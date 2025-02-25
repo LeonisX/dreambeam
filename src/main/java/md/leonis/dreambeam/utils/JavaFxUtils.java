@@ -3,14 +3,14 @@ package md.leonis.dreambeam.utils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.MainApp;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class JavaFxUtils {
 
@@ -50,7 +50,7 @@ public class JavaFxUtils {
             Region innerPane = loader.load();
             currentController = loader.getController();
             //if (controller instanceof SubPane) ((SubPane) controller).init();
-            ((BorderPane)rootLayout.getCenter()).setCenter(((BorderPane)innerPane).getCenter());
+            ((BorderPane) rootLayout.getCenter()).setCenter(((BorderPane) innerPane).getCenter());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,7 +61,7 @@ public class JavaFxUtils {
         alert.setTitle(title);
         alert.setHeaderText(header);
 
-        TextArea textArea = new TextArea(text);
+        //TextArea textArea = new TextArea(text);
         //textArea.setEditable(false);
         //textArea.setWrapText(true);
 
@@ -72,11 +72,11 @@ public class JavaFxUtils {
 
         //alert.getDialogPane().setContent(textArea);
 
-        alert.setResizable(true);
+        //alert.setResizable(true);
         alert.setContentText(text);
         //alert.setWidth(800);
-        alert.getDialogPane().setPrefSize(880, 320);
-        alert.getDialogPane().getChildren().stream().filter(node -> node instanceof Label).forEach(node -> ((Label)node).setMinHeight(Region.USE_PREF_SIZE));
+        //alert.getDialogPane().setPrefSize(880, 320);
+        //alert.getDialogPane().getChildren().stream().filter(node -> node instanceof Label).forEach(node -> ((Label) node).setMinHeight(Region.USE_PREF_SIZE));
         alert.showAndWait();
     }
 
@@ -85,5 +85,14 @@ public class JavaFxUtils {
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.showAndWait();
+    }
+
+    public static Optional<ButtonType> showConfirmation(String title, String header, String text) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(text);
+
+        return alert.showAndWait();
     }
 }

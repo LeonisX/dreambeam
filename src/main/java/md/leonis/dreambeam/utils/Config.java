@@ -18,6 +18,7 @@ public class Config {
     static final String resourcePath = "/fxml/";
 
     public static List<Path> files;
+    public static List<String> saveFiles;
     public static String crc32;
     public static Map<String, String> hashes;
 

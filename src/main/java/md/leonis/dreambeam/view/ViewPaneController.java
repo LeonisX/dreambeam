@@ -15,7 +15,6 @@ import md.leonis.dreambeam.utils.JavaFxUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class ViewPaneController {
@@ -27,7 +26,6 @@ public class ViewPaneController {
     public Button breakButton;
 
     private boolean breaked;
-    private List<String> files;
 
     @FXML
     private void initialize() {
@@ -35,8 +33,8 @@ public class ViewPaneController {
     }
 
     private void update() {
-        files = Config.files.stream().map(Path::toString).collect(Collectors.toList());
-        filesListView.setItems(FXCollections.observableList(files));
+        Config.saveFiles = Config.files.stream().map(Path::toString).collect(Collectors.toList());
+        filesListView.setItems(FXCollections.observableList(Config.saveFiles));
         filesListView.scrollTo(0);
     }
 
@@ -63,27 +61,27 @@ public class ViewPaneController {
                 totalSize += size;
                 if (!breaked) {
                     try {
-                        //todo копка паузы
+                        //todo кнопка паузы
                         //todo читать блоками а не целиком,
                         //todo строка прогресса
                         byte[] bytes = Files.readAllBytes(Config.files.get(i));
                         int crc32 = BinaryUtils.crc32(bytes);
-                        files.set(i, String.format("%s [%s bytes] - %s", file.subpath(0, file.getNameCount()).toString().toLowerCase(), bytes.length, String.format("%08X", crc32)));
+                        Config.saveFiles.set(i, String.format("%s [%s bytes] - %s", file.subpath(0, file.getNameCount()).toString().toLowerCase(), bytes.length, String.format("%08X", crc32)));
 
                         refreshListView(i);
 
                     } catch (Exception e) {
-                        files.set(i, String.format("%s [%s bytes] - Error!!!", file.subpath(0, file.getNameCount()).toString().toLowerCase(), size));
+                        Config.saveFiles.set(i, String.format("%s [%s bytes] - Error!!!", file.subpath(0, file.getNameCount()).toString().toLowerCase(), size));
                         refreshListView(i);
                     }
                 }
             }
 
-            files.add(0, String.format("Total size: %s bytes.", totalSize));
-            files.add(""); // костыль конечно, но так работал код на Delphi :(
+            Config.saveFiles.add(0, String.format("Total size: %s bytes.", totalSize));
+            //Config.saveFiles.add(""); // костыль конечно, но так работал код на Delphi :(
 
             if (!breaked) {
-                Config.crc32 = String.format("%08X", BinaryUtils.crc32(String.join("\r\n", files).getBytes()));
+                Config.crc32 = String.format("%08X", BinaryUtils.crc32((String.join("\r\n", Config.saveFiles) + "\r\n").getBytes()));// костыль конечно, но так работал код на Delphi :(
                 Platform.runLater(() -> JavaFxUtils.showPane("SavePane.fxml"));
             }
         }).start();
