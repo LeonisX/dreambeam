@@ -1,9 +1,11 @@
 package md.leonis.dreambeam.utils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Config {
@@ -15,7 +17,9 @@ public class Config {
 
     static final String resourcePath = "/fxml/";
 
-    public static File lastPath;
+    public static List<Path> files;
+    public static String crc32;
+    public static Map<String, String> hashes;
 
     public static void loadProperties() throws IOException {
         try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream("config.properties")) {

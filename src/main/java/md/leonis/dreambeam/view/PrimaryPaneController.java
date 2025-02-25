@@ -2,32 +2,60 @@ package md.leonis.dreambeam.view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.stage.FileChooser;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PrimaryPaneController {
 
-    public Button scanCdButton;
-    public Button scanFsButton;
-    public Button scanGdiButton;
+    public Button readCdButton;
+    public Button readFsButton;
+    public Button readGdiButton;
+    public Button rescanDrivesButton;
+
+    public List<Path> listFiles(File folder) {
+        return listFiles(folder, new ArrayList<>());
+    }
+
+    public List<Path> listFiles(File folder, List<Path> paths) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    listFiles(file, paths);
+                }
+            }
+            for (File file : files) {  // костыль конечно, но так считал код на Delphi :(
+                if (file.isFile()) {
+                    paths.add(file.toPath());
+                }
+            }
+        }
+        return paths;
+    }
 
     @FXML
-    private void initialize() throws IOException {
-        //todo вычитать список приводов, вывести под них кнопки.
-        //отдельная кнопка для директории.
-        //разбирать gdi
-        //drag&drop
-        //archives support
+    private void initialize() {
+        Config.hashes = new HashMap<>();
+        try {
+            Files.readAllLines(Paths.get("./Base/games.dat")).forEach(line -> {
+                int index = line.lastIndexOf("-");
+                Config.hashes.put(line.substring(index + 2).trim(), line.substring(0, index - 1).trim());
+            });
+        } catch (Exception e) {
+            //todo перечитать, сохранить
+            e.printStackTrace();
+        }
+    }
+
+    private void readDrives() {
         FileSystemView fsv = FileSystemView.getFileSystemView();
 
         for (File path : File.listRoots()) {
@@ -97,23 +125,32 @@ public class PrimaryPaneController {
         }
     }
 
-    public void scanCdButtonClick() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
+    public void readCdButtonClick() {
+        Config.files = listFiles(new File("E:\\"));
+        JavaFxUtils.showPane("ViewPane.fxml");
+        /*FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open File");
         if (Config.lastPath != null) {
             fileChooser.setInitialDirectory(Config.lastPath.getParentFile());
         }
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All saves", "*.sav", "*.ssm", "*.ss0", "*.ss1", "*.s00", "*.s01"),
-                new FileChooser.ExtensionFilter("SRAM saves", "*.ssm", "*.sav"),
-                new FileChooser.ExtensionFilter("RAM snapshots", "*.ss0", "*.ss1", "*.s00", "*.s01"),
-                new FileChooser.ExtensionFilter("Kega Fusion saves", "*.ssm", "*.ss0", "*.ss1", "*.ss2", "*.ss3", "*.ss4", "*.ss5", "*.ss6", "*.ss7", "*.ss8", "*.ss9"),
                 new FileChooser.ExtensionFilter("All files", "*.*")
         );
-        Config.lastPath = fileChooser.showOpenDialog(scanCdButton.getScene().getWindow());
+        Config.lastPath = fileChooser.showOpenDialog(readFsButton.getScene().getWindow());
 
         if (Config.lastPath != null && Config.lastPath.exists()) {
-            JavaFxUtils.showPane("ScanPane.fxml");
-        }
+            JavaFxUtils.showPane("ViewPane.fxml");
+        }*/
+    }
+
+    public void readFsButtonClick() {
+        JavaFxUtils.showPane("SavePane.fxml");
+    }
+
+    public void readGdiButtonClick() {
+    }
+
+    public void rescanDrivesButtonClick() {
+        JavaFxUtils.showPane("PrimaryPane.fxml");
     }
 }

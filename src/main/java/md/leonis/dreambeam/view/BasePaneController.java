@@ -1,13 +1,13 @@
 package md.leonis.dreambeam.view;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 
-public class ScanPaneController {
+public class BasePaneController {
 
-    private int saveSlotIndex;
+    public ListView filesListView;
 
     @FXML
     private void initialize() {
     }
-
 }
