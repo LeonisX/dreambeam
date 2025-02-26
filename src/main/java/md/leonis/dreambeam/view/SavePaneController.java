@@ -7,12 +7,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class SavePaneController {
 
@@ -49,14 +48,10 @@ public class SavePaneController {
     }
 
     public void saveButtonClick() {
-        System.out.println(Paths.get("./Base/games/" + name).normalize().toAbsolutePath());
-        System.out.println(Files.exists(Paths.get("./Base/games/" + name)));
-        System.out.println(Paths.get("./Leonis/" + name).normalize().toAbsolutePath());
-
-        if (Files.exists(Paths.get("./Base/games/" + name)) && !recognized) {
+        if (FileUtils.exists(Config.getBaseGamesPath(name)) && !recognized) {
             JavaFxUtils.showAlert("Образ уже есть в основной базе!", "Возможно стоит указать, что это альтернативная версия.", "Например, " + name + " (Alt)", Alert.AlertType.WARNING);
 
-        } else if (Files.exists(Paths.get("./Leonis/" + name))) { //todo login
+        } else if (FileUtils.exists(Config.getUserPath(name))) {
             var buttonType = JavaFxUtils.showConfirmation("Образ уже есть в вашей базе!", "Перезаписать?", name);
             if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
                 saveAndClose();
@@ -69,11 +64,10 @@ public class SavePaneController {
 
     private void saveAndClose() {
         try {
-            //todo verify, create catalog
-            Files.write(Paths.get("./Leonis/" + name), Config.saveFiles); //todo login
+            FileUtils.saveToFile(Config.getUserPath(name), Config.saveFiles);
             JavaFxUtils.showPane("PrimaryPane.fxml");
         } catch (IOException e) {
-            //todo alert
+            JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить файл " + name, e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 }

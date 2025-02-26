@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -21,6 +22,28 @@ public class Config {
     public static List<String> saveFiles;
     public static String crc32;
     public static Map<String, String> hashes;
+
+
+    public static Path getUserPath(String fileName) {
+        return getUserPath().resolve(fileName);
+    }
+
+    public static Path getUserPath() {
+        return Paths.get("./Leonis"); //todo
+    }
+
+    public static Path getBaseGamesPath(String fileName) {
+        return getBaseGamesPath().resolve(fileName);
+    }
+
+    public static Path getBaseGamesPath() {
+        return getBasePath().resolve("games");
+    }
+
+    public static Path getBasePath() {
+        return Paths.get("./Base");
+    }
+
 
     public static void loadProperties() throws IOException {
         try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream("config.properties")) {
