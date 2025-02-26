@@ -12,9 +12,14 @@ public class FileUtils {
         return Files.exists(path);
     }
 
-    public static long getFilesCount(Path path) throws IOException {
+    public static int getFilesCount(Path path) throws IOException {
+        return getFilesList(path).size();
+    }
+
+    @SuppressWarnings("all")
+    public static List<Path> getFilesList(Path path) throws IOException {
         try (Stream<Path> files = Files.list(path)) {
-            return files.count();
+            return files.toList();
         }
     }
 
@@ -22,13 +27,13 @@ public class FileUtils {
         return Files.readAllLines(path);
     }
 
-    public static void saveToFile(Path path, List<String> lines) throws IOException {
-        createDirectory(path.getParent());
+    public static void writeToFile(Path path, List<String> lines) throws IOException {
+        createDirectories(path.getParent());
         Files.write(path, lines);
     }
 
-    public static void createDirectory(Path path) throws IOException {
-        Files.createDirectory(path);
+    public static void createDirectories(Path path) throws IOException {
+        Files.createDirectories(path);
     }
 
     public static void deleteSilently(Path path) {

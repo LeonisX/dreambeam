@@ -66,7 +66,7 @@ public class SavePaneController {
     private void saveToBase() {
         try {
             if (Config.admin) {
-                FileUtils.saveToFile(Config.getBaseGamesFile(name), Config.saveFiles);
+                FileUtils.writeToFile(Config.getBaseGamesFile(name), Config.saveFiles);
             }
         } catch (IOException e) {
             showFileAlert(e, name);
@@ -75,7 +75,7 @@ public class SavePaneController {
 
     private void saveAndClose() {
         try {
-            FileUtils.saveToFile(Config.getUserFile(name), Config.saveFiles);
+            FileUtils.writeToFile(Config.getUserFile(name), Config.saveFiles);
             JavaFxUtils.showPane("PrimaryPane.fxml");
         } catch (IOException e) {
             showFileAlert(e, name);
