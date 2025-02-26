@@ -4,10 +4,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.MainApp;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -94,5 +96,19 @@ public class JavaFxUtils {
         alert.setContentText(text);
 
         return alert.showAndWait();
+    }
+
+    public static Optional<String> showInputDialog(String title, String header, String content) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
+        dialog.setContentText(content);
+        dialog.setOnCloseRequest(dialogEvent -> {
+            if (StringUtils.isBlank(dialog.getEditor().getText())) {
+                dialogEvent.consume();
+            }
+        });
+
+        return dialog.showAndWait();
     }
 }

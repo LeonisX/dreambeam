@@ -48,26 +48,41 @@ public class SavePaneController {
     }
 
     public void saveButtonClick() {
-        if (FileUtils.exists(Config.getBaseGamesPath(name)) && !recognized) {
+        if (FileUtils.exists(Config.getBaseGamesFile(name)) && !recognized) {
             JavaFxUtils.showAlert("Образ уже есть в основной базе!", "Возможно стоит указать, что это альтернативная версия.", "Например, " + name + " (Alt)", Alert.AlertType.WARNING);
 
-        } else if (FileUtils.exists(Config.getUserPath(name))) {
+        } else if (FileUtils.exists(Config.getUserFile(name))) {
             var buttonType = JavaFxUtils.showConfirmation("Образ уже есть в вашей базе!", "Перезаписать?", name);
             if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
                 saveAndClose();
             }
 
         } else {
+            saveToBase();
             saveAndClose();
+        }
+    }
+
+    private void saveToBase() {
+        try {
+            if (Config.admin) {
+                FileUtils.saveToFile(Config.getBaseGamesFile(name), Config.saveFiles);
+            }
+        } catch (IOException e) {
+            showFileAlert(e, name);
         }
     }
 
     private void saveAndClose() {
         try {
-            FileUtils.saveToFile(Config.getUserPath(name), Config.saveFiles);
+            FileUtils.saveToFile(Config.getUserFile(name), Config.saveFiles);
             JavaFxUtils.showPane("PrimaryPane.fxml");
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить файл " + name, e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            showFileAlert(e, name);
         }
+    }
+
+    private void showFileAlert(Exception e, String name) {
+        JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить файл " + name, e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
     }
 }

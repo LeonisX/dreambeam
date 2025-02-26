@@ -1,8 +1,8 @@
 package md.leonis.dreambeam.utils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Config {
-    /*static String apiPath;
-    public static String sitePath;
-    static String sampleVideo;*/
+
+    private static final String NAME = "Name";
+    private static final String ADMIN = "Admin";
 
     public static Properties languageTable;
 
@@ -23,37 +23,67 @@ public class Config {
     public static String crc32;
     public static Map<String, String> hashes;
 
+    public static Properties properties = new Properties();
+    public static String user;
+    public static long userFiles;
+    public static boolean admin;
 
-    public static Path getUserPath(String fileName) {
-        return getUserPath().resolve(fileName);
+
+    public static Path getUserFile(String fileName) {
+        return getUserDir().resolve(fileName);
     }
 
-    public static Path getUserPath() {
-        return Paths.get("./Leonis"); //todo
+    public static Path getUserDir() {
+        return getRootDir().resolve(user);
     }
 
-    public static Path getBaseGamesPath(String fileName) {
-        return getBaseGamesPath().resolve(fileName);
+    public static Path getConfigFile() {
+        return getRootDir().resolve("DreamBeam.ini");
     }
 
-    public static Path getBaseGamesPath() {
-        return getBasePath().resolve("games");
+    public static Path getBaseGamesDatFile() {
+        return getBaseDir().resolve("games.dat");
     }
 
-    public static Path getBasePath() {
-        return Paths.get("./Base");
+    public static Path getBaseGamesFile(String fileName) {
+        return getBaseGamesDir().resolve(fileName);
     }
 
+    public static Path getBaseGamesDir() {
+        return getBaseDir().resolve("games");
+    }
 
-    public static void loadProperties() throws IOException {
-        try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (inputStream == null) throw new FileNotFoundException("Property file isn't found...");
-            Properties prop = new Properties();
-            prop.load(inputStream);
-            /*apiPath = prop.getProperty("api.path");
-            sitePath = prop.getProperty("site.path");
-            sampleVideo = prop.getProperty("sample.video");*/
+    public static Path getBaseDir() {
+        return getRootDir().resolve("Base");
+    }
+
+    public static Path getRootDir() {
+        return Paths.get(".");
+    }
+
+    public static void loadProperties() {
+        try (InputStream inputStream = new FileInputStream(getConfigFile().toFile())) {
+            properties.load(inputStream);
+            user = properties.getProperty(NAME);
+            admin = "true".equals(properties.getProperty(ADMIN));
+        } catch (Exception ignored) {
         }
+    }
+
+    public static boolean isUser() {
+        return StringUtils.isNotBlank(user);
+    }
+
+    public static void setUser(String user) {
+        Config.user = user;
+        properties.put(NAME, user);
+        if (admin) {
+            properties.put(ADMIN, admin);
+        }
+    }
+
+    public static void saveProperties() throws IOException {
+        properties.store(new FileOutputStream(getConfigFile().toFile()), "Settings");
     }
 
     public static String getKeyByValue(char value) {
