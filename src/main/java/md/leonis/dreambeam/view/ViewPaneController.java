@@ -12,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.skin.ListViewSkin;
 import javafx.scene.control.skin.VirtualFlow;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import md.leonis.dreambeam.utils.BinaryUtils;
@@ -39,6 +40,8 @@ public class ViewPaneController implements Closeable {
     public VBox progressVBox;
     public Label fileProgressLabel;
     public Label totalProgressLabel;
+    public StackPane stackPane1;
+    public StackPane stackPane2;
 
     private Timeline timeline;
 
@@ -47,7 +50,8 @@ public class ViewPaneController implements Closeable {
 
     @FXML
     private void initialize() {
-        progressVBox.setPrefHeight(0);
+        progressVBox.setManaged(false);
+
         update();
     }
 
@@ -67,7 +71,8 @@ public class ViewPaneController implements Closeable {
         breaked = false;
         breakButton.setVisible(true);
         scanButton.setVisible(false);
-        progressVBox.setPrefHeight(62);
+
+        progressVBox.setManaged(true);
         fileProgressBar.setProgress(0); //todo обновлять прогресс файла когда научимся читать блоками
         totalProgressBar.setProgress(0);
         totalProgressLabel.setText("0%");
@@ -207,6 +212,7 @@ public class ViewPaneController implements Closeable {
 
     @Override
     public void close() throws IOException {
+        breaked = true;
         if (timeline != null) {
             timeline.stop();
         }

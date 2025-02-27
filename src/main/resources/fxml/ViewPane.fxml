@@ -47,21 +47,21 @@
                     </padding>
                 </HBox>
             </top>
-            <center>
-                <ListView fx:id="filesListView" BorderPane.alignment="CENTER" />
-            </center>
-         <bottom>
-             <VBox fx:id="progressVBox" alignment="CENTER" prefHeight="62.0" prefWidth="630.0" spacing="5.0" BorderPane.alignment="CENTER">
-                 <StackPane>
-                     <ProgressBar fx:id="fileProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0"/>
-                     <Label fx:id="fileProgressLabel" text="\%" textFill="#00000096"/>
-                 </StackPane>
-                 <StackPane>
-                     <ProgressBar fx:id="totalProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0"/>
-                     <Label fx:id="totalProgressLabel" text="\%" textFill="#00000096"/>
-                 </StackPane>
+         <center>
+             <VBox BorderPane.alignment="CENTER">
+                 <ListView fx:id="filesListView" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+                 <VBox fx:id="progressVBox" alignment="CENTER" minHeight="62.0" prefHeight="62.0" spacing="5.0">
+                     <StackPane fx:id="stackPane1">
+                         <ProgressBar fx:id="fileProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0" />
+                         <Label fx:id="fileProgressLabel" text="\%" textFill="#00000096" />
+                     </StackPane>
+                     <StackPane fx:id="stackPane2">
+                         <ProgressBar fx:id="totalProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0" />
+                         <Label fx:id="totalProgressLabel" text="\%" textFill="#00000096" />
+                     </StackPane>
+                 </VBox>
              </VBox>
-         </bottom>
+         </center>
         </BorderPane>
     </center>
 </BorderPane>
