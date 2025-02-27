@@ -59,19 +59,32 @@ public class ViewPaneController {
                     throw new RuntimeException(e);
                 }
                 totalSize += size;
+
+                String fileName = Config.isDirectory
+                        ? file.toString().replace(Config.lastDirectory.getAbsolutePath(), "").substring(1).toLowerCase()
+                        : file.subpath(0, file.getNameCount()).toString().toLowerCase();
+
+                System.out.println(fileName);
                 if (!breaked) {
                     try {
                         //todo кнопка паузы
                         //todo читать блоками а не целиком,
                         //todo строка прогресса
+
                         byte[] bytes = Files.readAllBytes(Config.files.get(i));
+
+                        //сравнивать на всякий случай с size
+                        if (bytes.length != size) {
+                            throw new RuntimeException(String.format("%s size is different: %s != %s !", file, bytes.length, size));
+                        }
+
                         int crc32 = BinaryUtils.crc32(bytes);
-                        Config.saveFiles.set(i, String.format("%s [%s bytes] - %s", file.subpath(0, file.getNameCount()).toString().toLowerCase(), bytes.length, String.format("%08X", crc32)));
+                        Config.saveFiles.set(i, String.format("%s [%s bytes] - %s", fileName, bytes.length, String.format("%08X", crc32)));
 
                         refreshListView(i);
 
                     } catch (Exception e) {
-                        Config.saveFiles.set(i, String.format("%s [%s bytes] - Error!!!", file.subpath(0, file.getNameCount()).toString().toLowerCase(), size));
+                        Config.saveFiles.set(i, String.format("%s [%s bytes] - Error!!!", fileName, size));
                         refreshListView(i);
                     }
                 }
@@ -98,7 +111,7 @@ public class ViewPaneController {
     }
 
     private int first = 0;
-    private int last  = 0;
+    private int last = 0;
 
     public void getFirstAndLast(ListView<?> t) {
         try {

@@ -1,9 +1,12 @@
 package md.leonis.dreambeam.view;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import md.leonis.dreambeam.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,13 +27,16 @@ import java.util.stream.Collectors;
 
 public class PrimaryPaneController {
 
-    public Button readCdButton;
     public Button readFsButton;
     public Button readGdiButton;
     public Button rescanDrivesButton;
     public Label userLabel;
     public Label userFilesLabel;
     public Label baseFilesCountLabel;
+    public VBox cdVBox;
+
+    private Map<String, Path> drives;
+    private String volumeLabel;
 
     public List<Path> listFiles(File folder) {
         return listFiles(folder, new ArrayList<>());
@@ -64,6 +70,8 @@ public class PrimaryPaneController {
         userFilesLabel.setText(String.format("In your collection %s image(s).", Config.userFiles));
         long verifiedCount = Config.hashes.values().stream().filter(v -> v.contains("[!]")).count();
         baseFilesCountLabel.setText(String.format("В базе данных %s записи; %s проверены на 100%%", Config.hashes.size(), verifiedCount));
+
+        rescanDrivesButtonClick();
     }
 
     private void createBaseDir() {
@@ -98,32 +106,6 @@ public class PrimaryPaneController {
             Config.setUser("Anonymous");
         }
     }
-
-    //todo файлов 1977 а хэшей только 1976 - где-то в файлах сидит дубликат!
-    //Caesars Palace - Special Edition (Rus) (Kudos)
-    //Caesars Palace 2000 - Millennium Gold Edition (Rus) (Kudos)
-    //todo решить какой файл правильный
-    //todo аудит дубликатов юзера (отдельная функция в меню)
-
-    //todo перебрать, сравнить визуально, может новая утилита неправильно что-то считает (что врядли)
-    //2-in-1 European Super League, NBA Hoopz (Rus) (Kudos) == 2-in-1 NBA Hoopz, European Super League (Rus) (Kudos)
-    //Resident Evil 2 (Disc 1 of 2) (PAL-E) (Eng) (Kalisto) == Resident Evil 2 (Disk 1 of 2) (PAL-E) (Eng)
-    //Draconus - Cult of the Wyrm (Disc 2 of 2) (Rus) (Kudos) == Draconus - Cult of the Wyrm (Disc 2 of 2) (Rus) (Kudos) (Alt) [!]
-    //Urban Chaos (Non-Rus) (Studia Max) == Urban Chaos (PAL-E) (Eng) (-)
-    //Hidden & Dangerous (Rus) (Vector) (Alt) == Hidden & Dangerous (Rus) (Vector) [!]
-    //Shenmue (Disc 3 of 3) (Eng) (Kudos) == Shenmue (Disc 3 of 3) (PAL-E) (Eng) [!]
-    //2-in-1 Raptors! Quake, Heavy Metal - Geomatrix (Rus) (Kudos) == 2-in-1 Raptors! Quake, Heavy Metal - Geomatrix (Rus) (Kudos) (Alt)
-    //Draconus - Cult of the Wyrm (Disc 1 of 2) (Rus) (Kudos) == Draconus - Cult of the Wyrm (Disc 1 of 2) (Rus) (Kudos) (Alt2)
-    //Godzilla Generations - Maximum Impact (Rus) (Kudos) (Alt) == Godzilla Generations - Maximum Impact (Rus) (Kudos) [!]
-    //Caesars Palace - Special Edition (Rus) (Kudos) == Caesars Palace 2000 - Millennium Gold Edition (Rus) (Kudos)
-    //Shenmue (Disc 2 of 3) (Eng) (Kudos) == Shenmue (Disc 2 of 3) (PAL-E) (Eng) [!]
-    //Maximum Pool (Rus) (Kudos) == Maximum Pool (Rus) (Kudos) (Alt)
-    //Shenmue (Disc 1 of 3) (Eng) (Kudos) == Shenmue (Disc 1 of 3) (PAL-E) (Eng) [!]
-    //D2 (Disc 1 of 4) (NTSC-U) (Eng) (Hykan) (Alt) == D2 (Disc 1 of 4) (NTSC-U) (Eng) (Hykan) [!]
-    //Tomb Raider - Chronicles (Rus) (Vector) (Alt) == Tomb Raider - Chronicles (Rus) (Vector) [!]
-    //D2 (Disc 3a of 4) (NTSC-U) (Eng) (Hykan) (Alt) == D2 (Disc 3a of 4) (NTSC-U) (Eng) (Hykan) [!]
-    //Millenium Soldier (Rus) (Vector) [!] == Millenium Soldier - Expendable (Rus) (Vector) (Alt)
-    //Taxi 2 (Rus) (Kudos) == Taxi 2 (Rus) (Kudos) (Alt)
 
     private void readGamesDat() {
         Config.hashes = new HashMap<>();
@@ -187,80 +169,47 @@ public class PrimaryPaneController {
         }
     }
 
-    //todo drives
-    private void readDrives() {
-        FileSystemView fsv = FileSystemView.getFileSystemView();
-
-        for (File path : File.listRoots()) {
-            try {
-                System.out.println("Drive Name: " + path);
-                System.out.println("getSystemTypeDescription: " + fsv.getSystemTypeDescription(path));
-
-                String volumeLabel = fsv.getSystemDisplayName(path);
-                if (!StringUtils.isBlank(volumeLabel)) {
-                    int index = volumeLabel.indexOf(") ");
-                    if (index == -1) {
-                        index = volumeLabel.lastIndexOf(" (");
-                        if (index > 0) {
-                            volumeLabel = volumeLabel.substring(0, index).trim();
-                        }
-                    } else {
-                        volumeLabel = volumeLabel.substring(index + 2).trim();
-                    }
-                }
-
-                System.out.println("getSystemDisplayName: " + volumeLabel);
-                System.out.println("isFileSystem: " + fsv.isFileSystem(path));
-                System.out.println("isDrive: " + fsv.isDrive(path));
-                //System.out.println("isComputerNode: " + fsv.isComputerNode(path)); // false
-                //System.out.println("isLink: " + fsv.isLink(path)); // false
-                //System.out.println("isFileSystemRoot: " + fsv.isFileSystemRoot(path)); // true
-                System.out.println("isFloppyDrive: " + fsv.isFloppyDrive(path));
-                //System.out.println("isRoot: " + fsv.isRoot(path)); // false
-                //System.out.println("isTraversable: " + fsv.isTraversable(path)); // true
-                //System.out.println("isHiddenFile: " + fsv.isHiddenFile(path)); // false
-            } catch (Exception e) {
-                System.out.println(e.getClass().getName() + ": " + e.getMessage());
-            }
-        }
-
-        System.out.println(FileSystems.getDefault().supportedFileAttributeViews());
-
-        for (Path root : FileSystems.getDefault().getRootDirectories()) {
-            System.out.println(root.toString());
-            try {
-                FileStore fileStore = Files.getFileStore(root);
-
-                System.out.println("getTotalSpace: " + fileStore.getTotalSpace());
-                System.out.println("getUsableSpace: " + fileStore.getUsableSpace());
-                System.out.println("getUnallocatedSpace: " + fileStore.getUnallocatedSpace());
-                System.out.println("bytesPerSector: " + fileStore.getBlockSize());
-                System.out.println("getTotalSpace: " + fileStore.getTotalSpace());
-                System.out.println("volume:vsn: " + fileStore.getAttribute("volume:vsn"));
-                System.out.println("volume:isRemovable: " + fileStore.getAttribute("volume:isRemovable"));
-                System.out.println("volume:isCdrom: " + fileStore.getAttribute("volume:isCdrom"));
-                //System.out.println("readonly: " + fileStore.getAttribute("readonly"));
-                //System.out.println("hidden: " + fileStore.getAttribute("hidden"));
-                //System.out.println("system: " + fileStore.getAttribute("system"));
-                //System.out.println("archive: " + fileStore.getAttribute("archive"));
-                //System.out.println("lastModifiedTime: " + fileStore.getAttribute("lastModifiedTime")); // FileTime
-                //System.out.println("lastAccessTime: " + fileStore.getAttribute("lastAccessTime")); // FileTime
-                //System.out.println("creationTime: " + fileStore.getAttribute("creationTime")); // FileTime
-                //System.out.println("size: " + fileStore.getAttribute("size"));
-                //System.out.println("isRegularFile: " + fileStore.getAttribute("isRegularFile"));
-                //System.out.println("isDirectory: " + fileStore.getAttribute("isDirectory"));
-                //System.out.println("isSymbolicLink: " + fileStore.getAttribute("isSymbolicLink"));
-                //System.out.println("isOther: " + fileStore.getAttribute("isOther"));
-                //System.out.println("fileKey: " + fileStore.getAttribute("fileKey")); // Object
-            } catch (Exception e) {
-                System.out.println(e.getClass().getName() + ": " + e.getMessage());
-            }
+    public void readCdButtonClick(ActionEvent actionEvent) {
+        File file = new File(((Button) actionEvent.getSource()).getUserData().toString());
+        Config.isDirectory = false;
+        try {
+            scanDriveAndOpenViewPane(file);
+        } catch (Exception e) {
+            showReadDiskAlert(file, e);
         }
     }
 
-    public void readCdButtonClick() {
-        Config.files = listFiles(new File("E:\\"));
+    public void readFsButtonClick() {
+        try {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Select directory");
+            if (Config.lastDirectory != null) {
+                directoryChooser.setInitialDirectory(Config.lastDirectory);
+            }
+            Config.lastDirectory = directoryChooser.showDialog(readFsButton.getScene().getWindow());
+
+            if (Config.lastDirectory != null && Config.lastDirectory.exists()) {
+                Config.isDirectory = true;
+                scanDriveAndOpenViewPane(Config.lastDirectory);
+            }
+        } catch (Exception e) {
+            showReadDiskAlert(Config.lastDirectory, e);
+        }
+    }
+
+    private void showReadDiskAlert(File file, Exception e) {
+        JavaFxUtils.showAlert("Ошибка!", String.format("Не удалось прочитать диск %s!", file.toString()), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+    }
+
+    private void scanDriveAndOpenViewPane(File driveRoot) throws IOException {
+        scanDrive(driveRoot);
+
+        Config.files = listFiles(driveRoot);
         JavaFxUtils.showPane("ViewPane.fxml");
+    }
+
+    public void readGdiButtonClick() {
+
         /*FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open File");
         if (Config.lastPath != null) {
@@ -276,14 +225,114 @@ public class PrimaryPaneController {
         }*/
     }
 
-    public void readFsButtonClick() {
-        JavaFxUtils.showPane("SavePane.fxml");
-    }
-
-    public void readGdiButtonClick() {
-    }
-
     public void rescanDrivesButtonClick() {
-        JavaFxUtils.showPane("PrimaryPane.fxml");
+        try {
+            rescanDrives();
+
+            cdVBox.getChildren().clear();
+            drives.entrySet().forEach(drive -> cdVBox.getChildren().add(createCdButton(drive)));
+        } catch (Exception e) {
+            JavaFxUtils.showAlert("Ошибка!", "Не удалось получить список дисков!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    public Button createCdButton(Map.Entry<String, Path> drive) {
+        Button button = new Button(String.format("Read CD-ROM (%s)", drive.getKey().replace("\\", "")));
+        button.setUserData(drive.getKey());
+        button.setOnAction(this::readCdButtonClick);
+
+        return button;
+    }
+
+    private void rescanDrives() throws IOException {
+        drives = new HashMap<>();
+
+        for (Path root : FileSystems.getDefault().getRootDirectories()) {
+            //System.out.println(root.toString());
+            try {
+                FileStore fileStore = Files.getFileStore(root);
+
+                //getTotalSpace: 23982080
+                //getUsableSpace: 0
+                //getUnallocatedSpace: 0
+                //bytesPerSector: 2048
+                //getTotalSpace: 23982080
+                //volume:vsn: 1233317977
+                //volume:isRemovable: false
+                //volume:isCdrom: true
+
+                /*System.out.println("getTotalSpace: " + fileStore.getTotalSpace());
+                System.out.println("getUsableSpace: " + fileStore.getUsableSpace());
+                System.out.println("getUnallocatedSpace: " + fileStore.getUnallocatedSpace());
+                System.out.println("bytesPerSector: " + fileStore.getBlockSize());
+                System.out.println("getTotalSpace: " + fileStore.getTotalSpace());
+                System.out.println("volume:vsn: " + fileStore.getAttribute("volume:vsn"));
+                System.out.println("volume:isRemovable: " + fileStore.getAttribute("volume:isRemovable"));
+                System.out.println("volume:isCdrom: " + fileStore.getAttribute("volume:isCdrom"));*/
+
+                if ((Boolean) fileStore.getAttribute("volume:isCdrom")) {
+                    drives.put(root.toString(), root);
+                }
+            } catch (Exception e) {
+                if (e.getMessage().contains("The device is not ready")) {
+                    drives.put(root.toString(), root);
+                } else {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    private void scanDrive(File driveRoot) throws IOException {
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+
+        if (fsv.getSystemTypeDescription(driveRoot) != null) {
+
+            volumeLabel = formatVolumeLabel(fsv.getSystemDisplayName(driveRoot));
+            //Drive Name: E:\
+            //getSystemTypeDescription: CD Drive
+            //getSystemDisplayName: DuxRev-RC1
+            //isFileSystem: true
+            //isDrive: true
+            //isFloppyDrive: false
+
+            //Drive Name: E:\
+            //getSystemTypeDescription: null
+            //getSystemDisplayName:
+            //isFileSystem: true
+            //isDrive: false
+            //isFloppyDrive: false
+
+            System.out.println("Drive Name: " + driveRoot);
+            System.out.println("getSystemTypeDescription: " + fsv.getSystemTypeDescription(driveRoot));
+            System.out.println("getSystemDisplayName: " + volumeLabel);
+            System.out.println("isFileSystem: " + fsv.isFileSystem(driveRoot));
+            System.out.println("isDrive: " + fsv.isDrive(driveRoot));
+            //System.out.println("isComputerNode: " + fsv.isComputerNode(path)); // false
+            //System.out.println("isLink: " + fsv.isLink(path)); // false
+            //System.out.println("isFileSystemRoot: " + fsv.isFileSystemRoot(path)); // true
+            System.out.println("isFloppyDrive: " + fsv.isFloppyDrive(driveRoot));
+            //System.out.println("isRoot: " + fsv.isRoot(path)); // false
+            //System.out.println("isTraversable: " + fsv.isTraversable(path)); // true
+            //System.out.println("isHiddenFile: " + fsv.isHiddenFile(path)); // false
+        } else {
+            throw new IOException(String.format("Drive %s is not ready", driveRoot.toString()));
+        }
+    }
+
+    private String formatVolumeLabel(String volumeLabel) {
+        if (!StringUtils.isBlank(volumeLabel)) {
+            int index = volumeLabel.indexOf(") ");
+            if (index == -1) {
+                index = volumeLabel.lastIndexOf(" (");
+                if (index > 0) {
+                    volumeLabel = volumeLabel.substring(0, index).trim();
+                }
+            } else {
+                volumeLabel = volumeLabel.substring(index + 2).trim();
+            }
+        }
+
+        return volumeLabel;
     }
 }

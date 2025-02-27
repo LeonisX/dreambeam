@@ -49,18 +49,17 @@
                     <center>
                         <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                             <VBox prefHeight="399.0" prefWidth="208.0">
-                                <VBox spacing="5.0">
+                                <VBox fx:id="cdVBox" spacing="5.0">
                                     <padding>
                                         <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
-                                    <Button fx:id="readCdButton" mnemonicParsing="false" onAction="#readCdButtonClick" text="Read CD-ROM (E:)" />
                                 </VBox>
                                 <VBox spacing="5.0">
                                     <padding>
                                         <Insets bottom="20.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <Button fx:id="readFsButton" mnemonicParsing="false" onAction="#readFsButtonClick" text="Read File System" />
-                                    <Button fx:id="readGdiButton" mnemonicParsing="false" onAction="#readGdiButtonClick" text="Read GDI" />
+                                    <Button fx:id="readGdiButton" disable="true" mnemonicParsing="false" onAction="#readGdiButtonClick" text="Read GDI" />
                                 </VBox>
                                 <VBox spacing="5.0">
                                     <padding>

@@ -27,6 +27,8 @@ public class Config {
     public static String user;
     public static long userFiles;
     public static boolean admin;
+    public static File lastDirectory;
+    public static boolean isDirectory;
 
 
     public static Path getUserFile(String fileName) {
