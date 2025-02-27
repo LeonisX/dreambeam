@@ -62,7 +62,7 @@ public class ViewPaneController implements Closeable {
     }
 
     public void backButtonClick() {
-        JavaFxUtils.showPane("PrimaryPane.fxml");
+        JavaFxUtils.showPrimaryPanel();
     }
 
     public void scanButtonClick() {
@@ -110,7 +110,6 @@ public class ViewPaneController implements Closeable {
                 Platform.runLater(() -> fileProgressLabel.setText(currentFile));
 
                 try {
-                    //todo кнопка паузы
                     //todo читать блоками а не целиком
                     byte[] bytes = Files.readAllBytes(Config.files.get(i));
 
@@ -207,7 +206,7 @@ public class ViewPaneController implements Closeable {
         scanButton.setVisible(true);
 
         JavaFxUtils.log("!Операция прервана!");
-        update();
+        JavaFxUtils.showPrimaryPanel();
     }
 
     @Override

@@ -87,7 +87,7 @@ public class SavePaneController implements Closeable {
     private void saveAndClose() {
         try {
             FileUtils.writeToFile(Config.getUserFile(name), Config.saveFiles);
-            JavaFxUtils.showPane("PrimaryPane.fxml");
+            JavaFxUtils.showPrimaryPanel();
         } catch (IOException e) {
             showFileAlert(e, name);
         }
