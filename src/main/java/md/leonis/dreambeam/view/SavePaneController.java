@@ -22,6 +22,7 @@ public class SavePaneController {
     public HBox nokHBox;
     public Button saveButton;
     public TextField titleTextField;
+    public Button runWizardButton;
 
     private String name;
     private boolean recognized;
@@ -43,12 +44,6 @@ public class SavePaneController {
             name = nev;
             saveButton.setDisable(StringUtils.isBlank(titleTextField.getText()));
         });
-
-        Config.wizardName = null;
-        JavaFxUtils.showWizardWindow();
-        if (StringUtils.isNotBlank(Config.wizardName)) {
-            titleTextField.setText(Config.wizardName);
-        }
     }
 
     public void backButtonClick() {
@@ -68,13 +63,7 @@ public class SavePaneController {
 
         } else {
             saveToBase();
-
-            //todo wizard
-            //Дали название образу:
-            //Prince of Persia - Arabian Nights (Rus) (Paradox)
-
             logSave();
-
             saveAndClose();
         }
     }
@@ -105,5 +94,15 @@ public class SavePaneController {
 
     private void showFileAlert(Exception e, String name) {
         JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить файл " + name, e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+    }
+
+    public void runWizardButtonClick() {
+        Config.wizardName = null;
+        JavaFxUtils.showWizardWindow();
+        if (StringUtils.isNotBlank(Config.wizardName)) {
+            titleTextField.setText(Config.wizardName);
+            JavaFxUtils.log("Дали название образу:");
+            JavaFxUtils.log(Config.wizardName);
+        }
     }
 }

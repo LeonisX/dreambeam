@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.utils.Config;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,6 +25,7 @@ public class WizardStageController {
     public RadioButton engRadioButton;
     public RadioButton freRadioButton;
     public RadioButton spaRadioButton;
+
     public TitledPane translatorTitledPane;
     public RadioButton kudosRadioButton;
     public RadioButton vectorRadioButton;
@@ -35,6 +37,7 @@ public class WizardStageController {
     public RadioButton unknownTranslatorRadioButton;
     public RadioButton otherTranslatorRadioButton;
     public TextField translatorTextField;
+
     public TitledPane regionTitledPane;
     public RadioButton palRadioButton;
     public RadioButton ntscuRadioButton;
@@ -43,16 +46,19 @@ public class WizardStageController {
     public RadioButton unknownRegionRadioButton;
     public TextField regionTextField;
     public TextField publisherTextField;
+
     public Spinner<Integer> disksSpinner;
     public Label diskLabel;
     public Spinner<Integer> diskSpinner;
     public CheckBox homebrewCheckBox;
     public CheckBox gdiCheckBox;
+    public CheckBox badDumpCheckBox;
+
     public TextField titleTextField;
     public TextField disksTextField;
     public TextField tagsTextField;
     public Button okButton;
-    public Button cancelButton;
+
     public ToggleGroup languageToggleGroup;
     public ToggleGroup translatorToggleGroup;
     public ToggleGroup regionToggleGroup;
@@ -100,8 +106,6 @@ public class WizardStageController {
         }).distinct().sorted().toList();
         gamesListView.setItems(FXCollections.observableList(games));
 
-        //todo навигация набором букв
-
         //todo было бы хорошо выводить предыдущие результаты
         languageToggleGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> languageToggleGroupListen());
         translatorToggleGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> updateTranslator());
@@ -115,6 +119,12 @@ public class WizardStageController {
 
         gamesListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
                 -> titleTextField.setText(gamesListView.getSelectionModel().getSelectedItem()));
+
+        //навигация набором букв
+        var handler = new ListViewHandler<>(gamesListView);
+        gamesListView.setOnKeyPressed(handler::handle);
+
+        badDumpCheckBox.setSelected(Config.error);
 
         translatorTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
         regionTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
@@ -132,19 +142,19 @@ public class WizardStageController {
     }
 
     private void updateTranslator() {
-        RadioButton regionButton = (RadioButton) translatorToggleGroup.getSelectedToggle();
-        regionTextField.setText(regionButton.getUserData().toString());
-
-        updateTags();
-    }
-
-    private void updateRegion() {
-        RadioButton translatorButton = (RadioButton) regionToggleGroup.getSelectedToggle();
+        RadioButton translatorButton = (RadioButton) translatorToggleGroup.getSelectedToggle();
         if (!translatorButton.getUserData().equals("?")) {
             translatorTextField.setText(translatorButton.getUserData().toString());
         } else {
             translatorTextField.setText("");
         }
+
+        updateTags();
+    }
+
+    private void updateRegion() {
+        RadioButton regionButton = (RadioButton) regionToggleGroup.getSelectedToggle();
+        regionTextField.setText(regionButton.getUserData().toString());
 
         updateTags();
     }
@@ -163,10 +173,12 @@ public class WizardStageController {
             tags.add(publisherTextField.getText());
         }
 
-        //todo галочка "BAD", если ошибки сканирования, блочить
-
         if (homebrewCheckBox.isSelected()) {
             tags.add("Homebrew");
+        }
+
+        if (gdiCheckBox.isSelected()) {
+            tags.add("GDI");
         }
 
         if (gdiCheckBox.isSelected()) {
@@ -192,7 +204,6 @@ public class WizardStageController {
     }
 
     public void okButtonClick(ActionEvent actionEvent) {
-        //todo реакция на той стороне
         Config.wizardName = Stream.of(titleTextField, disksTextField, tagsTextField)
                 .map(f -> f.getText().trim()).filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(" "));

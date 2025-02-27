@@ -153,19 +153,24 @@
                             <Spinner fx:id="diskSpinner" editable="true" />
                         </VBox>
                     </TitledPane>
-                    <TitledPane animated="false" collapsible="false" text="Homebrew" VBox.vgrow="ALWAYS">
-                        <VBox spacing="5.0">
-                            <Label text="(бесплатные)" />
+                    <TitledPane animated="false" collapsible="false" text="Другие настройки" VBox.vgrow="ALWAYS">
+                        <VBox prefHeight="194.0" prefWidth="116.0" spacing="5.0">
+                            <Label text="Бесплатная игра" />
                             <CheckBox fx:id="homebrewCheckBox" mnemonicParsing="false" text="Homebrew" />
-                        </VBox>
-                        <padding>
-                            <Insets top="5.0" />
-                        </padding>
-                    </TitledPane>
-                    <TitledPane collapsible="false" text="GD-ROM">
-                        <VBox prefHeight="89.0" prefWidth="104.0" spacing="5.0">
-                            <Label text="Образ GDI?" />
+                     <Separator prefWidth="200.0">
+                        <VBox.margin>
+                           <Insets top="10.0" />
+                        </VBox.margin>
+                     </Separator>
+                            <Label text="Образ GD-ROM" />
                             <CheckBox fx:id="gdiCheckBox" mnemonicParsing="false" text="GDI" />
+                     <Separator prefWidth="200.0">
+                        <VBox.margin>
+                           <Insets top="10.0" />
+                        </VBox.margin>
+                     </Separator>
+                     <Label text="Is bad dump?" />
+                     <CheckBox fx:id="badDumpCheckBox" disable="true" mnemonicParsing="false" text="Bad dump" />
                         </VBox>
                         <padding>
                             <Insets top="5.0" />
@@ -193,23 +198,20 @@
                     <Label minHeight="22.0" text="название игры" textFill="#00000082" />
                 </VBox>
                 <VBox alignment="BOTTOM_CENTER">
-                    <TextField fx:id="disksTextField" prefHeight="25.0" prefWidth="160.0" />
-                    <Label contentDisplay="CENTER" minHeight="22.0" text="диски (если больше 1) " textFill="#00000082" />
+                    <TextField fx:id="disksTextField" prefHeight="25.0" prefWidth="55.0" />
+                    <Label contentDisplay="CENTER" minHeight="22.0" text="диски (если&gt;1)" textFill="#00000082" />
 
                 </VBox>
                 <VBox alignment="BOTTOM_CENTER">
-
-                    <TextField fx:id="tagsTextField" prefHeight="25.0" prefWidth="163.0" text="(Rus) (Kudos)" />
+                    <TextField fx:id="tagsTextField" prefHeight="25.0" prefWidth="260.0" text="(Rus) (Kudos)" />
                     <Label minHeight="22.0" text="другие характеристики" textFill="#00000082" />
                 </VBox>
-                <VBox alignment="CENTER">
-                    <HBox spacing="5.0">
-                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okButtonClick" prefHeight="25.0" prefWidth="76.0" text="Готово!" />
-                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonClick" text="Закрыть" />
+                <VBox alignment="CENTER" spacing="5.0">
+                    <Button fx:id="okButton" mnemonicParsing="false" onAction="#okButtonClick" prefHeight="60.0" prefWidth="60.0" text="Готово!">
                         <VBox.margin>
-                            <Insets bottom="16.0" />
+                            <Insets />
                         </VBox.margin>
-                    </HBox>
+                    </Button>
                 </VBox>
             </HBox>
         </TitledPane>

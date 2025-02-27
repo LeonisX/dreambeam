@@ -71,19 +71,17 @@ public class JavaFxUtils {
     }
 
     public static void showWindow(String resource, String title) {
-        Platform.runLater(() -> {
-            try {
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
-                Parent root = loader.load();
-                Stage stage = new Stage();
-                stage.setTitle(title);
-                stage.setScene(new Scene(root, 900, 600));
-                stage.showAndWait();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.setScene(new Scene(root, 900, 600));
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void showAlert(String title, String header, String text, Alert.AlertType alertType) {

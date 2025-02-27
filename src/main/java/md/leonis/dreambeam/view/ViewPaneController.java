@@ -98,6 +98,7 @@ public class ViewPaneController {
             //Config.saveFiles.add(""); // костыль конечно, но так работал код на Delphi :(
 
             if (!breaked) {
+                Config.error = error;
                 Config.crc32 = BinaryUtils.crc32String((String.join("\r\n", Config.saveFiles) + "\r\n").getBytes());// костыль конечно, но так работал код на Delphi :(
 
                 //todo время сканирования - двоеточие мигает если что
@@ -155,14 +156,6 @@ public class ViewPaneController {
             last = vf.getLastVisibleCell().getIndex();
         } catch (Exception ignored) {
         }
-    }
-
-    public int getFirst() {
-        return first;
-    }
-
-    public int getLast() {
-        return last;
     }
 
     public void breakButtonClick() {
