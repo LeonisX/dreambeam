@@ -7,4 +7,8 @@ public class Utils {
     public static String formatSeconds(long millis) {
         return DurationFormatUtils.formatDuration(millis, "mm:ss", true);
     }
+
+    public static String formatSecondsNoTick(long millis) {
+        return DurationFormatUtils.formatDuration(millis, "mm ss", true);
+    }
 }

@@ -11,11 +11,12 @@ import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import static md.leonis.dreambeam.utils.Config.HR;
 
-public class SavePaneController {
+public class SavePaneController implements Closeable {
 
     public Button backButton;
     public HBox okHBox;
@@ -104,5 +105,9 @@ public class SavePaneController {
             JavaFxUtils.log("Дали название образу:");
             JavaFxUtils.log(Config.wizardName);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

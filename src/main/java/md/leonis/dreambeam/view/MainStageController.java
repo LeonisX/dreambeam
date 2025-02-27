@@ -11,12 +11,13 @@ import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.time.Instant;
 
 import static md.leonis.dreambeam.utils.Config.HR;
 
-public class MainStageController {
+public class MainStageController implements Closeable {
 
     public ListView<String> logListView;
     public MenuItem exitMenuItem;
@@ -92,5 +93,9 @@ public class MainStageController {
 
     public void showDiskNameWizard() {
         JavaFxUtils.showWizardWindow();
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

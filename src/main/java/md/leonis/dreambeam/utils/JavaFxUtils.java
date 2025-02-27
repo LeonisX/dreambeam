@@ -14,6 +14,7 @@ import md.leonis.dreambeam.MainApp;
 import md.leonis.dreambeam.view.MainStageController;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class JavaFxUtils {
     private static final int sceneWidth = 900;
     private static final int sceneHeight = 700;
 
-    public static Object currentController;
+    public static Closeable currentController;
 
     @SuppressWarnings("all")
     public static void showMainPane(Stage primaryStage) {
@@ -37,7 +38,13 @@ public class JavaFxUtils {
             controller = loader.getController();
             Scene scene = new Scene(rootLayout, sceneWidth, sceneHeight);
             primaryStage.setScene(scene);
-            primaryStage.setOnHiding(event -> controller.saveLogsAndClose());
+            primaryStage.setOnHiding(event -> {
+                controller.saveLogsAndClose();
+                try {
+                    currentController.close();
+                } catch (Exception ignored) {
+                }
+            });
 
             showPrimaryPanel();
 

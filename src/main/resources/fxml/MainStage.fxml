@@ -34,6 +34,6 @@
         <BorderPane BorderPane.alignment="CENTER" />
     </center>
     <bottom>
-        <ListView fx:id="logListView" focusTraversable="false" prefHeight="224.0" prefWidth="640.0" BorderPane.alignment="CENTER" />
+        <ListView fx:id="logListView" focusTraversable="false" prefHeight="160.0" prefWidth="640.0" BorderPane.alignment="CENTER" />
     </bottom>
 </BorderPane>

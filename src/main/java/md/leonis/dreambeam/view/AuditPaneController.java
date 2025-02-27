@@ -3,11 +3,18 @@ package md.leonis.dreambeam.view;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 
-public class AuditPaneController {
+import java.io.Closeable;
+import java.io.IOException;
+
+public class AuditPaneController implements Closeable {
 
     public ListView filesListView;
 
     @FXML
     private void initialize() {
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

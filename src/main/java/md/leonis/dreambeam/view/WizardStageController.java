@@ -10,12 +10,14 @@ import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.utils.Config;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class WizardStageController {
+public class WizardStageController implements Closeable {
 
     public ListView<String> gamesListView;
     public RadioButton rusRadioButton;
@@ -218,5 +220,9 @@ public class WizardStageController {
         Node source = (Node) actionEvent.getSource();
         Stage stage = (Stage) source.getScene().getWindow();
         stage.close();
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

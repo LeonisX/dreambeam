@@ -31,18 +31,17 @@
                         </StackPane>
                     </HBox>
                     <HBox alignment="CENTER" prefWidth="150.0" spacing="5.0" BorderPane.alignment="CENTER">
-                  <children>
-                          <Label text="Scan Time:">
-                        <padding>
-                           <Insets bottom="2.0" />
-                        </padding>
-                     </Label>
-                          <Label fx:id="timeLabel" text="00:45">
-                        <padding>
-                           <Insets bottom="2.0" />
-                        </padding>
-                     </Label>
-                  </children></HBox>
+                        <Label text="Scan Time:">
+                            <padding>
+                                <Insets bottom="4.0" />
+                            </padding>
+                        </Label>
+                        <Label fx:id="timeLabel" text="00:00">
+                            <padding>
+                                <Insets bottom="4.0" />
+                            </padding>
+                        </Label>
+                    </HBox>
                     <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                     </padding>
@@ -52,12 +51,16 @@
                 <ListView fx:id="filesListView" BorderPane.alignment="CENTER" />
             </center>
          <bottom>
-            <VBox alignment="CENTER" prefHeight="62.0" prefWidth="630.0" spacing="5.0" BorderPane.alignment="CENTER">
-               <children>
-                  <ProgressBar fx:id="fileProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0" />
-                  <ProgressBar fx:id="totalProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0" />
-               </children>
-            </VBox>
+             <VBox fx:id="progressVBox" alignment="CENTER" prefHeight="62.0" prefWidth="630.0" spacing="5.0" BorderPane.alignment="CENTER">
+                 <StackPane>
+                     <ProgressBar fx:id="fileProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0"/>
+                     <Label fx:id="fileProgressLabel" text="\%" textFill="#00000096"/>
+                 </StackPane>
+                 <StackPane>
+                     <ProgressBar fx:id="totalProgressBar" prefHeight="22.0" prefWidth="600.0" progress="0.0"/>
+                     <Label fx:id="totalProgressLabel" text="\%" textFill="#00000096"/>
+                 </StackPane>
+             </VBox>
          </bottom>
         </BorderPane>
     </center>

@@ -11,6 +11,7 @@ import md.leonis.dreambeam.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.filechooser.FileSystemView;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileStore;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 import static md.leonis.dreambeam.utils.Config.HR;
 
-public class PrimaryPaneController {
+public class PrimaryPaneController implements Closeable {
 
     public Button readFsButton;
     public Button readGdiButton;
@@ -340,5 +341,9 @@ public class PrimaryPaneController {
         }
 
         return volumeLabel;
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }
