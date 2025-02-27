@@ -26,6 +26,7 @@ public class ViewPaneController {
     public Button breakButton;
 
     private boolean breaked;
+    private boolean error;
 
     @FXML
     private void initialize() {
@@ -43,6 +44,7 @@ public class ViewPaneController {
     }
 
     public void scanButtonClick() {
+        error = false;
         breaked = false;
         breakButton.setVisible(true);
         scanButton.setVisible(false);
@@ -64,12 +66,12 @@ public class ViewPaneController {
                         ? file.toString().replace(Config.lastDirectory.getAbsolutePath(), "").substring(1).toLowerCase()
                         : file.subpath(0, file.getNameCount()).toString().toLowerCase();
 
-                System.out.println(fileName);
                 if (!breaked) {
                     try {
                         //todo кнопка паузы
                         //todo читать блоками а не целиком,
                         //todo строка прогресса
+                        //todo время сканирования
 
                         byte[] bytes = Files.readAllBytes(Config.files.get(i));
 
@@ -84,8 +86,10 @@ public class ViewPaneController {
                         refreshListView(i);
 
                     } catch (Exception e) {
+                        error = true;
                         Config.saveFiles.set(i, String.format("%s [%s bytes] - Error!!!", fileName, size));
                         refreshListView(i);
+                        JavaFxUtils.log(file + "   - ошибка чтения!");
                     }
                 }
             }
@@ -95,7 +99,37 @@ public class ViewPaneController {
 
             if (!breaked) {
                 Config.crc32 = BinaryUtils.crc32String((String.join("\r\n", Config.saveFiles) + "\r\n").getBytes());// костыль конечно, но так работал код на Delphi :(
-                Platform.runLater(() -> JavaFxUtils.showPane("SavePane.fxml"));
+
+                //todo время сканирования - двоеточие мигает если что
+                //@Время сканирования: 00:17
+
+                if (error) {
+                    //todo если были ошибки - получить размер файла и поискать похожие
+                    // на самом деле, лучше дождаться сравнения по файликам.
+                    //По размеру образ совпадает с:
+                    //Dreamsoft (Rus) (RGR)
+                    //В базе данных не удалось найти похожий образ диска
+
+                    //if getfilesize(Dir+SearchRec.name)=j then
+                    //  begin
+                    //   journal.memo2.SelAttributes.Color:= clgreen;journal.memo2.Lines.add('@По размеру образ совпадает с:');
+                    //   journal.memo2.SelAttributes.Color:= clgreen;journal.memo2.Lines.add(@searchrec.name);memo1.perform(wm_vscroll, sb_linedown,0);flu:=true;
+                    //  end;
+                    // until FindNext(SearchRec)<>0;
+                    // FindClose(SearchRec);
+                    // if flu=false then journal.memo2.SelAttributes.Color:= clred;journal.memo2.Lines.add('!В базе данных не удалось найти похожий образ диска');memo1.perform(wm_vscroll, sb_linedown,0);
+                    //e
+                }
+
+                String name = Config.hashes.get(Config.crc32);
+
+                if (name != null) {
+                    JavaFxUtils.log("@Диск распознан как: " + name);
+                } else {
+                    JavaFxUtils.log("#Этого диска нет в базе данных!");
+                }
+
+                JavaFxUtils.showPane("SavePane.fxml");
             }
         }).start();
     }
@@ -135,6 +169,8 @@ public class ViewPaneController {
         breaked = true;
         breakButton.setVisible(false);
         scanButton.setVisible(true);
+
+        JavaFxUtils.log("!Операция прервана!");
         update();
     }
 }

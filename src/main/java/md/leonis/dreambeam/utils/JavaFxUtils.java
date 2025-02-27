@@ -1,5 +1,6 @@
 package md.leonis.dreambeam.utils;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -50,16 +51,18 @@ public class JavaFxUtils {
     }
 
     public static void showPane(String resource) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
-            Region innerPane = loader.load();
-            currentController = loader.getController();
-            //if (controller instanceof SubPane) ((SubPane) controller).init();
-            ((BorderPane) rootLayout.getCenter()).setCenter(((BorderPane) innerPane).getCenter());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+                Region innerPane = loader.load();
+                currentController = loader.getController();
+                //if (controller instanceof SubPane) ((SubPane) controller).init();
+                ((BorderPane) rootLayout.getCenter()).setCenter(((BorderPane) innerPane).getCenter());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static void showAlert(String title, String header, String text, Alert.AlertType alertType) {

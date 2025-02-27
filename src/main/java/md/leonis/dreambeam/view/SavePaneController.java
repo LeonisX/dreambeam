@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
+import static md.leonis.dreambeam.utils.Config.HR;
+
 public class SavePaneController {
 
     public Button backButton;
@@ -54,13 +56,26 @@ public class SavePaneController {
         } else if (FileUtils.exists(Config.getUserFile(name))) {
             var buttonType = JavaFxUtils.showConfirmation("Образ уже есть в вашей базе!", "Перезаписать?", name);
             if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+                logSave();
                 saveAndClose();
             }
 
         } else {
             saveToBase();
+
+            //todo wizard
+            //Дали название образу:
+            //Prince of Persia - Arabian Nights (Rus) (Paradox)
+
+            logSave();
+
             saveAndClose();
         }
+    }
+
+    private void logSave() {
+        JavaFxUtils.log("Образ сохранён");
+        JavaFxUtils.log(HR);
     }
 
     private void saveToBase() {

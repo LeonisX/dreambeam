@@ -83,7 +83,9 @@ public class MainStageController {
     }
 
     public void log(String message) {
-        logListView.getItems().add(message);
-        logListView.scrollTo(logListView.getItems().size());
+        Platform.runLater( () -> {
+            logListView.getItems().add(message);
+            logListView.scrollTo(logListView.getItems().size());
+        });
     }
 }
