@@ -11,6 +11,9 @@ import java.util.Properties;
 
 public class Config {
 
+    //todo may be not need
+    public static final String HR = "------------------------------------------------------------------";
+
     private static final String NAME = "Name";
     private static final String ADMIN = "Admin";
 

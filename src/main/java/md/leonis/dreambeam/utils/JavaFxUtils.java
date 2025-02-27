@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.MainApp;
+import md.leonis.dreambeam.view.MainStageController;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -17,21 +18,24 @@ import java.util.Optional;
 public class JavaFxUtils {
 
     private static BorderPane rootLayout;
+    private static MainStageController controller;
 
     private static final int sceneWidth = 900;
     private static final int sceneHeight = 720;
 
     public static Object currentController;
 
+    @SuppressWarnings("all")
     public static void showMainPane(Stage primaryStage) {
         primaryStage.setTitle("DreamBeam");
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource(Config.resourcePath + "MainStage.fxml"));
             rootLayout = loader.load();
-            //MainStageController controller = loader.getController();
+            controller = loader.getController();
             Scene scene = new Scene(rootLayout, sceneWidth, sceneHeight);
             primaryStage.setScene(scene);
+            primaryStage.setOnHiding(event -> controller.saveLogsAndClose());
 
             showPrimaryPanel();
 
@@ -110,5 +114,9 @@ public class JavaFxUtils {
         });
 
         return dialog.showAndWait();
+    }
+
+    public static void log(String message) {
+        controller.log(message);
     }
 }

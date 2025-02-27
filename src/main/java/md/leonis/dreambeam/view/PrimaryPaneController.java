@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static md.leonis.dreambeam.utils.Config.HR;
+
 public class PrimaryPaneController {
 
     public Button readFsButton;
@@ -203,6 +205,10 @@ public class PrimaryPaneController {
 
     private void scanDriveAndOpenViewPane(File driveRoot) throws IOException {
         scanDrive(driveRoot);
+
+        JavaFxUtils.log(HR);
+        JavaFxUtils.log("Файлы успешно найдены, можно сканировать.");
+        JavaFxUtils.log("#Метка диска (Volume Label): " + volumeLabel);
 
         Config.files = listFiles(driveRoot);
         JavaFxUtils.showPane("ViewPane.fxml");
