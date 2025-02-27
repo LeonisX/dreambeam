@@ -31,7 +31,7 @@
         </HBox>
     </top>
     <center>
-        <ListView prefHeight="590.0" prefWidth="573.0" BorderPane.alignment="CENTER" />
+        <ListView fx:id="gamesListView" prefHeight="590.0" prefWidth="573.0" BorderPane.alignment="CENTER" />
     </center>
     <right>
         <VBox prefHeight="590.0" prefWidth="322.0" BorderPane.alignment="CENTER">
@@ -39,9 +39,10 @@
                 <VBox prefHeight="85.0" prefWidth="308.0">
                     <HBox spacing="25.0">
                         <RadioButton fx:id="rusRadioButton" mnemonicParsing="false" selected="true" text="Rus">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="languageToggleGroup" />
-                     </toggleGroup></RadioButton>
+                            <toggleGroup>
+                                <ToggleGroup fx:id="languageToggleGroup" />
+                            </toggleGroup>
+                        </RadioButton>
                         <RadioButton fx:id="japRadioButton" mnemonicParsing="false" text="Jap" toggleGroup="$languageToggleGroup" />
                         <RadioButton fx:id="gerRadioButton" mnemonicParsing="false" text="Ger" toggleGroup="$languageToggleGroup" />
                         <RadioButton fx:id="multiRadioButton" mnemonicParsing="false" text="Multi" toggleGroup="$languageToggleGroup" />
@@ -69,9 +70,10 @@
                             <VBox spacing="5.0">
                                 <HBox>
                                     <RadioButton fx:id="kudosRadioButton" mnemonicParsing="false" prefWidth="100.0" selected="true" text="Kudos" HBox.hgrow="ALWAYS">
-                              <toggleGroup>
-                                 <ToggleGroup fx:id="translatorToggleGroup" />
-                              </toggleGroup></RadioButton>
+                                        <toggleGroup>
+                                            <ToggleGroup fx:id="translatorToggleGroup" />
+                                        </toggleGroup>
+                                    </RadioButton>
                                     <Label text="(= RusPerevod)" HBox.hgrow="ALWAYS">
                                         <font>
                                             <Font size="11.0" />
@@ -114,9 +116,10 @@
                         <TitledPane fx:id="regionTitledPane" animated="false" collapsible="false" text="Регион">
                             <VBox spacing="5.0">
                                 <RadioButton fx:id="palRadioButton" mnemonicParsing="false" selected="true" text="PAL-E">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="regionToggleGroup" />
-                           </toggleGroup></RadioButton>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="regionToggleGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
                                 <RadioButton fx:id="ntscuRadioButton" mnemonicParsing="false" text="NTSC-U" toggleGroup="$regionToggleGroup" />
                                 <RadioButton fx:id="ntscjRadioButton" mnemonicParsing="false" text="NTSC-J" toggleGroup="$regionToggleGroup" />
                                 <RadioButton fx:id="ntscPalRadioButton" mnemonicParsing="false" text="NTSC-U, PAL-E" toggleGroup="$regionToggleGroup" />
@@ -125,11 +128,12 @@
                                         <Insets bottom="5.0" top="5.0" />
                                     </padding>
                                 </RadioButton>
-                                <TextField text="PAL-E" />
+                                <TextField fx:id="regionTextField" text="PAL-E" />
                                 <Separator prefWidth="200.0">
-                           <padding>
-                              <Insets top="20.0" />
-                           </padding></Separator>
+                                    <padding>
+                                        <Insets top="20.0" />
+                                    </padding>
+                                </Separator>
                                 <Label text="Издатель (или риппер)" />
                                 <TextField fx:id="publisherTextField" text="-" />
                             </VBox>
@@ -140,7 +144,7 @@
                     <TitledPane animated="false" collapsible="false" text="Discs setup" VBox.vgrow="ALWAYS">
                         <VBox prefHeight="113.0" prefWidth="104.0" spacing="5.0">
                             <Label text="Всего дисков:" />
-                            <Spinner fx:id="disksSpinner" editable="true"/>
+                            <Spinner fx:id="disksSpinner" editable="true" />
                             <Label fx:id="diskLabel" text="Номер диска:">
                                 <padding>
                                     <Insets top="5.0" />
@@ -200,11 +204,11 @@
                 </VBox>
                 <VBox alignment="CENTER">
                     <HBox spacing="5.0">
-                        <Button fx:id="okButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Готово!" />
-                        <Button fx:id="cancelButton" mnemonicParsing="false" text="Закрыть" />
-                  <VBox.margin>
-                     <Insets bottom="16.0" />
-                  </VBox.margin>
+                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okButtonClick" prefHeight="25.0" prefWidth="76.0" text="Готово!" />
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonClick" text="Закрыть" />
+                        <VBox.margin>
+                            <Insets bottom="16.0" />
+                        </VBox.margin>
                     </HBox>
                 </VBox>
             </HBox>
