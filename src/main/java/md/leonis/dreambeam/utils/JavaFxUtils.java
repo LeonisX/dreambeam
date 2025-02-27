@@ -2,6 +2,7 @@ package md.leonis.dreambeam.utils;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -22,7 +23,7 @@ public class JavaFxUtils {
     private static MainStageController controller;
 
     private static final int sceneWidth = 900;
-    private static final int sceneHeight = 720;
+    private static final int sceneHeight = 700;
 
     public static Object currentController;
 
@@ -59,6 +60,26 @@ public class JavaFxUtils {
                 currentController = loader.getController();
                 //if (controller instanceof SubPane) ((SubPane) controller).init();
                 ((BorderPane) rootLayout.getCenter()).setCenter(((BorderPane) innerPane).getCenter());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void showWizardWindow() {
+        showWindow("WizardStage.fxml", "Мастер названия диска");
+    }
+
+    public static void showWindow(String resource, String title) {
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+                Parent root = loader.load();
+                Stage stage = new Stage();
+                stage.setTitle(title);
+                stage.setScene(new Scene(root, 900, 600));
+                stage.showAndWait();
             } catch (IOException e) {
                 e.printStackTrace();
             }

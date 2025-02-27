@@ -43,6 +43,12 @@ public class SavePaneController {
             name = nev;
             saveButton.setDisable(StringUtils.isBlank(titleTextField.getText()));
         });
+
+        Config.wizardName = null;
+        JavaFxUtils.showWizardWindow();
+        if (StringUtils.isNotBlank(Config.wizardName)) {
+            titleTextField.setText(Config.wizardName);
+        }
     }
 
     public void backButtonClick() {

@@ -9,6 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.FileUtils;
+import md.leonis.dreambeam.utils.JavaFxUtils;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -87,5 +88,9 @@ public class MainStageController {
             logListView.getItems().add(message);
             logListView.scrollTo(logListView.getItems().size());
         });
+    }
+
+    public void showDiskNameWizard() {
+        JavaFxUtils.showWizardWindow();
     }
 }

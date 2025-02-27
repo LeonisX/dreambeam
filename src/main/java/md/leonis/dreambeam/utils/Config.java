@@ -32,6 +32,7 @@ public class Config {
     public static boolean admin;
     public static File lastDirectory;
     public static boolean isDirectory;
+    public static String wizardName;
 
 
     public static Path getUserFile(String fileName) {
