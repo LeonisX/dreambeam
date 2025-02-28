@@ -3,32 +3,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.StatsPaneController">
-   <top>
-      <HBox prefWidth="900.0" BorderPane.alignment="CENTER">
-         <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-            <HBox.margin>
-               <Insets />
-            </HBox.margin>
-            <padding>
-               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </padding>
-            <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="Показать только различия" />
-         </VBox>
-         <VBox alignment="CENTER">
-            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Закрыть" />
-         </VBox>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </HBox>
-   </top>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.StatsPaneController">
    <center>
       <HBox BorderPane.alignment="CENTER">
          <ListView fx:id="leftListView" HBox.hgrow="ALWAYS" />
@@ -36,4 +20,63 @@
          <ListView fx:id="rightListView" HBox.hgrow="ALWAYS" />
       </HBox>
    </center>
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <HBox>
+            <VBox alignment="CENTER_LEFT">
+               <HBox.margin>
+                  <Insets/>
+               </HBox.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+               </padding>
+               <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="Показать только различия"/>
+            </VBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+               </padding>
+               <Label text="Фильтры:">
+                  <padding>
+                     <Insets left="10.0"/>
+                  </padding>
+               </Label>
+               <RadioButton fx:id="allRadioButton" mnemonicParsing="false" selected="true" text="All games">
+                  <toggleGroup>
+                     <ToggleGroup fx:id="filterToggleGroup" />
+                  </toggleGroup>
+               </RadioButton>
+               <RadioButton fx:id="rusRadioButton" mnemonicParsing="false" text="Russian"
+                            toggleGroup="$filterToggleGroup"/>
+               <RadioButton fx:id="usaRadioButton" mnemonicParsing="false" text="NTSC-U"
+                            toggleGroup="$filterToggleGroup"/>
+               <RadioButton fx:id="eurRadioButton" mnemonicParsing="false" text="PAL-E"
+                            toggleGroup="$filterToggleGroup"/>
+               <RadioButton fx:id="japRadioButton" mnemonicParsing="false" text="NTSC-J"
+                            toggleGroup="$filterToggleGroup"/>
+               <RadioButton fx:id="homeRadioButton" mnemonicParsing="false" text="Homebrew"
+                            toggleGroup="$filterToggleGroup"/>
+               <RadioButton fx:id="gdiRadioButton" mnemonicParsing="false" text="GDI" toggleGroup="$filterToggleGroup"/>
+            </HBox>
+            <VBox alignment="CENTER">
+               <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Закрыть" />
+            </VBox>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </HBox>
+         <HBox spacing="5.0">
+            <VBox spacing="5.0">
+               <padding>
+                  <Insets top="5.0"/>
+               </padding>
+               <Label fx:id="baseLabel" text="                   "/>
+               <Label fx:id="userLabel" text="                   "/>
+            </VBox>
+            <padding>
+               <Insets bottom="7.0" left="10.0" right="5.0" />
+            </padding>
+         </HBox>
+      </VBox>
+   </top>
 </BorderPane>

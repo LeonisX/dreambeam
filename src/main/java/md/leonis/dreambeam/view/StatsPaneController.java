@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import md.leonis.dreambeam.model.Game;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.JavaFxUtils;
@@ -15,9 +14,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class StatsPaneController implements Closeable {
@@ -28,12 +28,31 @@ public class StatsPaneController implements Closeable {
 
     public ListView<String> leftListView;
     public ListView<String> rightListView;
+    public Label userLabel;
+    public Label baseLabel;
+    public RadioButton allRadioButton;
+    public RadioButton rusRadioButton;
+    public RadioButton usaRadioButton;
+    public RadioButton eurRadioButton;
+    public RadioButton japRadioButton;
+    public RadioButton homeRadioButton;
+    public RadioButton gdiRadioButton;
+    public ToggleGroup filterToggleGroup;
 
     private volatile List<String> userGames;
     private volatile List<String> baseGames;
+    private volatile List<String> userFilteredGames;
+    private volatile List<String> baseFilteredGames;
 
     @FXML
     private void initialize() {
+        allRadioButton.setUserData("all");
+        rusRadioButton.setUserData("rus");
+        usaRadioButton.setUserData("usa");
+        eurRadioButton.setUserData("eur");
+        japRadioButton.setUserData("jap");
+        homeRadioButton.setUserData("home");
+        gdiRadioButton.setUserData("gdi");
         calculateUserHashes();
 
         baseGames = Config.baseHashes.values().stream().sorted().toList();
@@ -44,14 +63,9 @@ public class StatsPaneController implements Closeable {
 
         differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> compare());
 
-        compare();
+        filterToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> compare());
 
-        //todo тут с самого начала надо добавлять фантомы
-        //так же 2 режима - всё и только разница
-        //плохие подсвечивать красным
-        //фильтры по языкам (и регионам) (Rus), (NTSC-U), (PAL-E), (NTSC-J), (Homebrew), (GDI)
-        //Для гди - наверно отдельный чекббокс
-        //на перспективу надо помнить левые образы и иметь возможность убирать их из статистики.
+        compare();
     }
 
     private void calculateUserHashes() {
@@ -73,73 +87,110 @@ public class StatsPaneController implements Closeable {
     }
 
     public void compare() {
-        List<String> leftLines = userGames;
-        List<String> rightLines = baseGames;
-        Map<String, Game> leftGames = mapGamesList(leftLines);
-        Map<String, Game> rightGames = mapGamesList(rightLines);
+        String text;
+        String filter;
 
-        leftLines = mapGamesListFull(leftGames, rightGames, differenceCheckBox.isSelected());
-        rightLines = mapGamesListFull(rightGames, leftGames, differenceCheckBox.isSelected());
+        switch (filterToggleGroup.getSelectedToggle().getUserData().toString()) {
+            case "all" -> {
+                text = "";
+                filter = "";
+            }
+            case "rus" -> {
+                text = " русских";
+                filter = "(Rus)";
+            }
+            case "usa" -> {
+                text = " американских";
+                filter = "NTSC-U";
+            }
+            case "eur" -> {
+                text = " европейских";
+                filter = "PAL-E";
+            }
+            case "jap" -> {
+                text = " японских";
+                filter = "NTSC-J";
+            }
+            case "home" -> {
+                text = " homebrew";
+                filter = "(Homebrew)";
+            }
+            case "gdi" -> {
+                text = " GDI";
+                filter = "(GDI)";
+            }
+            default -> {
+                text = "Почини это!";
+                filter = "";
+            }
+        }
+
+        userFilteredGames = userGames.stream().filter(g -> g.contains(filter)).toList();
+        baseFilteredGames = baseGames.stream().filter(g -> g.contains(filter)).toList();
+
+        List<String> list1nulls = withNullsList(userFilteredGames, baseFilteredGames);
+        List<String> list2nulls = withNullsList(baseFilteredGames, userFilteredGames);
+
+        List<String> leftLines = mapGamesListFull(list1nulls, list2nulls, differenceCheckBox.isSelected());
+        List<String> rightLines = mapGamesListFull(list2nulls, list1nulls, differenceCheckBox.isSelected()).stream().filter(g -> g.contains(filter)).toList();
 
         leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
         rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
+
+        long baseBest = baseFilteredGames.stream().filter(g -> g.contains("[!]")).count();
+        int userUnique = gerUserUniqueGamesCount();
+
+        baseLabel.setText(String.format("В базе данных: %s%s дисков, %s проверены на 100%%", baseFilteredGames.size(), text, baseBest));
+        userLabel.setText(String.format("У вас %s%s дисков, %s уникальных, %s входят в базу данных.",
+                userFilteredGames.size(), text, userUnique, userFilteredGames.size() - userUnique));
     }
 
-    private Map<String, Game> mapGamesList(List<String> lines) {
-        return lines.subList(1, lines.size() - 1).stream().map(Game::parseLine)
-                .collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+    private int gerUserUniqueGamesCount() {
+        var list = new ArrayList<>(userFilteredGames);
+        list.removeAll(baseFilteredGames);
+        return list.size();
     }
 
-    public static List<String> mapGamesListFull(Map<String, Game> games1, Map<String, Game> games2, boolean diffOnly) {
-        List<Game> list1 = new ArrayList<>(games1.values());
-        List<Game> list2 = new ArrayList<>(games2.values());
-
-        //1. найти общие
-        List<Game> list1nulls = withNullsList(games1, list2);
-        List<Game> list2nulls = withNullsList(games2, list1);
-
+    public static List<String> mapGamesListFull(List<String> games1, List<String> games2, boolean diffOnly) {
         List<String> result = new ArrayList<>();
 
-        for (int i = 0; i < list1nulls.size(); i++) {
-            Game game1 = list1nulls.get(i);
-            Game game2 = list2nulls.get(i);
+        for (int i = 0; i < games1.size(); i++) {
+            String game1 = games1.get(i);
+            String game2 = games2.get(i);
             if (game1 == null) {
-                result.add("~" + game2.fullTitle());
+                if (!diffOnly) {
+                    result.add("~" + game2);
+                }
             } else {
-                result.add(compare(game1, game2, diffOnly));
+                if (!diffOnly || !game1.equals(game2)) {
+                    result.add(checkStatus(game1));
+                }
             }
         }
 
         return result.stream().filter(Objects::nonNull).toList();
     }
 
-    public static List<Game> withNullsList(Map<String, Game> games1, List<Game> list2) {
-        List<Game> list1 = new ArrayList<>(games1.values());
-        List<Game> result = new ArrayList<>(list1);
-        List<Pair<Game, Boolean>> common2 = list2.stream().map(g2 -> {
-            Game game1 = games1.get(g2.title());
-            String title = game1 == null ? null : game1.title();
-            return Pair.of(g2, g2.title().equals(title));
-        }).toList();
+    public static List<String> withNullsList(List<String> games1, List<String> games2) {
+        List<String> result = new ArrayList<>(games1);
+        List<Pair<String, Boolean>> common2 = games2.stream().map(g2 -> Pair.of(g2, result.contains(g2))).toList();
 
-        //2. добавить между ними оставшиеся
-        int index2 = 0;
-        int index1 = 0;
+        int count = 0;
 
-        for (int i = 0; i < common2.size(); i++) {
-            var pair = common2.get(i);
+        for (Pair<String, Boolean> pair : common2) {
             if (pair.getRight()) {
-                index1 = index(list1, pair.getLeft().title(), index1);
-                for (int j = 0; j < i - index2; j++) {
+                int index1 = result.indexOf(pair.getLeft());
+                for (int j = 0; j < count; j++) {
                     result.add(index1, null);
                 }
-                index1++;
-                index2 = i + 1;
+                count = 0;
+            } else {
+                count++;
             }
         }
 
-        if (index2 < list2.size()) {
-            for (int j = index2; j < list2.size(); j++) {
+        if (count > 0) {
+            for (int j = 0; j < count; j++) {
                 result.add(null);
             }
         }
@@ -147,43 +198,9 @@ public class StatsPaneController implements Closeable {
         return result;
     }
 
-    public static int index(List<Game> list, String title, int index) {
-        for (int i = index; i < list.size(); i++) {
-            if (list.get(i).title().equals(title)) {
-                return i;
-            }
-        }
-        throw new IllegalStateException();
-    }
-
-    public static String compare(Game game1, Game game2, boolean diffOnly) {
-        CompareStatus status = compare(game1, game2);
-        if (diffOnly && status.equals(CompareStatus.EQUALS)) {
-            return null;
-        } else {
-            return status.getMarker() + game1.fullTitle();
-        }
-    }
-
-    public static CompareStatus compare(Game game1, Game game2) {
-        if (game2 == null) {
-            return CompareStatus.ABSENT;
-        }
-        if (game1.isError()) {
-            return CompareStatus.ERROR;
-        }
-        int code = 0;
-        if (!game1.hash().equals(game2.hash())) {
-            code++;
-        }
-        if (game1.size() != game2.size()) {
-            code++;
-        }
-        return CompareStatus.values()[code];
-    }
-
-    private Path getGamePath(String fileName, boolean isUser) {
-        return isUser ? Config.getUserFile(fileName) : Config.getBaseGamesFile(fileName);
+    public static String checkStatus(String game1) {
+        CompareStatus status = (game1.contains("(Bad")) ? CompareStatus.ERROR : CompareStatus.EQUALS;
+            return status.getMarker() + game1;
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
