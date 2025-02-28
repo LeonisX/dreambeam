@@ -95,6 +95,10 @@ public class MainStageController implements Closeable {
         JavaFxUtils.showWizardWindow();
     }
 
+    public void compareDisks() {
+        JavaFxUtils.showPane("ComparePane.fxml");
+    }
+
     @Override
     public void close() throws IOException {
     }

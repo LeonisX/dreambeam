@@ -16,7 +16,7 @@
             </Menu>
             <Menu mnemonicParsing="false" text="Functions">
                 <MenuItem mnemonicParsing="false" text="Compare DataBases" />
-                <MenuItem mnemonicParsing="false" text="Compare 2 disk images" />
+                <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="Compare 2 disk images" />
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" text="Recalculate short DB" />
                 <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="Disk Name Wizard" />
