@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ComparePaneController implements Closeable {
+public class StatsPaneController implements Closeable {
 
     public Button closeButton;
     public Button compareButton;

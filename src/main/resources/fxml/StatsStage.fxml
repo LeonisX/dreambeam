@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.StatsPaneController">
+   <top>
+      <HBox prefHeight="60.0" BorderPane.alignment="CENTER">
+         <VBox alignment="CENTER" spacing="5.0">
+            <HBox.margin>
+               <Insets left="15.0" right="15.0" />
+            </HBox.margin>
+            <Button fx:id="compareButton" mnemonicParsing="false" onAction="#compareButtonClick" prefWidth="80.0" text="Сравнить" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" prefWidth="80.0" text="Назад" />
+         </VBox>
+         <TitledPane collapsible="false" text="Слева">
+            <HBox spacing="5.0">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <RadioButton fx:id="leftUserRadioButton" mnemonicParsing="false" selected="true" text="мои">
+                  <toggleGroup>
+                     <ToggleGroup fx:id="leftToggleGroup" />
+                  </toggleGroup>
+               </RadioButton>
+               <RadioButton fx:id="leftBaseRadioButton" mnemonicParsing="false" text="база" toggleGroup="$leftToggleGroup">
+                  <padding>
+                     <Insets left="25.0" />
+                  </padding>
+               </RadioButton>
+            </HBox>
+         </TitledPane>
+         <TitledPane collapsible="false" text="Справа">
+            <HBox spacing="5.0">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <RadioButton fx:id="rightUserRadioButton" mnemonicParsing="false" text="мои">
+                  <toggleGroup>
+                     <ToggleGroup fx:id="rightToggleGroup" />
+                  </toggleGroup>
+               </RadioButton>
+               <RadioButton fx:id="rightBaseRadioButton" mnemonicParsing="false" selected="true" text="база" toggleGroup="$rightToggleGroup">
+                  <padding>
+                     <Insets left="25.0" />
+                  </padding>
+               </RadioButton>
+            </HBox>
+         </TitledPane>
+         <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+               <Insets left="10.0" />
+            </HBox.margin>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+            <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="Показать только различия" />
+         </VBox>
+         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Закрыть" />
+         </VBox>
+      </HBox>
+   </top>
+   <center>
+      <HBox BorderPane.alignment="CENTER">
+         <ListView fx:id="leftListView" HBox.hgrow="ALWAYS" />
+         <Separator prefWidth="3.0" />
+         <ListView fx:id="rightListView" HBox.hgrow="ALWAYS" />
+      </HBox>
+   </center>
+</BorderPane>

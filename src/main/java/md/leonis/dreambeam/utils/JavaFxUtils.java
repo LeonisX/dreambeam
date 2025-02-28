@@ -81,6 +81,10 @@ public class JavaFxUtils {
         showWindow("CompareStage.fxml", "Сравнение дисков");
     }
 
+    public static void showStatsWindow() {
+        showWindow("StatsStage.fxml", "Статистика");
+    }
+
     public static void showWindow(String resource, String title) {
         try {
             FXMLLoader loader = new FXMLLoader();

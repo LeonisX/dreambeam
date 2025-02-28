@@ -3,10 +3,8 @@ package md.leonis.dreambeam.view;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.paint.Color;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
@@ -69,6 +67,10 @@ public class MainStageController implements Closeable {
 
     public void compareDisks() {
         JavaFxUtils.showCompareWindow();
+    }
+
+    public void showStatistics() {
+        JavaFxUtils.showStatsWindow();
     }
 
     @Override

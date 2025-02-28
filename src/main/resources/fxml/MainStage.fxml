@@ -8,15 +8,15 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.MainStageController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.MainStageController">
     <top>
         <MenuBar maxHeight="28.0" BorderPane.alignment="CENTER">
             <Menu mnemonicParsing="false" text="File">
                 <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#exitMenuItemClick" text="Exit" />
             </Menu>
             <Menu mnemonicParsing="false" text="Functions">
-                <MenuItem mnemonicParsing="false" text="Compare DataBases" />
-                <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="Compare 2 disk images" />
+                <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="Compare Discs" />
+                <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Show Statistics" />
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" text="Recalculate short DB" />
                 <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="Disk Name Wizard" />
