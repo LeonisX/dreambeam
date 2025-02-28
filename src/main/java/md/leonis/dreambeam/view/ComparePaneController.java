@@ -95,7 +95,7 @@ public class ComparePaneController implements Closeable {
     private void reportDuplicates(Map<String, String> duplicates) {
         if (!duplicates.isEmpty()) {
             duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В базе данных есть дубликаты!",
+            JavaFxUtils.showAlert("Ошибка!", "В вашей базе данных есть дубликаты!",
                     duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
         }
     }

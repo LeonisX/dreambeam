@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import md.leonis.dreambeam.model.Game;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
-import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.Utils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,62 +23,35 @@ import java.util.stream.Collectors;
 public class StatsPaneController implements Closeable {
 
     public Button closeButton;
-    public Button compareButton;
-    public Button backButton;
-
-    public ToggleGroup leftToggleGroup;
-    public ToggleGroup rightToggleGroup;
-
-    public RadioButton leftUserRadioButton;
-    public RadioButton leftBaseRadioButton;
-    public RadioButton rightUserRadioButton;
-    public RadioButton rightBaseRadioButton;
 
     public CheckBox differenceCheckBox;
 
     public ListView<String> leftListView;
     public ListView<String> rightListView;
 
-    private boolean leftUser = true;
-    private boolean rightUser = false;
-
-    private String leftFile;
-    private String rightFile;
-
     private volatile List<String> userGames;
     private volatile List<String> baseGames;
 
     @FXML
     private void initialize() {
-        leftUserRadioButton.setUserData("v");
-        rightUserRadioButton.setUserData("v");
-
         calculateUserHashes();
 
         baseGames = Config.baseHashes.values().stream().sorted().toList();
         userGames = Config.userHashes.values().stream().sorted().toList();
 
-        leftToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> {
-            leftUser = newToggle.getUserData() != null;
-            showLists();
-        });
-        rightToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> {
-            rightUser = newToggle.getUserData() != null;
-            showLists();
-        });
-
         leftListView.setCellFactory(Utils::colorLines);
         rightListView.setCellFactory(Utils::colorLines);
 
-        differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
+        differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> compare());
 
-        showLists();
-    }
+        compare();
 
-    private void reactOnCheckBoxes() {
-        if (compareButton.isDisabled()) {
-            compare();
-        }
+        //todo тут с самого начала надо добавлять фантомы
+        //так же 2 режима - всё и только разница
+        //плохие подсвечивать красным
+        //фильтры по языкам (и регионам) (Rus), (NTSC-U), (PAL-E), (NTSC-J), (Homebrew), (GDI)
+        //Для гди - наверно отдельный чекббокс
+        //на перспективу надо помнить левые образы и иметь возможность убирать их из статистики.
     }
 
     private void calculateUserHashes() {
@@ -95,64 +67,22 @@ public class StatsPaneController implements Closeable {
     private void reportDuplicates(Map<String, String> duplicates) {
         if (!duplicates.isEmpty()) {
             duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В базе данных есть дубликаты!",
+            JavaFxUtils.showAlert("Ошибка!", "В вашей базе данных есть дубликаты!",
                     duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
         }
     }
 
-    private void showLists() {
-        showList(leftListView, leftUser);
-        showList(rightListView, rightUser);
-        leftListView.getSelectionModel().selectFirst();
-        rightListView.getSelectionModel().selectFirst();
-    }
-
-    private void showList(ListView<String> listView, boolean isUser) {
-        if (isUser) {
-            showMyGames(listView);
-        } else {
-            showBaseGames(listView);
-        }
-    }
-
-    private void showMyGames(ListView<String> leftListView) {
-        leftListView.setItems(FXCollections.observableList(userGames));
-    }
-
-    private void showBaseGames(ListView<String> leftListView) {
-        leftListView.setItems(FXCollections.observableList(baseGames));
-    }
-
-    public void compareButtonClick() {
-        backButton.setDisable(false);
-        compareButton.setDisable(true);
-
-        leftFile = leftListView.getSelectionModel().getSelectedItem();
-        rightFile = rightListView.getSelectionModel().getSelectedItem();
-
-        compare();
-    }
-
     public void compare() {
-        try {
-            List<String> leftLines = loadGames(leftFile, leftUser);
-            List<String> rightLines = loadGames(rightFile, rightUser);
-            Map<String, Game> leftGames = mapGamesList(leftLines);
-            Map<String, Game> rightGames = mapGamesList(rightLines);
+        List<String> leftLines = userGames;
+        List<String> rightLines = baseGames;
+        Map<String, Game> leftGames = mapGamesList(leftLines);
+        Map<String, Game> rightGames = mapGamesList(rightLines);
 
-            leftLines = mapGamesListFull(leftGames, rightGames, differenceCheckBox.isSelected());
-            rightLines = mapGamesListFull(rightGames, leftGames, differenceCheckBox.isSelected());
+        leftLines = mapGamesListFull(leftGames, rightGames, differenceCheckBox.isSelected());
+        rightLines = mapGamesListFull(rightGames, leftGames, differenceCheckBox.isSelected());
 
-            leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
-            rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
-
-        } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось выполнить сравнение дисков!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    private List<String> loadGames(String file, boolean isUser) throws IOException {
-        return FileUtils.readFromFile(getGamePath(file, isUser));
+        leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
+        rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
     }
 
     private Map<String, Game> mapGamesList(List<String> lines) {
@@ -254,12 +184,6 @@ public class StatsPaneController implements Closeable {
 
     private Path getGamePath(String fileName, boolean isUser) {
         return isUser ? Config.getUserFile(fileName) : Config.getBaseGamesFile(fileName);
-    }
-
-    public void backButtonClick() {
-        showLists();
-        backButton.setDisable(true);
-        compareButton.setDisable(false);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
