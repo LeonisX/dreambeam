@@ -56,15 +56,14 @@
                </RadioButton>
             </HBox>
          </TitledPane>
-         <VBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
+         <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
             <HBox.margin>
-               <Insets left="15.0" />
+               <Insets left="10.0" />
             </HBox.margin>
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
-            <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="Только различия" />
-            <CheckBox fx:id="compactCheckBox" mnemonicParsing="false" selected="true" text="Компактный вид" />
+            <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="Показать только различия" />
          </VBox>
          <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
             <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Закрыть" />

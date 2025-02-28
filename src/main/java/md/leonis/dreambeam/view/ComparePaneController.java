@@ -36,7 +36,6 @@ public class ComparePaneController implements Closeable {
     public RadioButton rightBaseRadioButton;
 
     public CheckBox differenceCheckBox;
-    public CheckBox compactCheckBox;
 
     public ListView<String> leftListView;
     public ListView<String> rightListView;
@@ -73,7 +72,8 @@ public class ComparePaneController implements Closeable {
         leftListView.setCellFactory(Utils::colorLines);
         rightListView.setCellFactory(Utils::colorLines);
 
-        compactCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
+        //todo для списка различий просится tableView
+
         differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
 
         showLists();
@@ -143,8 +143,8 @@ public class ComparePaneController implements Closeable {
             Map<String, Game> leftGames = mapGamesList(leftLines);
             Map<String, Game> rightGames = mapGamesList(rightLines);
 
-            leftLines = mapGamesList(leftGames, rightGames, differenceCheckBox.isSelected(), compactCheckBox.isSelected());
-            rightLines = mapGamesList(rightGames, leftGames, differenceCheckBox.isSelected(), compactCheckBox.isSelected());
+            leftLines = mapGamesListFull(leftGames, rightGames, differenceCheckBox.isSelected());
+            rightLines = mapGamesListFull(rightGames, leftGames, differenceCheckBox.isSelected());
 
             leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
             rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
@@ -161,17 +161,6 @@ public class ComparePaneController implements Closeable {
     private Map<String, Game> mapGamesList(List<String> lines) {
         return lines.subList(1, lines.size() - 1).stream().map(Game::parseLine)
                 .collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-    }
-
-    //todo фантомы всегда.
-    //todo совместный скролл (возможно перейти на таблицу)
-    public static List<String> mapGamesList(Map<String, Game> games1, Map<String, Game> games2, boolean diffOnly, boolean compactView) {
-        if (compactView) {
-            return games1.entrySet().stream().map(l -> compare(l.getValue(), games2.get(l.getKey()), diffOnly)).filter(Objects::nonNull).toList();
-
-        } else {
-            return mapGamesListFull(games1, games2, diffOnly);
-        }
     }
 
     public static List<String> mapGamesListFull(Map<String, Game> games1, Map<String, Game> games2, boolean diffOnly) {
@@ -194,11 +183,8 @@ public class ComparePaneController implements Closeable {
             }
         }
 
-
-        return result;
+        return result.stream().filter(Objects::nonNull).toList();
     }
-
-    //todo либо различия, либо полный с фантомами
 
     public static List<Game> withNullsList(Map<String, Game> games1, List<Game> list2) {
         List<Game> list1 = new ArrayList<>(games1.values());
@@ -235,7 +221,7 @@ public class ComparePaneController implements Closeable {
     }
 
     public static int index(List<Game> list, String title, int index) {
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = index; i < list.size(); i++) {
             if (list.get(i).title().equals(title)) {
                 return i;
             }
