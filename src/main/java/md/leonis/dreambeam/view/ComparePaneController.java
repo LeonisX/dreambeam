@@ -6,14 +6,19 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import md.leonis.dreambeam.model.Game;
+import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.Utils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ComparePaneController implements Closeable {
@@ -36,8 +41,14 @@ public class ComparePaneController implements Closeable {
     public ListView<String> leftListView;
     public ListView<String> rightListView;
 
-    private List<String> userGames;
-    private List<String> baseGames;
+    private boolean leftUser = true;
+    private boolean rightUser = false;
+
+    private String leftFile;
+    private String rightFile;
+
+    private volatile List<String> userGames;
+    private volatile List<String> baseGames;
 
     @FXML
     private void initialize() {
@@ -47,14 +58,32 @@ public class ComparePaneController implements Closeable {
         //todo в перспективе пользовательскую базу надо загружать фоном после старта и работать с ней.
         calculateUserHashes();
 
-        baseGames = Utils.cleanAndSortGameNames(Config.baseHashes.values());
-        userGames = Utils.cleanAndSortGameNames(Config.userHashes.values());
+        baseGames = Config.baseHashes.values().stream().sorted().toList();
+        userGames = Config.userHashes.values().stream().sorted().toList();
 
+        leftToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> {
+            leftUser = newToggle.getUserData() != null;
+            showLists();
+        });
+        rightToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> {
+            rightUser = newToggle.getUserData() != null;
+            showLists();
+        });
 
-        //todo
+        leftListView.setCellFactory(Utils::colorLines);
+        rightListView.setCellFactory(Utils::colorLines);
+
+        compactCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
+        differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
         //реагировать на смену чеков даже во время сравнения
 
         showLists();
+    }
+
+    private void reactOnCheckBoxes() {
+        if (compareButton.isDisabled()) {
+            compare();
+        }
     }
 
     private void calculateUserHashes() {
@@ -76,15 +105,14 @@ public class ComparePaneController implements Closeable {
     }
 
     private void showLists() {
-        showList(leftToggleGroup, leftListView);
-        showList(rightToggleGroup, rightListView);
+        showList(leftListView, leftUser);
+        showList(rightListView, rightUser);
         leftListView.getSelectionModel().selectFirst();
         rightListView.getSelectionModel().selectFirst();
     }
 
-    private void showList(ToggleGroup toggleGroup, ListView<String> listView) {
-        RadioButton button = (RadioButton) toggleGroup.getSelectedToggle();
-        if (button.getUserData() != null) {
+    private void showList(ListView<String> listView, boolean isUser) {
+        if (isUser) {
             showMyGames(listView);
         } else {
             showBaseGames(listView);
@@ -99,14 +127,157 @@ public class ComparePaneController implements Closeable {
         leftListView.setItems(FXCollections.observableList(baseGames));
     }
 
-    //todo скрывать кнопки при переключении режима
-
     public void compareButtonClick() {
-        List<String> //todo считать, выводить
+        backButton.setDisable(false);
+        compareButton.setDisable(true);
+
+        leftFile = leftListView.getSelectionModel().getSelectedItem();
+        rightFile = rightListView.getSelectionModel().getSelectedItem();
+
+        compare();
+    }
+
+    public void compare() {
+        try {
+            List<String> leftLines = loadGames(leftFile, leftUser);
+            List<String> rightLines = loadGames(rightFile, rightUser);
+            Map<String, Game> leftGames = mapGamesList(leftLines);
+            Map<String, Game> rightGames = mapGamesList(rightLines);
+
+            leftLines = mapGamesList(leftGames, rightGames, differenceCheckBox.isSelected(), compactCheckBox.isSelected());
+            rightLines = mapGamesList(rightGames, leftGames, differenceCheckBox.isSelected(), compactCheckBox.isSelected());
+
+            leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
+            rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
+
+        } catch (IOException e) {
+            JavaFxUtils.showAlert("Ошибка!", "Не удалось выполнить сравнение дисков!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private List<String> loadGames(String file, boolean isUser) throws IOException {
+        return FileUtils.readFromFile(getGamePath(file, isUser));
+    }
+
+    private Map<String, Game> mapGamesList(List<String> lines) {
+        return lines.subList(1, lines.size() - 1).stream().map(Game::parseLine)
+                .collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+    }
+
+    //todo сломан compactView=true
+    //todo цвета перелезли в основной список
+    public static List<String> mapGamesList(Map<String, Game> games1, Map<String, Game> games2, boolean diffOnly, boolean compactView) {
+        if (compactView) {
+            return games1.entrySet().stream().map(l -> compare(l.getValue(), games2.get(l.getKey()), diffOnly)).filter(Objects::nonNull).toList();
+
+        } else {
+            return mapGamesListFull(games1, games2, diffOnly);
+        }
+    }
+
+    public static List<String> mapGamesListFull(Map<String, Game> games1, Map<String, Game> games2, boolean diffOnly) {
+        List<Game> list1 = new ArrayList<>(games1.values());
+        List<Game> list2 = new ArrayList<>(games2.values());
+
+        //1. найти общие
+        List<Game> list1nulls = withNullsList(games1, list2);
+        List<Game> list2nulls = withNullsList(games2, list1);
+
+        List<String> result = new ArrayList<>();
+
+        for (int i = 0; i < list1nulls.size(); i++) {
+            Game game1 = list1nulls.get(i);
+            Game game2 = list2nulls.get(i);
+            if (game1 == null) {
+                result.add("~" + game2.fullTitle());
+            } else {
+                result.add(compare(game1, game2, diffOnly));
+            }
+        }
+
+
+        return result;
+    }
+
+    //todo либо различия, либо полный с фантомами
+
+    public static List<Game> withNullsList(Map<String, Game> games1, List<Game> list2) {
+        List<Game> list1 = new ArrayList<>(games1.values());
+        List<Game> result = new ArrayList<>(list1);
+        List<Pair<Game, Boolean>> common2 = list2.stream().map(g2 -> {
+            Game game1 = games1.get(g2.title());
+            String title = game1 == null ? null : game1.title();
+            return Pair.of(g2, g2.title().equals(title));
+        }).toList();
+
+        //2. добавить между ними оставшиеся
+        int index2 = 0;
+        int index1 = 0;
+
+        for (int i = 0; i < common2.size(); i++) {
+            var pair = common2.get(i);
+            if (pair.getRight()) {
+                for (int j = 0; j < i - index2; j++) {
+                    index1 = index(list1, pair.getLeft().title(), index1);
+                    result.add(index1, null);
+                    index1++;
+                }
+                index2 = i + 1;
+            }
+        }
+
+        if (index2 < list2.size()) {
+            for (int j = index2; j < list2.size(); j++) {
+                result.add(null);
+            }
+        }
+
+        return result;
+    }
+
+    public static int index(List<Game> list, String title, int index) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).title().equals(title)) {
+                return i;
+            }
+        }
+        throw new IllegalStateException();
+    }
+
+    public static String compare(Game game1, Game game2, boolean diffOnly) {
+        CompareStatus status = compare(game1, game2);
+        if (diffOnly && status.equals(CompareStatus.EQUALS)) {
+            return null;
+        } else {
+            return status.getMarker() + game1.fullTitle();
+        }
+    }
+
+    public static CompareStatus compare(Game game1, Game game2) {
+        if (game2 == null) {
+            return CompareStatus.ABSENT;
+        }
+        if (game1.isError()) {
+            return CompareStatus.ERROR;
+        }
+        int code = 0;
+        if (!game1.hash().equals(game2.hash())) {
+            code++;
+        }
+        if (game1.size() != game2.size()) {
+            code++;
+        }
+        return CompareStatus.values()[code];
+    }
+
+    private Path getGamePath(String fileName, boolean isUser) {
+        return isUser ? Config.getUserFile(fileName) : Config.getBaseGamesFile(fileName);
     }
 
     public void backButtonClick() {
         showLists();
+        backButton.setDisable(true);
+        compareButton.setDisable(false);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {

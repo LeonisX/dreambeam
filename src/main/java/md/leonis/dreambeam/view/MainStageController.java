@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.Utils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -24,35 +25,7 @@ public class MainStageController implements Closeable {
 
     @FXML
     private void initialize() {
-        logListView.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(String message, boolean empty) {
-                super.updateItem(message, empty);
-
-                if (empty || message == null) {
-                    setText(null);
-
-                } else {
-                    char firstSymbol = message.isEmpty() ? '-' : message.charAt(0);
-
-                    switch (firstSymbol) {
-                        case '#' -> {
-                            this.setTextFill(Color.BLUE);   // #
-                            setText(message.substring(1));
-                        }
-                        case '@' -> {
-                            this.setTextFill(Color.GREEN);  // @
-                            setText(message.substring(1));
-                        }
-                        case '!' -> {
-                            this.setTextFill(Color.RED);    // !
-                            setText(message.substring(1));
-                        }
-                        default -> setText(message);
-                    }
-                }
-            }
-        });
+        logListView.setCellFactory(Utils::colorLines);
 
         if (Config.user != null) {
             try {
@@ -95,7 +68,7 @@ public class MainStageController implements Closeable {
     }
 
     public void compareDisks() {
-        JavaFxUtils.showPane("ComparePane.fxml");
+        JavaFxUtils.showCompareWindow();
     }
 
     @Override

@@ -77,6 +77,10 @@ public class JavaFxUtils {
         showWindow("WizardStage.fxml", "Мастер названия диска");
     }
 
+    public static void showCompareWindow() {
+        showWindow("CompareStage.fxml", "Сравнение дисков");
+    }
+
     public static void showWindow(String resource, String title) {
         try {
             FXMLLoader loader = new FXMLLoader();

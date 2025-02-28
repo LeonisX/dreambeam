@@ -119,7 +119,7 @@ public class ViewPaneController implements Closeable {
                     }
 
                     int crc32 = BinaryUtils.crc32(bytes);
-                    Config.saveFiles.set(i, String.format("%s [%s bytes] - %s", currentFile, bytes.length, String.format("%08X", crc32)));
+                    Config.saveFiles.set(i, Utils.formatRecord(currentFile, bytes.length, String.format("%08X", crc32)));
 
                     double percents = i * 1.0 / Config.files.size();
                     Platform.runLater(() -> totalProgressLabel.setText(String.format("%.2f%%", percents * 100)));
@@ -128,7 +128,7 @@ public class ViewPaneController implements Closeable {
 
                 } catch (Exception e) {
                     error = true;
-                    Config.saveFiles.set(i, String.format("%s [%s bytes] - Error!!!", currentFile, size));
+                    Config.saveFiles.set(i, Utils.formatRecord(currentFile, size, "Error!!!"));
                     refreshControls(i);
                     JavaFxUtils.log(file + "   - ошибка чтения!");
                 }

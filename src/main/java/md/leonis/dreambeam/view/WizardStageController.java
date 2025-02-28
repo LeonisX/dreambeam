@@ -104,9 +104,9 @@ public class WizardStageController implements Closeable {
         gamesListView.setItems(FXCollections.observableList(games));
 
         //todo было бы хорошо выводить предыдущие результаты
-        languageToggleGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> languageToggleGroupListen());
-        translatorToggleGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> updateTranslator());
-        regionToggleGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> updateRegion());
+        languageToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> languageToggleGroupListen());
+        translatorToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> updateTranslator());
+        regionToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> updateRegion());
 
         homebrewCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> updateTags());
         gdiCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> updateTags());
@@ -204,10 +204,6 @@ public class WizardStageController implements Closeable {
         Config.wizardName = Stream.of(titleTextField, disksTextField, tagsTextField)
                 .map(f -> f.getText().trim()).filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(" "));
-        close(actionEvent);
-    }
-
-    public void cancelButtonClick(ActionEvent actionEvent) {
         close(actionEvent);
     }
 
