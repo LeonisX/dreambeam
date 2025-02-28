@@ -75,7 +75,6 @@ public class ComparePaneController implements Closeable {
 
         compactCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
         differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
-        //реагировать на смену чеков даже во время сравнения
 
         showLists();
     }
@@ -164,8 +163,8 @@ public class ComparePaneController implements Closeable {
                 .collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
     }
 
-    //todo сломан compactView=true
-    //todo цвета перелезли в основной список
+    //todo фантомы всегда.
+    //todo совместный скролл (возможно перейти на таблицу)
     public static List<String> mapGamesList(Map<String, Game> games1, Map<String, Game> games2, boolean diffOnly, boolean compactView) {
         if (compactView) {
             return games1.entrySet().stream().map(l -> compare(l.getValue(), games2.get(l.getKey()), diffOnly)).filter(Objects::nonNull).toList();
@@ -217,11 +216,11 @@ public class ComparePaneController implements Closeable {
         for (int i = 0; i < common2.size(); i++) {
             var pair = common2.get(i);
             if (pair.getRight()) {
+                index1 = index(list1, pair.getLeft().title(), index1);
                 for (int j = 0; j < i - index2; j++) {
-                    index1 = index(list1, pair.getLeft().title(), index1);
                     result.add(index1, null);
-                    index1++;
                 }
+                index1++;
                 index2 = i + 1;
             }
         }
