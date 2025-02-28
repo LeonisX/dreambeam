@@ -24,7 +24,6 @@ public class MainStageController implements Closeable {
 
     @FXML
     private void initialize() {
-
         logListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(String message, boolean empty) {

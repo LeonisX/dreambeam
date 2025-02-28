@@ -164,7 +164,7 @@ public class ViewPaneController implements Closeable {
                     //e
                 }
 
-                String name = Config.hashes.get(Config.crc32);
+                String name = Config.baseHashes.get(Config.crc32);
 
                 if (name != null) {
                     JavaFxUtils.log("@Диск распознан как: " + name);

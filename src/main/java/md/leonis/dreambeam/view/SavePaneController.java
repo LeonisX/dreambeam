@@ -30,7 +30,7 @@ public class SavePaneController implements Closeable {
 
     @FXML
     private void initialize() {
-        name = Config.hashes.get(Config.crc32);
+        name = Config.baseHashes.get(Config.crc32);
         recognized = (name != null);
 
         if (recognized) {

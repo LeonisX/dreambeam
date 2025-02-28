@@ -71,8 +71,8 @@ public class PrimaryPaneController implements Closeable {
 
         userLabel.setText(Config.user);
         userFilesLabel.setText(String.format("In your collection %s image(s).", Config.userFiles));
-        long verifiedCount = Config.hashes.values().stream().filter(v -> v.contains("[!]")).count();
-        baseFilesCountLabel.setText(String.format("В базе данных %s записи; %s проверены на 100%%", Config.hashes.size(), verifiedCount));
+        long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
+        baseFilesCountLabel.setText(String.format("В базе данных %s записи; %s проверены на 100%%", Config.baseHashes.size(), verifiedCount));
 
         rescanDrivesButtonClick();
     }
@@ -111,19 +111,14 @@ public class PrimaryPaneController implements Closeable {
     }
 
     private void readGamesDat() {
-        Config.hashes = new HashMap<>();
+        Config.baseHashes = new HashMap<>();
 
         Path path = Config.getBaseGamesDatFile().normalize().toAbsolutePath();
         if (FileUtils.exists(path)) {
             try {
-                Map<String, String> duplicates = new HashMap<>();
-                FileUtils.readFromFile(path).forEach(line -> {
-                    int index = line.lastIndexOf("-");
-                    String hash = line.substring(index + 2).trim();
-                    String file = line.substring(0, index - 1).trim();
-                    addHash(hash, file, duplicates);
-                });
-                reportDuplicates(duplicates);
+                var pair = Utils.loadShortListHashes(path);
+                Config.baseHashes = pair.getLeft();
+                reportDuplicates(pair.getRight());
             } catch (Exception e) {
                 JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файл " + path + "; Он будет пересоздан.", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
                 FileUtils.deleteSilently(path);
@@ -138,7 +133,7 @@ public class PrimaryPaneController implements Closeable {
         try {
             Instant start = Instant.now();
             calculateShortList();
-            FileUtils.writeToFile(Config.getBaseGamesDatFile(), Config.hashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> e.getValue() + " - " + e.getKey()).toList());
+            FileUtils.writeToFile(Config.getBaseGamesDatFile(), Config.baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> e.getValue() + " - " + e.getKey()).toList());
             String time = Utils.formatSeconds(Duration.between(start, Instant.now()).toMillis());
             JavaFxUtils.showAlert("DreamBeam", "Создание краткого списка завершено!", String.format("Время выполнения: %s s", time), Alert.AlertType.INFORMATION);
 
@@ -148,20 +143,9 @@ public class PrimaryPaneController implements Closeable {
     }
 
     private void calculateShortList() throws IOException {
-        Map<String, String> duplicates = new HashMap<>();
-        for (Path path : FileUtils.getFilesList(Config.getBaseGamesDir())) {
-            String hash = BinaryUtils.crc32String((String.join("\r\n", FileUtils.readFromFile(path)) + "\r\n").getBytes());
-            String file = path.getFileName().toString();
-            addHash(hash, file, duplicates);
-        }
-        reportDuplicates(duplicates);
-    }
-
-    private void addHash(String hash, String file, Map<String, String> duplicates) {
-        if (Config.hashes.containsKey(hash)) {
-            duplicates.put(Config.hashes.get(hash), file);
-        }
-        Config.hashes.put(hash, file);
+        var pair = Utils.calculateHashes(Config.getBaseGamesDir());
+        Config.baseHashes = pair.getLeft();
+        reportDuplicates(pair.getRight());
     }
 
     private void reportDuplicates(Map<String, String> duplicates) {

@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
@@ -99,13 +100,7 @@ public class WizardStageController implements Closeable {
         showDiscs();
 
         //todo добавлять ещё свои свежие игры
-        List<String> games = Config.hashes.values().stream().map(s -> {
-            int index = s.indexOf('(');
-            if (index > 0) {
-                s = s.substring(0, index);
-            }
-            return s.trim();
-        }).distinct().sorted().toList();
+        List<String> games = Utils.cleanAndSortGameNames(Config.baseHashes.values());
         gamesListView.setItems(FXCollections.observableList(games));
 
         //todo было бы хорошо выводить предыдущие результаты
