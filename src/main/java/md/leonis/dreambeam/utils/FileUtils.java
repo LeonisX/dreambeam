@@ -1,13 +1,37 @@
 package md.leonis.dreambeam.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class FileUtils {
+
+
+    public static List<Path> listFiles(File folder) {
+        return listFiles(folder, new ArrayList<>());
+    }
+
+    public static List<Path> listFiles(File folder, List<Path> paths) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    listFiles(file, paths);
+                }
+            }
+            for (File file : files) {  // костыль конечно, но так считал код на Delphi :(
+                if (file.isFile()) {
+                    paths.add(file.toPath());
+                }
+            }
+        }
+        return paths;
+    }
 
     public static boolean exists(Path path) {
         return Files.exists(path);
@@ -42,6 +66,10 @@ public class FileUtils {
         //todo сконвертировать текста в юникод.
         createDirectories(path.getParent());
         Files.writeString(path, text, Charset.forName("windows-1251"));
+    }
+
+    public static void renameFile(Path source, Path target) throws IOException {
+        Files.move(source, target);
     }
 
     public static void createDirectories(Path path) throws IOException {

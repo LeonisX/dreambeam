@@ -18,10 +18,10 @@
                 <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="Compare Discs" />
                 <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Show Statistics" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" text="Recalculate short DB" />
-                <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="Disk Name Wizard" />
+                <MenuItem mnemonicParsing="false" onAction="#recalculateShortDb" text="Recalculate short DB"/>
+                <CheckMenuItem mnemonicParsing="false" onAction="#showAudit" text="Audit" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <CheckMenuItem mnemonicParsing="false" text="Unspecified Action" />
+                <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="Disk Name Wizard" />
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
                 <MenuItem mnemonicParsing="false" text="About" />

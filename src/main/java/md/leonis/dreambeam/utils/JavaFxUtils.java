@@ -91,49 +91,59 @@ public class JavaFxUtils {
         showWindow("BaseStage.fxml", "База данных (описания)");
     }
 
+    public static void showAuditWindow() {
+        showWindow("AuditStage.fxml", "Аудит базы данных");
+    }
+
     public static void showWindow(String resource, String title) {
-        try {
-            currentStage = new Stage();
-            currentStage.setTitle(title);
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
-            Parent root = loader.load();
-            currentStage.setScene(new Scene(root, 900, 600));
-            currentStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Platform.runLater(() -> {
+            try {
+                currentStage = new Stage();
+                currentStage.setTitle(title);
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+                Parent root = loader.load();
+                currentStage.setScene(new Scene(root, 900, 600));
+                currentStage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static void showAlert(String title, String header, String text, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(header);
 
-        //TextArea textArea = new TextArea(text);
-        //textArea.setEditable(false);
-        //textArea.setWrapText(true);
+            //TextArea textArea = new TextArea(text);
+            //textArea.setEditable(false);
+            //textArea.setWrapText(true);
 
         /*textArea.setMinWidth(720);
         textArea.setMinHeight(600);
         textArea.setMaxWidth(Double.MAX_VALUE);
         textArea.setMaxHeight(Double.MAX_VALUE);*/
 
-        //alert.getDialogPane().setContent(textArea);
+            //alert.getDialogPane().setContent(textArea);
 
-        //alert.setResizable(true);
-        alert.setContentText(text);
-        //alert.setWidth(800);
-        //alert.getDialogPane().setPrefSize(880, 320);
-        //alert.getDialogPane().getChildren().stream().filter(node -> node instanceof Label).forEach(node -> ((Label) node).setMinHeight(Region.USE_PREF_SIZE));
-        alert.showAndWait();
+            //alert.setResizable(true);
+            alert.setContentText(text);
+            //alert.setWidth(800);
+            //alert.getDialogPane().setPrefSize(880, 320);
+            //alert.getDialogPane().getChildren().stream().filter(node -> node instanceof Label).forEach(node -> ((Label) node).setMinHeight(Region.USE_PREF_SIZE));
+            alert.showAndWait();
+        });
     }
 
     public static void showAlert(String title, String header, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(header);
+            alert.showAndWait();
+        });
     }
 
     public static Optional<ButtonType> showConfirmation(String title, String header, String text) {

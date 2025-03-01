@@ -7,7 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import md.leonis.dreambeam.utils.*;
+import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.utils.FileUtils;
+import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.ServiceUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.filechooser.FileSystemView;
@@ -18,13 +21,8 @@ import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static md.leonis.dreambeam.utils.Config.HR;
 
@@ -42,31 +40,10 @@ public class PrimaryPaneController implements Closeable {
     private Map<String, Path> drives;
     private String volumeLabel;
 
-    public List<Path> listFiles(File folder) {
-        return listFiles(folder, new ArrayList<>());
-    }
-
-    public List<Path> listFiles(File folder, List<Path> paths) {
-        File[] files = folder.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    listFiles(file, paths);
-                }
-            }
-            for (File file : files) {  // костыль конечно, но так считал код на Delphi :(
-                if (file.isFile()) {
-                    paths.add(file.toPath());
-                }
-            }
-        }
-        return paths;
-    }
-
     @FXML
     private void initialize() {
         inputUserName();
-        readGamesDat();
+        ServiceUtils.readGamesDat();
         readUserFilesCount();
         createBaseDir();
 
@@ -111,52 +88,6 @@ public class PrimaryPaneController implements Closeable {
         }
     }
 
-    private void readGamesDat() {
-        Config.baseHashes = new HashMap<>();
-
-        Path path = Config.getBaseGamesDatFile().normalize().toAbsolutePath();
-        if (FileUtils.exists(path)) {
-            try {
-                var pair = Utils.loadShortListHashes(path);
-                Config.baseHashes = pair.getLeft();
-                reportDuplicates(pair.getRight());
-            } catch (Exception e) {
-                JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файл " + path + "; Он будет пересоздан.", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-                FileUtils.deleteSilently(path);
-                recalculateHashes();
-            }
-        } else {
-            recalculateHashes();
-        }
-    }
-
-    private void recalculateHashes() {
-        try {
-            Instant start = Instant.now();
-            calculateShortList();
-            FileUtils.writeToFile(Config.getBaseGamesDatFile(), Config.baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> e.getValue() + " - " + e.getKey()).toList());
-            String time = Utils.formatSeconds(Duration.between(start, Instant.now()).toMillis());
-            JavaFxUtils.showAlert("DreamBeam", "Создание краткого списка завершено!", String.format("Время выполнения: %s s", time), Alert.AlertType.INFORMATION);
-
-        } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось пересчитать краткий список!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    private void calculateShortList() throws IOException {
-        var pair = Utils.calculateHashes(Config.getBaseGamesDir());
-        Config.baseHashes = pair.getLeft();
-        reportDuplicates(pair.getRight());
-    }
-
-    private void reportDuplicates(Map<String, String> duplicates) {
-        if (!duplicates.isEmpty()) {
-            duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В базе данных есть дубликаты!",
-                    duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
-        }
-    }
-
     public void readCdButtonClick(ActionEvent actionEvent) {
         File file = new File(((Button) actionEvent.getSource()).getUserData().toString());
         Config.isDirectory = false;
@@ -196,12 +127,11 @@ public class PrimaryPaneController implements Closeable {
         JavaFxUtils.log("Файлы успешно найдены, можно сканировать.");
         JavaFxUtils.log("#Метка диска (Volume Label): " + volumeLabel);
 
-        Config.files = listFiles(driveRoot);
+        Config.files = FileUtils.listFiles(driveRoot);
         JavaFxUtils.showPane("ViewPane.fxml");
     }
 
     public void readGdiButtonClick() {
-
         /*FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open File");
         if (Config.lastPath != null) {
@@ -220,7 +150,6 @@ public class PrimaryPaneController implements Closeable {
     public void rescanDrivesButtonClick() {
         try {
             rescanDrives();
-
             cdVBox.getChildren().clear();
             drives.entrySet().forEach(drive -> cdVBox.getChildren().add(createCdButton(drive)));
         } catch (Exception e) {

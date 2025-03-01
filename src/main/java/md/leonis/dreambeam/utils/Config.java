@@ -25,7 +25,9 @@ public class Config {
     public static List<String> saveFiles;
     public static String crc32;
     public static Map<String, String> baseHashes;
+    public static Map<String, String> baseDuplicates;
     public static Map<String, String> userHashes;
+    public static Map<String, String> userDuplicates;
     public static Map<String, String> textMap;
 
     public static Properties properties = new Properties();

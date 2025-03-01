@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
-import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.ServiceUtils;
 import md.leonis.dreambeam.utils.Utils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -16,9 +16,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class StatsPaneController implements Closeable {
 
@@ -53,7 +51,7 @@ public class StatsPaneController implements Closeable {
         japRadioButton.setUserData("jap");
         homeRadioButton.setUserData("home");
         gdiRadioButton.setUserData("gdi");
-        calculateUserHashes();
+        ServiceUtils.calculateUserHashes(true);
 
         baseGames = Config.baseHashes.values().stream().sorted().toList();
         userGames = Config.userHashes.values().stream().sorted().toList();
@@ -66,24 +64,6 @@ public class StatsPaneController implements Closeable {
         filterToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> compare());
 
         compare();
-    }
-
-    private void calculateUserHashes() {
-        try {
-            var pair = Utils.calculateHashes(Config.getUserDir());
-            Config.userHashes = pair.getLeft();
-            reportDuplicates(pair.getRight());
-        } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файлы пользовательской базы!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    private void reportDuplicates(Map<String, String> duplicates) {
-        if (!duplicates.isEmpty()) {
-            duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В вашей базе данных есть дубликаты!",
-                    duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
-        }
     }
 
     public void compare() {

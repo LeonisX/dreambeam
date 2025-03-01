@@ -7,10 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.model.ListViewHandler;
-import md.leonis.dreambeam.utils.Config;
-import md.leonis.dreambeam.utils.FileUtils;
-import md.leonis.dreambeam.utils.JavaFxUtils;
-import md.leonis.dreambeam.utils.Utils;
+import md.leonis.dreambeam.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
@@ -43,8 +40,8 @@ public class BaseStageController implements Closeable {
         var handler = new ListViewHandler<>(gamesListView);
         gamesListView.setOnKeyPressed(handler::handle);
 
-        calculateUserHashes();
-        loadTexts();
+        ServiceUtils.calculateUserHashes(true);
+        ServiceUtils.loadTexts();
 
         showGames();
         gamesListView.getSelectionModel().selectFirst();
@@ -93,34 +90,6 @@ public class BaseStageController implements Closeable {
             } else {
                 list.set(prevListIndex, prevValue);
             }
-        }
-    }
-
-    //todo duplicate
-    private void calculateUserHashes() {
-        try {
-            var pair = Utils.calculateHashes(Config.getUserDir());
-            Config.userHashes = pair.getLeft();
-            reportDuplicates(pair.getRight());
-        } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файлы пользовательской базы!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    //todo duplicate
-    private void reportDuplicates(Map<String, String> duplicates) {
-        if (!duplicates.isEmpty()) {
-            duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В вашей базе данных есть дубликаты!",
-                    duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
-        }
-    }
-
-    private void loadTexts() {
-        try {
-            Config.textMap = Utils.loadTexts(Config.getTextsDir());
-        } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать описания!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
