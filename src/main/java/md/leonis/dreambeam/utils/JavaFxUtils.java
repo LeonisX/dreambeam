@@ -85,6 +85,10 @@ public class JavaFxUtils {
         showWindow("StatsStage.fxml", "Статистика");
     }
 
+    public static void showBaseWindow() {
+        showWindow("BaseStage.fxml", "База данных (описания)");
+    }
+
     public static void showWindow(String resource, String title) {
         try {
             FXMLLoader loader = new FXMLLoader();

@@ -26,6 +26,7 @@ public class Config {
     public static String crc32;
     public static Map<String, String> baseHashes;
     public static Map<String, String> userHashes;
+    public static Map<String, String> textMap;
 
     public static Properties properties = new Properties();
     public static String user;
@@ -47,6 +48,10 @@ public class Config {
 
     public static Path getConfigFile() {
         return getRootDir().resolve("DreamBeam.ini");
+    }
+
+    public static Path getTextsDir() {
+        return getBaseDir().resolve("txtz");
     }
 
     public static Path getBaseGamesDatFile() {

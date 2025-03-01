@@ -46,6 +46,17 @@ public class Utils {
         hashes.put(hash, file);
     }
 
+    public static Map<String, String> loadTexts(Path basePath) throws IOException {
+        Map<String, String> hashes = new HashMap<>();
+        for (Path path : FileUtils.getFilesList(basePath)) {
+            String hash = path.getFileName().toString();
+            String text = String.join("\n", FileUtils.readFromRussianFile(path));
+            hashes.put(hash, text);
+        }
+
+        return hashes;
+    }
+
     public static List<String> cleanAndSortGameNames(Collection<String> games) {
         return games.stream().map(s -> {
             int index = s.indexOf('(');
@@ -80,6 +91,9 @@ public class Utils {
                 } else {
                     char firstSymbol = message.isEmpty() ? '-' : message.charAt(0);
 
+                    setStyle(null);
+                    //setStyle("-fx-font-weight: regular");
+
                     switch (firstSymbol) {
                         case '@' -> {
                             setStyle("-fx-text-fill: green;");       // @
@@ -101,8 +115,13 @@ public class Utils {
                             setStyle("-fx-text-fill: lightgray;");  // ~
                             setText(message.substring(1));
                         }
+                        case '+' -> {
+                            setStyle("-fx-font-weight: bold;");  // +  bold text
+                            setText(message.substring(1));
+                        }
                         default -> {
-                            setStyle("-fx-text-fill: -fx-text-base-color;");
+                            setStyle(null);
+                            //setStyle("-fx-text-fill: -fx-text-base-color;");
                             setText(message);
                         }
                     }

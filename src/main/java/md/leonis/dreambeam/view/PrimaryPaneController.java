@@ -37,6 +37,7 @@ public class PrimaryPaneController implements Closeable {
     public Label userFilesLabel;
     public Label baseFilesCountLabel;
     public VBox cdVBox;
+    public Button viewBaseButton;
 
     private Map<String, Path> drives;
     private String volumeLabel;
@@ -325,6 +326,10 @@ public class PrimaryPaneController implements Closeable {
         }
 
         return volumeLabel;
+    }
+
+    public void viewBaseButtonClick() {
+        JavaFxUtils.showBaseWindow();
     }
 
     @Override
