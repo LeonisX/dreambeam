@@ -47,6 +47,7 @@ public class Utils {
     }
 
     public static Map<String, String> loadTexts(Path basePath) throws IOException {
+        FileUtils.createDirectories(basePath);
         Map<String, String> hashes = new HashMap<>();
         for (Path path : FileUtils.getFilesList(basePath)) {
             String hash = path.getFileName().toString();

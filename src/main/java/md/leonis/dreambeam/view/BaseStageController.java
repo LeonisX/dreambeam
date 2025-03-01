@@ -8,27 +8,33 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.Utils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BaseStageController implements Closeable {
 
-    public RadioButton baseRadioButton;
-    public RadioButton userRadioButton;
     public Button closeButton;
     public ListView<String> gamesListView;
-    public TextArea textArea; //todo //После редактирования автоматическое сохранение. Удалил текст - удалился файл.
-    public ToggleGroup toggleGroup;
+    public TextArea textArea;
+
+    private String prevText = "";
+    private int prevListIndex = 0;
+    private List<String> list;
+    private final List<String> hashes = new ArrayList<>();
 
     @FXML
     private void initialize() {
-        //todo setup
-        userRadioButton.setUserData("v");
+        JavaFxUtils.currentStage.setOnHiding(e -> showText(""));
 
         gamesListView.setCellFactory(Utils::colorLines);
         gamesListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> showText(newValue));
@@ -37,20 +43,56 @@ public class BaseStageController implements Closeable {
         var handler = new ListViewHandler<>(gamesListView);
         gamesListView.setOnKeyPressed(handler::handle);
 
-        toggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> showGames());
-
         calculateUserHashes();
         loadTexts();
 
         showGames();
+        gamesListView.getSelectionModel().selectFirst();
     }
 
     private void showText(String line) {
-        if (line != null && line.startsWith("+")) {
-            String hash = Config.baseHashes.entrySet().stream().filter(e -> e.getValue().equals(line.substring(1))).findFirst().get().getKey();
+        saveText(!getTextAreaText().equals(prevText));
+
+        prevListIndex = gamesListView.getSelectionModel().getSelectedIndex();
+        if (line.startsWith("+")) {
+            String hash = hashes.get(prevListIndex);
             textArea.setText(Config.textMap.get(hash));
+            prevText = Config.textMap.get(hash);
         } else {
             textArea.clear();
+            prevText = "";
+        }
+    }
+
+    private String getTextAreaText() {
+        return StringUtils.isBlank(textArea.getText()) ? "" : textArea.getText();
+    }
+
+    private void saveText(boolean needToSave) {
+        if (needToSave) {
+            String hash = hashes.get(prevListIndex);
+            Path path = Config.getTextFile(hash).normalize().toAbsolutePath();
+            if (StringUtils.isNotBlank(textArea.getText())) {
+                try {
+                    Config.textMap.put(hash, textArea.getText());
+                    FileUtils.writeToRussianFile(path, textArea.getText());
+                } catch (IOException e) {
+                    JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить текст в файл " + path, e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+                }
+            } else {
+                Config.textMap.remove(hash);
+                FileUtils.deleteSilently(path);
+            }
+
+            String prevValue = list.get(prevListIndex);
+            if (prevValue.startsWith("+")) {
+                prevValue = prevValue.substring(1);
+            }
+            if (hasText(hash)) {
+                list.set(prevListIndex, addTextMark(prevValue));
+            } else {
+                list.set(prevListIndex, prevValue);
+            }
         }
     }
 
@@ -76,7 +118,6 @@ public class BaseStageController implements Closeable {
 
     private void loadTexts() {
         try {
-            //todo стоит создать директорию сначала
             Config.textMap = Utils.loadTexts(Config.getTextsDir());
         } catch (IOException e) {
             JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать описания!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
@@ -85,20 +126,27 @@ public class BaseStageController implements Closeable {
 
     private void showGames() {
         textArea.clear();
-        //todo source
-        var list = Config.baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(this::addTextMark).toList();
+        list = Config.baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> {
+            hashes.add(e.getKey());
+            return addTextMark(e);
+        }).collect(Collectors.toList());
         gamesListView.setItems(FXCollections.observableList(list));
     }
 
     private String addTextMark(Map.Entry<String, String> entry) {
-        return hasText(entry.getKey()) ? '+' + entry.getValue() : entry.getValue();
+        return hasText(entry.getKey()) ? addTextMark(entry.getValue()) : entry.getValue();
     }
 
-    private boolean hasText(String line) {
-        return Config.textMap.containsKey(line);
+    private String addTextMark(String value) {
+        return '+' + value;
+    }
+
+    private boolean hasText(String hash) {
+        return Config.textMap.containsKey(hash);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
+        saveText(true);
         Node source = (Node) actionEvent.getSource();
         Stage stage = (Stage) source.getScene().getWindow();
         stage.close();

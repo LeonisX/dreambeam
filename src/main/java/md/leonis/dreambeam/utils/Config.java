@@ -50,6 +50,10 @@ public class Config {
         return getRootDir().resolve("DreamBeam.ini");
     }
 
+    public static Path getTextFile(String fileName) {
+        return getTextsDir().resolve(fileName);
+    }
+
     public static Path getTextsDir() {
         return getBaseDir().resolve("txtz");
     }

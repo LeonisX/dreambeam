@@ -26,7 +26,9 @@ public class JavaFxUtils {
     private static final int sceneWidth = 900;
     private static final int sceneHeight = 700;
 
-    public static Closeable currentController;
+    public static Closeable currentPaneController;
+
+    public static Stage currentStage;
 
     @SuppressWarnings("all")
     public static void showMainPane(Stage primaryStage) {
@@ -41,7 +43,7 @@ public class JavaFxUtils {
             primaryStage.setOnHiding(event -> {
                 controller.saveLogsAndClose();
                 try {
-                    currentController.close();
+                    currentPaneController.close();
                 } catch (Exception ignored) {
                 }
             });
@@ -64,7 +66,7 @@ public class JavaFxUtils {
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
                 Region innerPane = loader.load();
-                currentController = loader.getController();
+                currentPaneController = loader.getController();
                 //if (controller instanceof SubPane) ((SubPane) controller).init();
                 ((BorderPane) rootLayout.getCenter()).setCenter(((BorderPane) innerPane).getCenter());
             } catch (IOException e) {
@@ -91,13 +93,13 @@ public class JavaFxUtils {
 
     public static void showWindow(String resource, String title) {
         try {
+            currentStage = new Stage();
+            currentStage.setTitle(title);
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
             Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle(title);
-            stage.setScene(new Scene(root, 900, 600));
-            stage.showAndWait();
+            currentStage.setScene(new Scene(root, 900, 600));
+            currentStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
