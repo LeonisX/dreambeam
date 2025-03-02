@@ -1,7 +1,7 @@
 DreamBeam
 =========
 
-TODO AboutPane
+локализация, выбор языка
 
 - Настройки - автоматическое обновление. пока только оповещать.
 
@@ -89,7 +89,7 @@ Build executable file
 1. Install `[GraalVM](https://github.com/gluonhq/graal/releases/latest)`
 2. Install `[Microsoft Visual Studio](https://visualstudio.microsoft.com/downloads/)`
 3. In terminal run `cmd.exe /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"`
-4. `mvn gluonfx:compile`
+4. `mvn clean gluonfx:compile`
 5. `mvn gluonfx:link`
 6. `mvn gluonfx:nativerun`
 

@@ -1,5 +1,7 @@
 package md.leonis.dreambeam.utils;
 
+import md.leonis.dreambeam.MainApp;
+
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +38,9 @@ public class Config {
     public static boolean isDirectory;
     public static String wizardName;
     public static boolean error;
-    public static String version;
+
+    public static String projectVersion;
+    public static String projectTime;
 
 
     public static Path getUserFile(String fileName) {
@@ -87,7 +91,19 @@ public class Config {
         } catch (Exception ignored) {
         }
 
-        version = ServiceUtils.getVersion();
+    }
+
+    public static void loadAppProperties() {
+        Properties prop = new Properties();
+        try (InputStream inputStream = MainApp.class.getResourceAsStream("/app.properties")) {
+            prop.load(inputStream);
+
+            projectVersion = prop.getProperty("version", "@!#?@!");
+            projectTime = prop.getProperty("date", "");
+            projectTime = StringUtils.isBlank(projectTime) ? projectTime : String.format("(%s)", projectTime);
+
+        } catch (Exception ignored) {
+        }
     }
 
     public static boolean isUser() {

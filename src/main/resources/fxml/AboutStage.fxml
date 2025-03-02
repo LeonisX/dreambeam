@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="280.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.AboutStageController">
+    <center>
+        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+            <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" smooth="false">
+                <Image smooth="false" url="@../icons/icon64.png" />
+            </ImageView>
+            <HBox alignment="CENTER" spacing="5.0">
+                <Label focusTraversable="false" text="DreamBeam">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+                <Label fx:id="versionLabel" text="???">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+                <Label fx:id="timeLabel">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+            </HBox>
+            <Label focusTraversable="false" text="Dreamcast collectors tool (and not only)" />
+            <Label focusTraversable="false" text="Copyright © 2007-2025 Leonis" />
+            <VBox alignment="CENTER">
+                <padding>
+                    <Insets top="10.0" />
+                </padding>
+                <Hyperlink focusTraversable="false" text="http://tv-games.ru/pages/Projects/DreamBeam.html" underline="true" />
+                <Hyperlink focusTraversable="false" text="https://github.com/LeonisX/dreambeam" underline="true" />
+                <Hyperlink focusTraversable="false" text="https://github.com/LeonisX/dreambeam-base" underline="true" />
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Close">
+                <padding>
+                    <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+                </padding>
+            </Button>
+        </HBox>
+    </bottom>
+</BorderPane>

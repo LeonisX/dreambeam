@@ -29,6 +29,10 @@ public class JavaFxUtils {
     private static final int sceneWidth = 900;
     private static final int sceneHeight = 700;
 
+    private static final List<Integer> dimensions = List.of(16, 20, 24, 32, 40, 48, 64, 128, 256);
+    private static final String fileFormat = "src/main/resources/icons/icon%s.png";
+    private static final String resourceFormat = "icon%s.png";
+
     public static Closeable currentPaneController;
 
     public static Stage currentStage;
@@ -79,13 +83,8 @@ public class JavaFxUtils {
         });
     }
 
-    private static final List<Integer> dimensions = List.of(16, 20, 24, 32, 64, 128, 256);
-    private static final String fileFormat = "src/main/resources/icons/icon%s.png";
-    private static final String resourceFormat = "icon%s.png";
-
     private static void setIcon(Stage stage) {
         try {
-            //todo different sizes
             String format = Files.exists(Paths.get(String.format(fileFormat, 32))) ? fileFormat : resourceFormat;
             dimensions.forEach(i -> stage.getIcons().add(new Image(String.format(format, i))));
 
@@ -94,26 +93,30 @@ public class JavaFxUtils {
     }
 
     public static void showWizardWindow() {
-        showWindow("WizardStage.fxml", "Мастер названия диска");
+        showWindow("WizardStage.fxml", "Мастер названия диска", 900, 600);
     }
 
     public static void showCompareWindow() {
-        showWindow("CompareStage.fxml", "Сравнение дисков");
+        showWindow("CompareStage.fxml", "Сравнение дисков", 900, 600);
     }
 
     public static void showStatsWindow() {
-        showWindow("StatsStage.fxml", "Статистика");
+        showWindow("StatsStage.fxml", "Статистика", 900, 600);
     }
 
     public static void showBaseWindow() {
-        showWindow("BaseStage.fxml", "База данных (описания)");
+        showWindow("BaseStage.fxml", "База данных (описания)", 900, 600);
     }
 
     public static void showAuditWindow() {
-        showWindow("AuditStage.fxml", "Аудит базы данных");
+        showWindow("AuditStage.fxml", "Аудит базы данных", 900, 600);
     }
 
-    public static void showWindow(String resource, String title) {
+    public static void showAboutWindow() {
+        showWindow("AboutStage.fxml", "Аудит базы данных", 320, 280);
+    }
+
+    public static void showWindow(String resource, String title, int width, int height) {
         Platform.runLater(() -> {
             try {
                 currentStage = new Stage();
@@ -122,7 +125,7 @@ public class JavaFxUtils {
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
                 Parent root = loader.load();
-                currentStage.setScene(new Scene(root, 900, 600));
+                currentStage.setScene(new Scene(root, width, height));
                 currentStage.showAndWait();
             } catch (IOException e) {
                 throw new RuntimeException(e);

@@ -77,11 +77,14 @@ public class MainStageController implements Closeable {
         JavaFxUtils.showAuditWindow();
     }
 
+    public void showAbout() {
+        JavaFxUtils.showAboutWindow();
+    }
+
     public void recalculateShortDb() {
     }
 
     @Override
     public void close() throws IOException {
     }
-
 }

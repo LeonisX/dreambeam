@@ -1,15 +1,9 @@
 package md.leonis.dreambeam.utils;
 
 import javafx.scene.control.Alert;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -104,21 +98,6 @@ public class ServiceUtils {
             Config.textMap = Utils.loadTexts(Config.getTextsDir());
         } catch (IOException e) {
             JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать описания!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    @SuppressWarnings("all")
-    public static String getVersion() {
-        try {
-            MavenXpp3Reader reader = new MavenXpp3Reader();
-            Model model;
-            if (Files.exists(Paths.get("pom.xml"))) {
-                return reader.read(new FileReader("pom.xml")).getVersion();
-            } else {
-                return reader.read(new InputStreamReader(ServiceUtils.class.getResourceAsStream("pom.xml"))).getVersion();
-            }
-        } catch (Exception ignored) {
-            return "@!#?@!";
         }
     }
 }

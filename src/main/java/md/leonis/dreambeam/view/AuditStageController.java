@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AuditPaneController implements Closeable {
+public class AuditStageController implements Closeable {
 
     public Button closeButton;
     public Button userUniqueButton;

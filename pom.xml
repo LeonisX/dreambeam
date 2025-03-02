@@ -4,7 +4,7 @@
 
     <groupId>dreambeam</groupId>
     <artifactId>dreambeam</artifactId>
-    <version>2.0.1 Beta</version>
+    <version>theBest</version>
     <packaging>jar</packaging>
 
     <name>DreamBeam</name>
@@ -85,14 +85,18 @@
                     <target>host</target>
                     <verbose>false</verbose>
                     <mainClass>md.leonis.dreambeam.MainApp</mainClass>
+                    <resourcesList>
+                        <list>app.properties</list>
+                    </resourcesList>
                     <reflectionList>
-                        <list>md.leonis.dreambeam.view.AuditPaneController</list>
+                        <list>md.leonis.dreambeam.view.AboutStageController</list>
+                        <list>md.leonis.dreambeam.view.AuditStageController</list>
                         <list>md.leonis.dreambeam.view.BaseStageController</list>
                         <list>md.leonis.dreambeam.view.ComparePaneController</list>
                         <list>md.leonis.dreambeam.view.MainStageController</list>
                         <list>md.leonis.dreambeam.view.PrimaryPaneController</list>
                         <list>md.leonis.dreambeam.view.SavePaneController</list>
-                        <list>md.leonis.dreambeam.view.StatsPaneController</list>
+                        <list>md.leonis.dreambeam.view.StatsStageController</list>
                         <list>md.leonis.dreambeam.view.ViewPaneController</list>
                         <list>md.leonis.dreambeam.view.WizardStageController</list>
                         <list>javafx.scene.control.MenuBar</list>
@@ -100,9 +104,12 @@
                         <list>javafx.scene.control.MenuItem</list>
                         <list>javafx.scene.control.SeparatorMenuItem</list>
                         <list>javafx.scene.control.CheckMenuItem</list>
+                        <list>javafx.scene.control.Hyperlink</list>
+                        <list>javafx.scene.image.Image</list>
+                        <list>javafx.scene.image.ImageView</list>
                     </reflectionList>
                     <releaseConfiguration>
-                        <description>DreamBeam - Dreamcast collector's tool</description>
+                        <description>DreamBeam - Dreamcast collectors tool</description>
                         <vendor>Leonis</vendor>
                     </releaseConfiguration>
                 </configuration>
