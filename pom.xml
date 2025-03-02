@@ -103,7 +103,6 @@
                         <list>javafx.scene.control.Menu</list>
                         <list>javafx.scene.control.MenuItem</list>
                         <list>javafx.scene.control.SeparatorMenuItem</list>
-                        <list>javafx.scene.control.CheckMenuItem</list>
                         <list>javafx.scene.control.Hyperlink</list>
                         <list>javafx.scene.image.Image</list>
                         <list>javafx.scene.image.ImageView</list>

@@ -11,20 +11,20 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.MainStageController">
     <top>
         <MenuBar maxHeight="28.0" BorderPane.alignment="CENTER">
-            <Menu mnemonicParsing="false" text="File">
-                <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#exitMenuItemClick" text="Exit" />
+            <Menu mnemonicParsing="false" text="Файл">
+                <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#exitMenuItemClick" text="Выход" />
             </Menu>
-            <Menu mnemonicParsing="false" text="Functions">
-                <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="Compare Discs" />
-                <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Show Statistics" />
+            <Menu mnemonicParsing="false" text="Команды">
+                <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="Сравнить диски" />
+                <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Показать статистику" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#recalculateShortDb" text="Recalculate Short DB"/>
-                <CheckMenuItem mnemonicParsing="false" onAction="#showAudit" text="Audit" />
+                <MenuItem mnemonicParsing="false" onAction="#recalculateShortDb" text="Пересчитать краткую базу данных"/>
+                <MenuItem mnemonicParsing="false" onAction="#showAudit" text="Аудит" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="Disk Name Wizard" />
+                <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="Мастер названия дисков" />
             </Menu>
-            <Menu mnemonicParsing="false" text="Help">
-                <MenuItem mnemonicParsing="false" onAction="#showAbout" text="About" />
+            <Menu mnemonicParsing="false" text="Справка">
+                <MenuItem mnemonicParsing="false" onAction="#showAbout" text="О программе" />
                 <MenuItem mnemonicParsing="false" disable="true" text="Readme" />
                 <MenuItem mnemonicParsing="false" disable="true" text="Changelog" />
             </Menu>

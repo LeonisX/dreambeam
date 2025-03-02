@@ -119,7 +119,7 @@ public class AuditStageController implements Closeable {
         try {
             for (Map.Entry<String, String> entry : oldTitlesMap.entrySet()) {
                 FileUtils.renameFile(Config.getUserFile(entry.getValue()), Config.getUserFile(entry.getKey()));
-                JavaFxUtils.log(String.format("Renamed: %s -> %s", entry.getValue(), entry.getKey()));
+                JavaFxUtils.log(String.format("Переименовано: %s -> %s", entry.getValue(), entry.getKey()));
             }
         } catch (Exception e) {
             JavaFxUtils.showAlert("Ошибка!", "Не удалось переименовать файлы!",

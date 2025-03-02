@@ -18,10 +18,10 @@
             <top>
                 <HBox>
                     <HBox prefWidth="100.0" BorderPane.alignment="CENTER">
-                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" text="&lt;&lt; Back" />
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" text="&lt;&lt; назад" />
                     </HBox>
                     <HBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
-                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveButtonClick" prefHeight="25.0" prefWidth="188.0" text="Save &amp; Close" />
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveButtonClick" prefHeight="25.0" prefWidth="188.0" text="Сохранить и закрыть" />
                     </HBox>
                     <HBox prefWidth="100.0" BorderPane.alignment="CENTER" />
                     <padding>

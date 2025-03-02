@@ -115,7 +115,7 @@ public class ViewPaneController implements Closeable {
 
                     //сравнивать на всякий случай с size
                     if (bytes.length != size) {
-                        throw new RuntimeException(String.format("%s size is different: %s != %s !", file, bytes.length, size));
+                        throw new RuntimeException(String.format("%s размер различается: %s != %s !", file, bytes.length, size));
                     }
 
                     int crc32 = BinaryUtils.crc32(bytes);

@@ -44,7 +44,7 @@ public class PrimaryPaneController implements Closeable {
         createBaseDir();
 
         userLabel.setText(Config.user);
-        userFilesLabel.setText(String.format("In your collection %s image(s).", Config.userFiles));
+        userFilesLabel.setText(String.format("В вашей коллекции %s образов.", Config.userFiles));
         long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
         baseFilesCountLabel.setText(String.format("В базе данных %s записи; %s проверены на 100%%", Config.baseHashes.size(), verifiedCount));
 
@@ -97,7 +97,7 @@ public class PrimaryPaneController implements Closeable {
     public void readFsButtonClick() {
         try {
             DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("Select directory");
+            directoryChooser.setTitle("Выберите каталог");
             if (Config.lastDirectory != null) {
                 directoryChooser.setInitialDirectory(Config.lastDirectory);
             }
@@ -154,7 +154,7 @@ public class PrimaryPaneController implements Closeable {
     }
 
     public Button createCdButton(Map.Entry<String, Path> drive) {
-        Button button = new Button(String.format("Read CD-ROM (%s)", drive.getKey().replace("\\", "")));
+        Button button = new Button(String.format("Прочитать CD-ROM (%s)", drive.getKey().replace("\\", "")));
         button.setUserData(drive.getKey());
         button.setOnAction(this::readCdButtonClick);
 
@@ -220,20 +220,20 @@ public class PrimaryPaneController implements Closeable {
             //isDrive: false
             //isFloppyDrive: false
 
-            System.out.println("Drive Name: " + driveRoot);
+            /*System.out.println("Drive Name: " + driveRoot);
             System.out.println("getSystemTypeDescription: " + fsv.getSystemTypeDescription(driveRoot));
             System.out.println("getSystemDisplayName: " + volumeLabel);
             System.out.println("isFileSystem: " + fsv.isFileSystem(driveRoot));
             System.out.println("isDrive: " + fsv.isDrive(driveRoot));
+            System.out.println("isFloppyDrive: " + fsv.isFloppyDrive(driveRoot));*/
             //System.out.println("isComputerNode: " + fsv.isComputerNode(path)); // false
             //System.out.println("isLink: " + fsv.isLink(path)); // false
             //System.out.println("isFileSystemRoot: " + fsv.isFileSystemRoot(path)); // true
-            System.out.println("isFloppyDrive: " + fsv.isFloppyDrive(driveRoot));
             //System.out.println("isRoot: " + fsv.isRoot(path)); // false
             //System.out.println("isTraversable: " + fsv.isTraversable(path)); // true
             //System.out.println("isHiddenFile: " + fsv.isHiddenFile(path)); // false
         } else {
-            throw new IOException(String.format("Drive %s is not ready", driveRoot.toString()));
+            throw new IOException(String.format("Привод %s не готов", driveRoot.toString()));
         }
     }
 

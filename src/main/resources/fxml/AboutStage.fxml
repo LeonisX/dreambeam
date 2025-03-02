@@ -21,7 +21,7 @@
                 <Image smooth="false" url="@../icons/icon64.png" />
             </ImageView>
             <HBox alignment="CENTER" spacing="5.0">
-                <Label focusTraversable="false" text="DreamBeam">
+                <Label text="DreamBeam">
                     <font>
                         <Font name="System Bold" size="16.0" />
                     </font>
@@ -37,8 +37,8 @@
                     </font>
                 </Label>
             </HBox>
-            <Label focusTraversable="false" text="Dreamcast collectors tool (and not only)" />
-            <Label focusTraversable="false" text="Copyright © 2007-2025 Leonis" />
+            <Label text="Инструмент коллекционеров Dreamcast (и не только)" />
+            <Label text="Copyright © 2007-2025 Leonis" />
             <VBox alignment="CENTER">
                 <padding>
                     <Insets top="10.0" />
@@ -54,7 +54,7 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
-            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Close">
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Закрыть">
                 <padding>
                     <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
                 </padding>

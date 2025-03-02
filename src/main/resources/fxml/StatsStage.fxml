@@ -41,12 +41,12 @@
                      <Insets left="10.0"/>
                   </padding>
                </Label>
-               <RadioButton fx:id="allRadioButton" mnemonicParsing="false" selected="true" text="All games">
+               <RadioButton fx:id="allRadioButton" mnemonicParsing="false" selected="true" text="Все игры">
                   <toggleGroup>
                      <ToggleGroup fx:id="filterToggleGroup" />
                   </toggleGroup>
                </RadioButton>
-               <RadioButton fx:id="rusRadioButton" mnemonicParsing="false" text="Russian"
+               <RadioButton fx:id="rusRadioButton" mnemonicParsing="false" text="На русском"
                             toggleGroup="$filterToggleGroup"/>
                <RadioButton fx:id="usaRadioButton" mnemonicParsing="false" text="NTSC-U"
                             toggleGroup="$filterToggleGroup"/>

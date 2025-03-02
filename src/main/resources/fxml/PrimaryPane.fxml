@@ -23,7 +23,7 @@
                                 <padding>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
-                                <Label fx:id="userLabel" text="User">
+                                <Label fx:id="userLabel">
                                     <font>
                                         <Font name="System Bold" size="12.0" />
                                     </font>
@@ -31,8 +31,8 @@
                                         <Insets bottom="5.0" />
                                     </padding>
                                 </Label>
-                                <Label fx:id="userFilesLabel" text="365 image(s) from 16376" />
-                                <Label fx:id="baseFilesCountLabel" text="В базе данных 1977 записи; 490 проверены на 100%">
+                                <Label fx:id="userFilesLabel" />
+                                <Label fx:id="baseFilesCountLabel">
                                     <padding>
                                         <Insets bottom="5.0" />
                                     </padding>
@@ -42,7 +42,7 @@
                                 <padding>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
-                                <Button fx:id="viewBaseButton" mnemonicParsing="false" onAction="#viewBaseButtonClick" text="View DataBase" />
+                                <Button fx:id="viewBaseButton" mnemonicParsing="false" onAction="#viewBaseButtonClick" text="Посмотреть базу данных" />
                             </VBox>
                         </HBox>
                     </top>
@@ -58,17 +58,17 @@
                                     <padding>
                                         <Insets bottom="20.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
-                                    <Button fx:id="readFsButton" mnemonicParsing="false" onAction="#readFsButtonClick" text="Read File System" />
-                                    <Button fx:id="readGdiButton" disable="true" mnemonicParsing="false" onAction="#readGdiButtonClick" text="Read GDI" />
+                                    <Button fx:id="readFsButton" mnemonicParsing="false" onAction="#readFsButtonClick" text="Прочитать каталог" />
+                                    <Button fx:id="readGdiButton" disable="true" mnemonicParsing="false" onAction="#readGdiButtonClick" text="Прочитать GDI" />
                                 </VBox>
                                 <VBox spacing="5.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
-                                    <Button fx:id="rescanDrivesButton" mnemonicParsing="false" onAction="#rescanDrivesButtonClick" text="Rescan Drives" />
+                                    <Button fx:id="rescanDrivesButton" mnemonicParsing="false" onAction="#rescanDrivesButtonClick" text="Пересканировать приводы" />
                                 </VBox>
                             </VBox>
-                            <TextArea promptText="Or drag file or path here" />
+                            <TextArea promptText="Или перетащите сюда файл или путь" />
                         </HBox>
                     </center>
                 </BorderPane>

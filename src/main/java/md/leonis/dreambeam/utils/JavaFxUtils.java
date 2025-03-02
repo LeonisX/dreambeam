@@ -113,7 +113,7 @@ public class JavaFxUtils {
     }
 
     public static void showAboutWindow() {
-        showWindow("AboutStage.fxml", "Аудит базы данных", 320, 280);
+        showWindow("AboutStage.fxml", "О программе", 320, 280);
     }
 
     public static void showWindow(String resource, String title, int width, int height) {

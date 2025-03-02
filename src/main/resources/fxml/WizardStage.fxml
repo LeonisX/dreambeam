@@ -141,7 +141,7 @@
                     </StackPane>
                 </VBox>
                 <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                    <TitledPane animated="false" collapsible="false" text="Discs setup" VBox.vgrow="ALWAYS">
+                    <TitledPane animated="false" collapsible="false" text="Число дисков" VBox.vgrow="ALWAYS">
                         <VBox prefHeight="113.0" prefWidth="104.0" spacing="5.0">
                             <Label text="Всего дисков:" />
                             <Spinner fx:id="disksSpinner" editable="true" />
@@ -169,8 +169,8 @@
                            <Insets top="10.0" />
                         </VBox.margin>
                      </Separator>
-                     <Label text="Is bad dump?" />
-                     <CheckBox fx:id="badDumpCheckBox" disable="true" mnemonicParsing="false" text="Bad dump" />
+                     <Label text="Образ с ошибками?" />
+                     <CheckBox fx:id="badDumpCheckBox" disable="true" mnemonicParsing="false" text="Битый образ" />
                         </VBox>
                         <padding>
                             <Insets top="5.0" />
