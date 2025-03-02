@@ -7,15 +7,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.MainApp;
 import md.leonis.dreambeam.view.MainStageController;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class JavaFxUtils {
@@ -48,6 +50,7 @@ public class JavaFxUtils {
                 }
             });
 
+            setIcon(primaryStage);
             showPrimaryPanel();
 
             primaryStage.show();
@@ -75,6 +78,26 @@ public class JavaFxUtils {
         });
     }
 
+    @SuppressWarnings("all")
+    private static void setIcon(Stage stage) {
+        try {
+            //todo different size
+            if (Files.exists(Paths.get("src/main/resources/icons/icon32.png"))) {
+                stage.getIcons().add(new Image("file:src/main/resources/icons/icon16.png"));
+                stage.getIcons().add(new Image("file:src/main/resources/icons/icon20.png"));
+                stage.getIcons().add(new Image("file:src/main/resources/icons/icon24.png"));
+                stage.getIcons().add(new Image("file:src/main/resources/icons/icon32.png"));
+            } else {
+                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon16.png")));
+                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon20.png")));
+                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon24.png")));
+                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon32.png")));
+            }
+        } catch (Exception ignored) {
+            ignored.printStackTrace(); //todo
+        }
+    }
+
     public static void showWizardWindow() {
         showWindow("WizardStage.fxml", "Мастер названия диска");
     }
@@ -100,6 +123,7 @@ public class JavaFxUtils {
             try {
                 currentStage = new Stage();
                 currentStage.setTitle(title);
+                setIcon(currentStage);
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
                 Parent root = loader.load();
