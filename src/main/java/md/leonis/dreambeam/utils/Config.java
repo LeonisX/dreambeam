@@ -38,6 +38,7 @@ public class Config {
     public static boolean isDirectory;
     public static String wizardName;
     public static boolean error;
+    public static String version;
 
 
     public static Path getUserFile(String fileName) {
@@ -87,6 +88,8 @@ public class Config {
             admin = "true".equals(properties.getProperty(ADMIN));
         } catch (Exception ignored) {
         }
+
+        version = ServiceUtils.getVersion();
     }
 
     public static boolean isUser() {

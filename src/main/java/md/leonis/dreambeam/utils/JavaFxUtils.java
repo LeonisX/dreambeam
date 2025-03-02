@@ -52,7 +52,7 @@ public class JavaFxUtils {
 
             primaryStage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class JavaFxUtils {
                 //if (controller instanceof SubPane) ((SubPane) controller).init();
                 ((BorderPane) rootLayout.getCenter()).setCenter(((BorderPane) innerPane).getCenter());
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         });
     }
@@ -106,7 +106,7 @@ public class JavaFxUtils {
                 currentStage.setScene(new Scene(root, 900, 600));
                 currentStage.showAndWait();
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         });
     }

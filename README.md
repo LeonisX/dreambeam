@@ -1,8 +1,8 @@
 DreamBeam
 =========
-- 
-- читать версию из мавена (или ресурсов, что проще)
-- собирать исполняемый файл
+
+TODO AboutPane
+
 - настройки - автоматическое обновление. пока только оповещать.
 
 - PrimaryPane: GDI, CHD
@@ -79,3 +79,16 @@ Run
 ### The right way
 
 https://stackoverflow.com/questions/53668630/how-to-run-javafx-applications-in-intellij-idea-ide
+
+
+Build executable file
+---------------------
+
+1. Install `[GraalVM](https://github.com/gluonhq/graal/releases/latest)`
+2. Install `[Microsoft Visual Studio](https://visualstudio.microsoft.com/downloads/)`
+3. In terminal run `cmd.exe /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"`
+4. `mvn gluonfx:compile`
+5. `mvn gluonfx:link`
+6. `mvn gluonfx:nativerun`
+
+[Full instruction](https://docs.gluonhq.com/#platforms_windows)

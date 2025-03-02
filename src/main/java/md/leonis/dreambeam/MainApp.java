@@ -8,7 +8,7 @@ import md.leonis.dreambeam.utils.JavaFxUtils;
 public class MainApp extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         Config.loadProperties();
         JavaFxUtils.showMainPane(primaryStage);
     }
