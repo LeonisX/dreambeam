@@ -2,8 +2,7 @@ package md.leonis.dreambeam.utils;
 
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import md.leonis.dreambeam.model.Pair;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -73,11 +72,18 @@ public class Utils {
     }
 
     public static String formatSeconds(long millis) {
-        return DurationFormatUtils.formatDuration(millis, "mm:ss", true);
+        return formatDuration(millis, ":");
     }
 
     public static String formatSecondsNoTick(long millis) {
-        return DurationFormatUtils.formatDuration(millis, "mm ss", true);
+        return formatDuration(millis, " ");
+    }
+
+    public static String formatDuration(long millis, String separator) {
+        long minutes = millis / 60000;
+        long seconds = (millis - minutes * 60000) / 1000;
+
+        return String.format("%02d%s%02d", minutes, separator, seconds);
     }
 
     public static ListCell<String> colorLines(ListView<String> ignoredParam) {

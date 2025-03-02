@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.utils.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;

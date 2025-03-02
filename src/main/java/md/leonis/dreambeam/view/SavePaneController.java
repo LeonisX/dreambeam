@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
-import org.apache.commons.lang3.StringUtils;
+import md.leonis.dreambeam.utils.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;

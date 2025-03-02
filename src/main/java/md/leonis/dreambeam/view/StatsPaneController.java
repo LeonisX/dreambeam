@@ -6,11 +6,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.ServiceUtils;
 import md.leonis.dreambeam.utils.Utils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Closeable;
 import java.io.IOException;
