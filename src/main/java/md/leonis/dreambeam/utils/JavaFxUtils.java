@@ -18,6 +18,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 public class JavaFxUtils {
@@ -78,23 +79,17 @@ public class JavaFxUtils {
         });
     }
 
-    @SuppressWarnings("all")
+    private static final List<Integer> dimensions = List.of(16, 20, 24, 32, 64, 128, 256);
+    private static final String fileFormat = "src/main/resources/icons/icon%s.png";
+    private static final String resourceFormat = "icon%s.png";
+
     private static void setIcon(Stage stage) {
         try {
-            //todo different size
-            if (Files.exists(Paths.get("src/main/resources/icons/icon32.png"))) {
-                stage.getIcons().add(new Image("file:src/main/resources/icons/icon16.png"));
-                stage.getIcons().add(new Image("file:src/main/resources/icons/icon20.png"));
-                stage.getIcons().add(new Image("file:src/main/resources/icons/icon24.png"));
-                stage.getIcons().add(new Image("file:src/main/resources/icons/icon32.png"));
-            } else {
-                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon16.png")));
-                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon20.png")));
-                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon24.png")));
-                stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("icon32.png")));
-            }
+            //todo different sizes
+            String format = Files.exists(Paths.get(String.format(fileFormat, 32))) ? fileFormat : resourceFormat;
+            dimensions.forEach(i -> stage.getIcons().add(new Image(String.format(format, i))));
+
         } catch (Exception ignored) {
-            ignored.printStackTrace(); //todo
         }
     }
 
