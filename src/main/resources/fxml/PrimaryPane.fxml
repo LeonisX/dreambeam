@@ -42,7 +42,7 @@
                                 <padding>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
-                                <Button fx:id="viewBaseButton" mnemonicParsing="false" onAction="#viewBaseButtonClick" text="Посмотреть базу данных" />
+                                <Button fx:id="viewBaseButton" mnemonicParsing="false" onAction="#viewBaseButtonClick" text="%primary.view.db.button" />
                             </VBox>
                         </HBox>
                     </top>
@@ -58,17 +58,17 @@
                                     <padding>
                                         <Insets bottom="20.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
-                                    <Button fx:id="readFsButton" mnemonicParsing="false" onAction="#readFsButtonClick" text="Прочитать каталог" />
-                                    <Button fx:id="readGdiButton" disable="true" mnemonicParsing="false" onAction="#readGdiButtonClick" text="Прочитать GDI" />
+                                    <Button fx:id="readFsButton" mnemonicParsing="false" onAction="#readFsButtonClick" text="%primary.read.directory.button" />
+                                    <Button fx:id="readGdiButton" disable="true" mnemonicParsing="false" onAction="#readGdiButtonClick" text="%primary.read.gdi.button" />
                                 </VBox>
                                 <VBox spacing="5.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
-                                    <Button fx:id="rescanDrivesButton" mnemonicParsing="false" onAction="#rescanDrivesButtonClick" text="Пересканировать приводы" />
+                                    <Button fx:id="rescanDrivesButton" mnemonicParsing="false" onAction="#rescanDrivesButtonClick" text="%primary.rescan.drives.button" />
                                 </VBox>
                             </VBox>
-                            <TextArea promptText="Или перетащите сюда файл или путь" />
+                            <TextArea promptText="%primary.drag.here.text.area" />
                         </HBox>
                     </center>
                 </BorderPane>

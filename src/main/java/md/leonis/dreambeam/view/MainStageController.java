@@ -5,16 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import md.leonis.dreambeam.utils.Config;
-import md.leonis.dreambeam.utils.FileUtils;
-import md.leonis.dreambeam.utils.JavaFxUtils;
-import md.leonis.dreambeam.utils.Utils;
+import md.leonis.dreambeam.utils.*;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Instant;
 
 import static md.leonis.dreambeam.utils.Config.HR;
+import static md.leonis.dreambeam.utils.Config.str;
 
 public class MainStageController implements Closeable {
 
@@ -34,7 +32,7 @@ public class MainStageController implements Closeable {
 
         log("");
         log(HR);
-        log("Начало работы. " + Instant.now());
+        log(String.format("%s %s", str("main.log.start"), Instant.now()));
         log(HR);
     }
 
@@ -45,7 +43,7 @@ public class MainStageController implements Closeable {
     public void saveLogsAndClose() {
         log("");
         log(HR);
-        log("Завершение работы. " + Instant.now());
+        log(String.format("%s %s", str("main.log.finish"), Instant.now()));
         log(HR);
 
         try {
@@ -82,6 +80,7 @@ public class MainStageController implements Closeable {
     }
 
     public void recalculateShortDb() {
+        ServiceUtils.recalculateHashes();
     }
 
     @Override

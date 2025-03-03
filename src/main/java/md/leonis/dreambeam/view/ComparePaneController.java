@@ -21,6 +21,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static md.leonis.dreambeam.utils.Config.str;
+import static md.leonis.dreambeam.utils.Config.strError;
+
 public class ComparePaneController implements Closeable {
 
     public Button closeButton;
@@ -53,6 +56,8 @@ public class ComparePaneController implements Closeable {
     private void initialize() {
         leftUserRadioButton.setUserData("v");
         rightUserRadioButton.setUserData("v");
+
+        backButton.setDisable(false);
 
         calculateUserHashes();
 
@@ -88,14 +93,14 @@ public class ComparePaneController implements Closeable {
             Config.userHashes = pair.getLeft();
             reportDuplicates(pair.getRight());
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файлы пользовательской базы!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("compare.user.files.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     private void reportDuplicates(Map<String, String> duplicates) {
         if (!duplicates.isEmpty()) {
             duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В вашей базе данных есть дубликаты!",
+            JavaFxUtils.showAlert(strError(), str("compare.user.duplicates.error"),
                     duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
         }
     }
@@ -147,7 +152,7 @@ public class ComparePaneController implements Closeable {
             rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
 
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось выполнить сравнение дисков!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("compare.compare.disks.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 

@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static md.leonis.dreambeam.utils.Config.str;
+import static md.leonis.dreambeam.utils.Config.strError;
+
 public class AuditStageController implements Closeable {
 
     public Button closeButton;
@@ -42,7 +45,7 @@ public class AuditStageController implements Closeable {
 
     public void userUniqueButtonClick() {
         var uniqueGames = getUserUniqueGames();
-        uniqueGames.add(0, String.format("В пользовательской базе данных %s уникальных записей.", uniqueGames.size()));
+        uniqueGames.add(0, String.format(str("audit.user.unique.records"), uniqueGames.size()));
         uniqueGames.add(1, "");
         textArea.setText(String.join("\n", uniqueGames));
     }
@@ -56,7 +59,7 @@ public class AuditStageController implements Closeable {
     public void userDuplicatesButtonClick() {
         var duplicates = Config.userDuplicates.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .map(e -> String.format("%s == %s", e.getKey(), e.getValue())).collect(Collectors.toList());
-        duplicates.add(0, String.format("В пользовательской базе данных %s дубликатов.", duplicates.size()));
+        duplicates.add(0, String.format(str("audit.user.duplicates"), duplicates.size()));
         duplicates.add(1, "");
         textArea.setText(String.join("\n", duplicates));
     }
@@ -70,8 +73,8 @@ public class AuditStageController implements Closeable {
             }
         });
         List<String> lines = oldTitlesMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .map(e -> String.format("%s (актуально: %s)", e.getValue() , e.getKey())).collect(Collectors.toList());
-        lines.add(0, String.format("В пользовательской базе %s устаревших названий.", oldTitlesMap.size()));
+                .map(e -> String.format(str("audit.texts.comparison"), e.getValue() , e.getKey())).collect(Collectors.toList());
+        lines.add(0, String.format(str("audit.user.old.titles"), oldTitlesMap.size()));
         lines.add(1, "");
         textArea.setText(String.join("\n", lines));
 
@@ -81,7 +84,7 @@ public class AuditStageController implements Closeable {
     public void baseDuplicatesButtonClick() {
         var duplicates = Config.baseDuplicates.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .map(e -> String.format("%s == %s", e.getKey(), e.getValue())).collect(Collectors.toList());
-        duplicates.add(0, String.format("В базе данных %s дубликатов.", duplicates.size()));
+        duplicates.add(0, String.format(str("audit.base.duplicates"), duplicates.size()));
         duplicates.add(1, "");
         textArea.setText(String.join("\n", duplicates));
     }
@@ -94,7 +97,7 @@ public class AuditStageController implements Closeable {
                 lines.add(key);
             }
         });
-        lines.add(0, String.format("В базе данных %s неиспользуемых текстов.", lines.size()));
+        lines.add(0, String.format(str("audit.base.unused.texts"), lines.size()));
         lines.add(1, "");
         textArea.setText(String.join("\n", lines));
     }
@@ -119,10 +122,10 @@ public class AuditStageController implements Closeable {
         try {
             for (Map.Entry<String, String> entry : oldTitlesMap.entrySet()) {
                 FileUtils.renameFile(Config.getUserFile(entry.getValue()), Config.getUserFile(entry.getKey()));
-                JavaFxUtils.log(String.format("Переименовано: %s -> %s", entry.getValue(), entry.getKey()));
+                JavaFxUtils.log(String.format(str("audit.renamed"), entry.getValue(), entry.getKey()));
             }
         } catch (Exception e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось переименовать файлы!",
+            JavaFxUtils.showAlert(strError(), str("audit.rename.error"),
                     e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }

@@ -30,23 +30,23 @@
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                </padding>
-               <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="Показать только различия"/>
+               <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="%stats.diff.only.check.box"/>
             </VBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                </padding>
-               <Label text="Фильтры:">
+               <Label text="%stats.filters">
                   <padding>
                      <Insets left="10.0"/>
                   </padding>
                </Label>
-               <RadioButton fx:id="allRadioButton" mnemonicParsing="false" selected="true" text="Все игры">
+               <RadioButton fx:id="allRadioButton" mnemonicParsing="false" selected="true" text="%stats.all.games">
                   <toggleGroup>
                      <ToggleGroup fx:id="filterToggleGroup" />
                   </toggleGroup>
                </RadioButton>
-               <RadioButton fx:id="rusRadioButton" mnemonicParsing="false" text="На русском"
+               <RadioButton fx:id="rusRadioButton" mnemonicParsing="false" text="%stats.russian"
                             toggleGroup="$filterToggleGroup"/>
                <RadioButton fx:id="usaRadioButton" mnemonicParsing="false" text="NTSC-U"
                             toggleGroup="$filterToggleGroup"/>
@@ -59,7 +59,7 @@
                <RadioButton fx:id="gdiRadioButton" mnemonicParsing="false" text="GDI" toggleGroup="$filterToggleGroup"/>
             </HBox>
             <VBox alignment="CENTER">
-               <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Закрыть" />
+               <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="%close" />
             </VBox>
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

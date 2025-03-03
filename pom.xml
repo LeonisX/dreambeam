@@ -87,7 +87,12 @@
                     <mainClass>md.leonis.dreambeam.MainApp</mainClass>
                     <resourcesList>
                         <list>app.properties</list>
+                        <list>lang.languages_en_US.properties</list>
+                        <list>lang.languages_ru_RU.properties</list>
                     </resourcesList>
+                    <bundlesList>
+                        <list>lang.languages</list>
+                    </bundlesList>
                     <reflectionList>
                         <list>md.leonis.dreambeam.view.AboutStageController</list>
                         <list>md.leonis.dreambeam.view.AuditStageController</list>
@@ -99,11 +104,12 @@
                         <list>md.leonis.dreambeam.view.StatsStageController</list>
                         <list>md.leonis.dreambeam.view.ViewPaneController</list>
                         <list>md.leonis.dreambeam.view.WizardStageController</list>
-                        <list>javafx.scene.control.MenuBar</list>
+                        <list>javafx.scene.control.Hyperlink</list>
                         <list>javafx.scene.control.Menu</list>
+                        <list>javafx.scene.control.MenuBar</list>
                         <list>javafx.scene.control.MenuItem</list>
                         <list>javafx.scene.control.SeparatorMenuItem</list>
-                        <list>javafx.scene.control.Hyperlink</list>
+                        <list>javafx.scene.control.TitledPane</list>
                         <list>javafx.scene.image.Image</list>
                         <list>javafx.scene.image.ImageView</list>
                     </reflectionList>

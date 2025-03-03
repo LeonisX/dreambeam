@@ -19,37 +19,37 @@
             <HBox.margin>
                <Insets left="15.0" right="15.0" />
             </HBox.margin>
-            <Button fx:id="compareButton" mnemonicParsing="false" onAction="#compareButtonClick" prefWidth="80.0" text="Сравнить" />
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" prefWidth="80.0" text="Назад" />
+            <Button fx:id="compareButton" mnemonicParsing="false" onAction="#compareButtonClick" prefWidth="80.0" text="%compare.compare.button" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" prefWidth="80.0" text="%compare.back.button" />
          </VBox>
-         <TitledPane collapsible="false" text="Слева">
+         <TitledPane collapsible="false" text="%compare.left.side.titled.pane">
             <HBox spacing="5.0">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
-               <RadioButton fx:id="leftUserRadioButton" mnemonicParsing="false" selected="true" text="мои">
+               <RadioButton fx:id="leftUserRadioButton" mnemonicParsing="false" selected="true" text="%compare.user.radio.button">
                   <toggleGroup>
                      <ToggleGroup fx:id="leftToggleGroup" />
                   </toggleGroup>
                </RadioButton>
-               <RadioButton fx:id="leftBaseRadioButton" mnemonicParsing="false" text="база" toggleGroup="$leftToggleGroup">
+               <RadioButton fx:id="leftBaseRadioButton" mnemonicParsing="false" text="%compare.base.radio.button" toggleGroup="$leftToggleGroup">
                   <padding>
                      <Insets left="25.0" />
                   </padding>
                </RadioButton>
             </HBox>
          </TitledPane>
-         <TitledPane collapsible="false" text="Справа">
+         <TitledPane collapsible="false" text="%compare.right.side.titled.pane">
             <HBox spacing="5.0">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
-               <RadioButton fx:id="rightUserRadioButton" mnemonicParsing="false" text="мои">
+               <RadioButton fx:id="rightUserRadioButton" mnemonicParsing="false" text="%compare.user.radio.button">
                   <toggleGroup>
                      <ToggleGroup fx:id="rightToggleGroup" />
                   </toggleGroup>
                </RadioButton>
-               <RadioButton fx:id="rightBaseRadioButton" mnemonicParsing="false" selected="true" text="база" toggleGroup="$rightToggleGroup">
+               <RadioButton fx:id="rightBaseRadioButton" mnemonicParsing="false" selected="true" text="%compare.base.radio.button" toggleGroup="$rightToggleGroup">
                   <padding>
                      <Insets left="25.0" />
                   </padding>
@@ -63,10 +63,13 @@
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
-            <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="Показать только различия" />
+            <CheckBox fx:id="differenceCheckBox" mnemonicParsing="false" text="%compare.diff.only.check.box" />
          </VBox>
          <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="Закрыть" />
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick" text="%close">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin></Button>
          </VBox>
       </HBox>
    </top>

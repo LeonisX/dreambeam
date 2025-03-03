@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static md.leonis.dreambeam.utils.Config.str;
+import static md.leonis.dreambeam.utils.Config.strError;
+
 public class ServiceUtils {
 
     public static void calculateBaseHashes(boolean reportDuplicates) {
@@ -21,14 +24,14 @@ public class ServiceUtils {
                 reportBaseDuplicates();
             }
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файлы базы данных!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("service.base.files.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     public static void reportBaseDuplicates() {
         if (Config.baseDuplicates != null && !Config.baseDuplicates.isEmpty()) {
             Config.baseDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В базе данных есть дубликаты!",
+            JavaFxUtils.showAlert(strError(), str("service.base.duplicates.error"),
                     Config.baseDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
         }
     }
@@ -42,14 +45,14 @@ public class ServiceUtils {
                 reportUserDuplicates();
             }
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файлы пользовательской базы!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("service.user.files.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     public static void reportUserDuplicates() {
         if (!Config.userDuplicates.isEmpty()) {
             Config.userDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
-            JavaFxUtils.showAlert("Ошибка!", "В вашей базе данных есть дубликаты!",
+            JavaFxUtils.showAlert(strError(), str("service.user.duplicates.error"),
                     Config.userDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
         }
     }
@@ -60,10 +63,10 @@ public class ServiceUtils {
             calculateShortList();
             FileUtils.writeToFile(Config.getBaseGamesDatFile(), Config.baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> e.getValue() + " - " + e.getKey()).toList());
             String time = Utils.formatSeconds(Duration.between(start, Instant.now()).toMillis());
-            JavaFxUtils.showAlert("DreamBeam", "Создание краткого списка завершено!", String.format("Время выполнения: %s s", time), Alert.AlertType.INFORMATION);
+            JavaFxUtils.showAlert("DreamBeam", str("service.short.list.created"), String.format("%s: %s s", str("service.run.time"), time), Alert.AlertType.INFORMATION);
 
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось пересчитать краткий список!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("service.short.list.create.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -78,7 +81,7 @@ public class ServiceUtils {
                 Config.baseDuplicates = pair.getRight();
                 reportBaseDuplicates();
             } catch (Exception e) {
-                JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать файл " + path + "; Он будет пересоздан.", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+                JavaFxUtils.showAlert(strError(), String.format(str("service.short.list.file.read.error"), path), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
                 FileUtils.deleteSilently(path);
                 recalculateHashes();
             }
@@ -97,7 +100,7 @@ public class ServiceUtils {
         try {
             Config.textMap = Utils.loadTexts(Config.getTextsDir());
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось прочитать описания!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("service.texts.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 }

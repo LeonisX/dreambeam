@@ -10,6 +10,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         Config.loadProperties();
+        Config.loadLanguages();
         Config.loadAppProperties();
         JavaFxUtils.showMainPane(primaryStage);
     }

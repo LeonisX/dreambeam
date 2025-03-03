@@ -19,19 +19,19 @@
             <top>
                 <HBox BorderPane.alignment="CENTER">
                     <HBox prefWidth="150.0" BorderPane.alignment="CENTER">
-                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" text="&lt;&lt; назад" />
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" text="%view.back" />
                     </HBox>
                     <HBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
                         <padding>
                             <Insets bottom="5.0" left="5.0" right="5.0" />
                         </padding>
                         <StackPane>
-                            <Button fx:id="scanButton" mnemonicParsing="false" onAction="#scanButtonClick" prefWidth="190.0" text="Просканировать и распознать" />
-                            <Button fx:id="breakButton" mnemonicParsing="false" onAction="#breakButtonClick" prefWidth="150.0" text="Прервать процесс" visible="false" />
+                            <Button fx:id="scanButton" mnemonicParsing="false" onAction="#scanButtonClick" prefWidth="190.0" text="%view.scan.recognize.button" />
+                            <Button fx:id="breakButton" mnemonicParsing="false" onAction="#interruptButtonClick" prefWidth="150.0" text="%view.interrupt.button" visible="false" />
                         </StackPane>
                     </HBox>
                     <HBox alignment="CENTER" prefWidth="150.0" spacing="5.0" BorderPane.alignment="CENTER">
-                        <Label text="Время сканирования:">
+                        <Label text="%view.scan.time.label">
                             <padding>
                                 <Insets bottom="4.0" />
                             </padding>

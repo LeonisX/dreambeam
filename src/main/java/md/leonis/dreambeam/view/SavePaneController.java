@@ -14,7 +14,7 @@ import md.leonis.dreambeam.utils.StringUtils;
 import java.io.Closeable;
 import java.io.IOException;
 
-import static md.leonis.dreambeam.utils.Config.HR;
+import static md.leonis.dreambeam.utils.Config.*;
 
 public class SavePaneController implements Closeable {
 
@@ -48,15 +48,15 @@ public class SavePaneController implements Closeable {
     }
 
     public void backButtonClick() {
-        JavaFxUtils.showPane("ViewPane.fxml");
+        JavaFxUtils.showViewPanel();
     }
 
     public void saveButtonClick() {
         if (FileUtils.exists(Config.getBaseGamesFile(name)) && !recognized) {
-            JavaFxUtils.showAlert("Образ уже есть в основной базе!", "Возможно стоит указать, что это альтернативная версия.", "Например, " + name + " (Alt)", Alert.AlertType.WARNING);
+            JavaFxUtils.showAlert(str("save.base.image.exists"), str("save.alt.version"), String.format("%s, %s (Alt)", str("save.for.example"), name), Alert.AlertType.WARNING);
 
         } else if (FileUtils.exists(Config.getUserFile(name))) {
-            var buttonType = JavaFxUtils.showConfirmation("Образ уже есть в вашей базе!", "Перезаписать?", name);
+            var buttonType = JavaFxUtils.showConfirmation(str("save.user.image.exists"), str("save.overwrite"), name);
             if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
                 logSave();
                 saveAndClose();
@@ -70,7 +70,7 @@ public class SavePaneController implements Closeable {
     }
 
     private void logSave() {
-        JavaFxUtils.log("Образ сохранён");
+        JavaFxUtils.log(str("save.image.saved.log"));
         JavaFxUtils.log(HR);
     }
 
@@ -94,7 +94,7 @@ public class SavePaneController implements Closeable {
     }
 
     private void showFileAlert(Exception e, String name) {
-        JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить файл " + name, e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+        JavaFxUtils.showAlert(strError(), String.format("%s: %s", str("save.file.save.error"), name), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
     }
 
     public void runWizardButtonClick() {
@@ -102,7 +102,7 @@ public class SavePaneController implements Closeable {
         JavaFxUtils.showWizardWindow();
         if (StringUtils.isNotBlank(Config.wizardName)) {
             titleTextField.setText(Config.wizardName);
-            JavaFxUtils.log("Дали название образу:");
+            JavaFxUtils.log(str("save.image.name.log"));
             JavaFxUtils.log(Config.wizardName);
         }
     }

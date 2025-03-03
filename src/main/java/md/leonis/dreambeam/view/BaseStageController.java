@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static md.leonis.dreambeam.utils.Config.str;
+import static md.leonis.dreambeam.utils.Config.strError;
+
 public class BaseStageController implements Closeable {
 
     public Button closeButton;
@@ -73,7 +76,7 @@ public class BaseStageController implements Closeable {
                     Config.textMap.put(hash, textArea.getText());
                     FileUtils.writeToRussianFile(path, textArea.getText());
                 } catch (IOException e) {
-                    JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить текст в файл " + path, e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+                    JavaFxUtils.showAlert(strError(), String.format(str("base.error.save.text"), path), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
                 }
             } else {
                 Config.textMap.remove(hash);

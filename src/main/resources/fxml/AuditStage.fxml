@@ -19,40 +19,39 @@
                     <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </padding>
-                    <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick"
-                            text="&lt;&lt; назад"/>
+                    <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonClick"                            text="%audit.back"/>
                     <Separator>
                         <padding>
                             <Insets bottom="10.0" top="20.0"/>
                         </padding>
                     </Separator>
-                    <TitledPane collapsible="false" text="База пользователя">
+                    <TitledPane collapsible="false" text="%audit.user.titled.pane">
                         <VBox alignment="CENTER" spacing="10.0">
                             <padding>
                                 <Insets bottom="10.0" left="5.0" right="5.0" top="10.0"/>
                             </padding>
                             <Button fx:id="userUniqueButton" mnemonicParsing="false" onAction="#userUniqueButtonClick"
-                                    prefWidth="160.0" text="Поиск уникальных игр"/>
+                                    prefWidth="160.0" text="%audit.user.find.unique.games.button"/>
                             <Button fx:id="userDuplicatesButton" mnemonicParsing="false"
-                                    onAction="#userDuplicatesButtonClick" prefWidth="160.0" text="Поиск дубликатов"/>
+                                    onAction="#userDuplicatesButtonClick" prefWidth="160.0" text="%audit.user.find.duplicates.button"/>
                             <Button fx:id="userTitlesButton" mnemonicParsing="false" onAction="#userTitlesButtonClick"
-                                    prefWidth="160.0" text="Проверка названий"/>
+                                    prefWidth="160.0" text="%audit.user.verify.titles.button"/>
                             <Button fx:id="renameButton" disable="true" mnemonicParsing="false"
-                                    onAction="#renameButtonClick" text="Переименовать"/>
+                                    onAction="#renameButtonClick" text="%audit.rename.button"/>
                         </VBox>
                         <font>
                             <Font name="System Bold"/>
                         </font>
                     </TitledPane>
-                    <TitledPane collapsible="false" text="Основная база">
+                    <TitledPane collapsible="false" text="%audit.base.titled.pane">
                         <VBox alignment="CENTER" spacing="10.0">
                             <padding>
                                 <Insets bottom="10.0" left="5.0" right="5.0" top="10.0"/>
                             </padding>
                             <Button fx:id="baseDuplicatesButton" mnemonicParsing="false"
-                                    onAction="#baseDuplicatesButtonClick" prefWidth="160.0" text="Поиск дубликатов"/>
+                                    onAction="#baseDuplicatesButtonClick" prefWidth="160.0" text="%audit.base.find.duplicates.button"/>
                             <Button fx:id="textsButton" mnemonicParsing="false" onAction="#textsButtonClick"
-                                    prefWidth="160.0" text="Проверка текстов"/>
+                                    prefWidth="160.0" text="%audit.base.check.texts.button"/>
                         </VBox>
                         <padding>
                             <Insets top="10.0"/>
@@ -62,7 +61,7 @@
                         </font>
                     </TitledPane>
                     <Button fx:id="reloadFilesButton" mnemonicParsing="false" onAction="#reloadFilesButtonClick"
-                            text="Перезагрузить файлы">
+                            text="%audit.reload.files.button">
                         <VBox.margin>
                             <Insets top="10.0"/>
                         </VBox.margin>

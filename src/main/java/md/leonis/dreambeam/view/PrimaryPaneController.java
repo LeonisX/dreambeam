@@ -20,7 +20,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import static md.leonis.dreambeam.utils.Config.HR;
+import static md.leonis.dreambeam.utils.Config.*;
 
 public class PrimaryPaneController implements Closeable {
 
@@ -44,9 +44,9 @@ public class PrimaryPaneController implements Closeable {
         createBaseDir();
 
         userLabel.setText(Config.user);
-        userFilesLabel.setText(String.format("В вашей коллекции %s образов.", Config.userFiles));
+        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Config.userFiles));
         long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
-        baseFilesCountLabel.setText(String.format("В базе данных %s записи; %s проверены на 100%%", Config.baseHashes.size(), verifiedCount));
+        baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Config.baseHashes.size(), verifiedCount));
 
         rescanDrivesButtonClick();
     }
@@ -55,7 +55,7 @@ public class PrimaryPaneController implements Closeable {
         try {
             FileUtils.createDirectories(Config.getBaseGamesDir());
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось создать!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("primary.create.base.directory.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -63,13 +63,13 @@ public class PrimaryPaneController implements Closeable {
         try {
             Config.userFiles = FileUtils.getFilesCount(Config.getUserDir());
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось посчитать имеющиеся образы!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("primary.base.disks.calculate.count.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     private void inputUserName() {
         if (!Config.isUser()) {
-            JavaFxUtils.showInputDialog("Новый аккаунт", "Введите имя", null).ifPresentOrElse(this::setAndSaveUser, this::inputUserName);
+            JavaFxUtils.showInputDialog(str("primary.new.user"), str("primary.enter.your.name"), null).ifPresentOrElse(this::setAndSaveUser, this::inputUserName);
         }
     }
 
@@ -79,7 +79,7 @@ public class PrimaryPaneController implements Closeable {
             Config.saveProperties();
             FileUtils.createDirectories(Config.getUserDir());
         } catch (IOException e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось сохранить файл настроек!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("primary.config.file.save.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
             Config.setUser("Anonymous");
         }
     }
@@ -97,7 +97,7 @@ public class PrimaryPaneController implements Closeable {
     public void readFsButtonClick() {
         try {
             DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("Выберите каталог");
+            directoryChooser.setTitle(str("primary.select.directory"));
             if (Config.lastDirectory != null) {
                 directoryChooser.setInitialDirectory(Config.lastDirectory);
             }
@@ -113,18 +113,18 @@ public class PrimaryPaneController implements Closeable {
     }
 
     private void showReadDiskAlert(File file, Exception e) {
-        JavaFxUtils.showAlert("Ошибка!", String.format("Не удалось прочитать диск %s!", file.toString()), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+        JavaFxUtils.showAlert(strError(), String.format(str("primary.disk.read.error"), file.toString()), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
     }
 
     private void scanDriveAndOpenViewPane(File driveRoot) throws IOException {
         scanDrive(driveRoot);
 
         JavaFxUtils.log(HR);
-        JavaFxUtils.log("Файлы успешно найдены, можно сканировать.");
-        JavaFxUtils.log("#Метка диска (Volume Label): " + volumeLabel);
+        JavaFxUtils.log(str("primary.disk.read.ok.can.scan"));
+        JavaFxUtils.log(String.format("#%s: %s", str("primary.volume.label"), volumeLabel));
 
         Config.files = FileUtils.listFiles(driveRoot);
-        JavaFxUtils.showPane("ViewPane.fxml");
+        JavaFxUtils.showViewPanel();
     }
 
     public void readGdiButtonClick() {
@@ -149,12 +149,12 @@ public class PrimaryPaneController implements Closeable {
             cdVBox.getChildren().clear();
             drives.entrySet().forEach(drive -> cdVBox.getChildren().add(createCdButton(drive)));
         } catch (Exception e) {
-            JavaFxUtils.showAlert("Ошибка!", "Не удалось получить список дисков!", e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("primary.disks.list.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     public Button createCdButton(Map.Entry<String, Path> drive) {
-        Button button = new Button(String.format("Прочитать CD-ROM (%s)", drive.getKey().replace("\\", "")));
+        Button button = new Button(String.format(str("primary.read.cd"), drive.getKey().replace("\\", "")));
         button.setUserData(drive.getKey());
         button.setOnAction(this::readCdButtonClick);
 
@@ -233,7 +233,7 @@ public class PrimaryPaneController implements Closeable {
             //System.out.println("isTraversable: " + fsv.isTraversable(path)); // true
             //System.out.println("isHiddenFile: " + fsv.isHiddenFile(path)); // false
         } else {
-            throw new IOException(String.format("Привод %s не готов", driveRoot.toString()));
+            throw new IOException(String.format(str("primary.drive.is.not.ready.error"), driveRoot.toString()));
         }
     }
 

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static md.leonis.dreambeam.utils.Config.str;
+
 public class StatsStageController implements Closeable {
 
     public Button closeButton;
@@ -76,31 +78,31 @@ public class StatsStageController implements Closeable {
                 filter = "";
             }
             case "rus" -> {
-                text = " русских";
+                text = String.format(" %s", str("stats.filter.russian"));
                 filter = "(Rus)";
             }
             case "usa" -> {
-                text = " американских";
+                text = String.format(" %s", str("stats.filter.usa"));
                 filter = "NTSC-U";
             }
             case "eur" -> {
-                text = " европейских";
+                text = String.format(" %s", str("stats.filter.eur"));
                 filter = "PAL-E";
             }
             case "jap" -> {
-                text = " японских";
+                text = String.format(" %s", str("stats.filter.japan"));
                 filter = "NTSC-J";
             }
             case "home" -> {
-                text = " homebrew";
+                text = String.format(" %s", str("stats.filter.homebrew"));
                 filter = "(Homebrew)";
             }
             case "gdi" -> {
-                text = " GDI";
+                text = String.format(" %s", str("stats.filter.gdi"));
                 filter = "(GDI)";
             }
             default -> {
-                text = "Почини это!";
+                text = str("stats.filter.fix.it");
                 filter = "";
             }
         }
@@ -120,8 +122,8 @@ public class StatsStageController implements Closeable {
         long baseBest = baseFilteredGames.stream().filter(g -> g.contains("[!]")).count();
         int userUnique = gerUserUniqueGamesCount();
 
-        baseLabel.setText(String.format("В базе данных: %s%s дисков, %s проверены на 100%%", baseFilteredGames.size(), text, baseBest));
-        userLabel.setText(String.format("У вас %s%s дисков, %s уникальных, %s входят в базу данных.",
+        baseLabel.setText(String.format(str("stats.base.disks.stats"), baseFilteredGames.size(), text, baseBest));
+        userLabel.setText(String.format(str("stats.user.disks.stats"),
                 userFilteredGames.size(), text, userUnique, userFilteredGames.size() - userUnique));
     }
 

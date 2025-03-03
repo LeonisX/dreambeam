@@ -28,6 +28,8 @@ import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static md.leonis.dreambeam.utils.Config.str;
+
 public class ViewPaneController implements Closeable {
 
     public ListView<String> filesListView;
@@ -115,11 +117,10 @@ public class ViewPaneController implements Closeable {
 
                     //сравнивать на всякий случай с size
                     if (bytes.length != size) {
-                        throw new RuntimeException(String.format("%s размер различается: %s != %s !", file, bytes.length, size));
+                        throw new RuntimeException(String.format("%s: %s: %s != %s !", file, str("view.size.is.different.error"), bytes.length, size));
                     }
 
-                    int crc32 = BinaryUtils.crc32(bytes);
-                    Config.saveFiles.set(i, Utils.formatRecord(currentFile, bytes.length, String.format("%08X", crc32)));
+                    Config.saveFiles.set(i, Utils.formatRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes)));
 
                     double percents = i * 1.0 / Config.files.size();
                     Platform.runLater(() -> totalProgressLabel.setText(String.format("%.2f%%", percents * 100)));
@@ -130,7 +131,7 @@ public class ViewPaneController implements Closeable {
                     error = true;
                     Config.saveFiles.set(i, Utils.formatRecord(currentFile, size, "Error!!!"));
                     refreshControls(i);
-                    JavaFxUtils.log(file + "   - ошибка чтения!");
+                    JavaFxUtils.log(String.format("%s: %s", file, str("view.read.error")));
                 }
             }
 
@@ -138,7 +139,7 @@ public class ViewPaneController implements Closeable {
 
             if (!breaked) {
                 long duration = java.time.Duration.between(start, Instant.now()).toMillis();
-                JavaFxUtils.log("@Время сканирования: " + Utils.formatSeconds(duration));
+                JavaFxUtils.log(String.format("@%s: %s", str("view.scan.time"), Utils.formatSeconds(duration)));
 
                 Config.saveFiles.add(0, String.format("Total size: %s bytes.", totalSize));
                 //Config.saveFiles.add(""); // костыль конечно, но так работал код на Delphi :(
@@ -167,12 +168,12 @@ public class ViewPaneController implements Closeable {
                 String name = Config.baseHashes.get(Config.crc32);
 
                 if (name != null) {
-                    JavaFxUtils.log("@Диск распознан как: " + name);
+                    JavaFxUtils.log(String.format("@%s: %s", str("view.disk.recognized.as"), name));
                 } else {
-                    JavaFxUtils.log("#Этого диска нет в базе данных!");
+                    JavaFxUtils.log(String.format("#%s", str("view.unknown.disk")));
                 }
 
-                JavaFxUtils.showPane("SavePane.fxml");
+                JavaFxUtils.showSavePanel();
             }
         }).start();
     }
@@ -200,12 +201,12 @@ public class ViewPaneController implements Closeable {
         }
     }
 
-    public void breakButtonClick() {
+    public void interruptButtonClick() {
         breaked = true;
         breakButton.setVisible(false);
         scanButton.setVisible(true);
 
-        JavaFxUtils.log("!Операция прервана!");
+        JavaFxUtils.log(String.format("!%s", str("view.interrupted")));
         JavaFxUtils.showPrimaryPanel();
     }
 

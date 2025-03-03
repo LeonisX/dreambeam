@@ -97,7 +97,7 @@ public class WizardStageController implements Closeable {
 
         disksSpinner.setValueFactory(disksValueFactory);
         diskSpinner.setValueFactory(diskValueFactory);
-        showDiscs();
+        showDisks();
 
         //todo добавлять ещё свои свежие игры
         List<String> games = Utils.cleanAndSortGameNames(Config.baseHashes.values());
@@ -111,8 +111,8 @@ public class WizardStageController implements Closeable {
         homebrewCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> updateTags());
         gdiCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> updateTags());
 
-        disksSpinner.valueProperty().addListener((obs, oldValue, newValue) -> updateDiscs());
-        diskSpinner.valueProperty().addListener((obs, oldValue, newValue) -> updateDiscs());
+        disksSpinner.valueProperty().addListener((obs, oldValue, newValue) -> updateDisks());
+        diskSpinner.valueProperty().addListener((obs, oldValue, newValue) -> updateDisks());
 
         gamesListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
                 -> titleTextField.setText(gamesListView.getSelectionModel().getSelectedItem()));
@@ -185,17 +185,17 @@ public class WizardStageController implements Closeable {
         tagsTextField.setText(tags.stream().map(t -> "(" + t + ")").collect(Collectors.joining(" ")));
     }
 
-    private void updateDiscs() {
-        showDiscs();
+    private void updateDisks() {
+        showDisks();
 
         if (disksSpinner.getValue() > 0) {
-            disksTextField.setText(String.format("(Disc %s of %s)", diskSpinner.getValue(), disksSpinner.getValue()));
+            disksTextField.setText(String.format("(Disk %s of %s)", diskSpinner.getValue(), disksSpinner.getValue()));
         } else {
             disksTextField.setText("");
         }
     }
 
-    private void showDiscs() {
+    private void showDisks() {
         diskLabel.setVisible(disksSpinner.getValue() > 1);
         diskSpinner.setVisible(disksSpinner.getValue() > 1);
     }

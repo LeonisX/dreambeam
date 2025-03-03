@@ -3,11 +3,10 @@ package md.leonis.dreambeam.utils;
 import md.leonis.dreambeam.MainApp;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class Config {
 
@@ -16,6 +15,7 @@ public class Config {
 
     private static final String NAME = "Name";
     private static final String ADMIN = "Admin";
+    private static final String LOCALE = "Locale";
 
     public static Properties languageTable;
 
@@ -31,6 +31,8 @@ public class Config {
     public static Map<String, String> textMap;
 
     public static Properties properties = new Properties();
+    public static Properties languages = new Properties();
+    public static Locale locale = Locale.getDefault();
     public static String user;
     public static long userFiles;
     public static boolean admin;
@@ -88,9 +90,35 @@ public class Config {
             properties.load(inputStream);
             user = properties.getProperty(NAME);
             admin = "true".equals(properties.getProperty(ADMIN));
+            locale = new Locale(properties.getProperty(LOCALE));
         } catch (Exception ignored) {
         }
+    }
 
+    public static void loadLanguages() {
+        try {
+            doLoadLanguages();
+        } catch (Exception e) {
+            locale = new Locale("en_US");
+            try {
+                doLoadLanguages();
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private static void doLoadLanguages() throws Exception {
+        try (InputStream inputStream = MainApp.class.getResourceAsStream(String.format("/lang/languages_%s.properties", locale.toString()))) {
+            languages.load(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8));
+        }
+    }
+
+    public static String str(String key) {
+        return languages.getProperty(key, key);
+    }
+
+    public static String strError() {
+        return languages.getProperty("error", "error");
     }
 
     public static void loadAppProperties() {

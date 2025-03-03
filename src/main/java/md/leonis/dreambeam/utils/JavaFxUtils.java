@@ -20,6 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
+
+import static md.leonis.dreambeam.utils.Config.str;
 
 public class JavaFxUtils {
 
@@ -43,13 +46,15 @@ public class JavaFxUtils {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource(Config.resourcePath + "MainStage.fxml"));
+            loader.setResources(loadBundle());
             rootLayout = loader.load();
             controller = loader.getController();
+            System.out.println(controller);
             Scene scene = new Scene(rootLayout, sceneWidth, sceneHeight);
             primaryStage.setScene(scene);
             primaryStage.setOnHiding(event -> {
-                controller.saveLogsAndClose();
                 try {
+                    controller.saveLogsAndClose();
                     currentPaneController.close();
                 } catch (Exception ignored) {
                 }
@@ -64,15 +69,29 @@ public class JavaFxUtils {
         }
     }
 
+    private static ResourceBundle loadBundle() {
+        return ResourceBundle.getBundle("lang.languages", Config.locale);
+    }
+
     public static void showPrimaryPanel() {
         showPane("PrimaryPane.fxml");
     }
 
+    public static void showViewPanel() {
+        showPane("ViewPane.fxml");
+    }
+
+    public static void showSavePanel() {
+        showPane("SavePane.fxml");
+    }
+
+    @SuppressWarnings("all")
     public static void showPane(String resource) {
         Platform.runLater(() -> {
             try {
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+                loader.setResources(loadBundle());
                 Region innerPane = loader.load();
                 currentPaneController = loader.getController();
                 //if (controller instanceof SubPane) ((SubPane) controller).init();
@@ -93,29 +112,30 @@ public class JavaFxUtils {
     }
 
     public static void showWizardWindow() {
-        showWindow("WizardStage.fxml", "Мастер названия диска", 900, 600);
+        showWindow("WizardStage.fxml", str("wizard.title"), 900, 600);
     }
 
     public static void showCompareWindow() {
-        showWindow("CompareStage.fxml", "Сравнение дисков", 900, 600);
+        showWindow("CompareStage.fxml", str("compare.title"), 900, 600);
     }
 
     public static void showStatsWindow() {
-        showWindow("StatsStage.fxml", "Статистика", 900, 600);
+        showWindow("StatsStage.fxml", str("stats.title"), 900, 600);
     }
 
     public static void showBaseWindow() {
-        showWindow("BaseStage.fxml", "База данных (описания)", 900, 600);
+        showWindow("BaseStage.fxml", str("base.title"), 900, 600);
     }
 
     public static void showAuditWindow() {
-        showWindow("AuditStage.fxml", "Аудит базы данных", 900, 600);
+        showWindow("AuditStage.fxml", str("audit.title"), 900, 600);
     }
 
     public static void showAboutWindow() {
-        showWindow("AboutStage.fxml", "О программе", 320, 280);
+        showWindow("AboutStage.fxml", str("about.title"), 320, 280);
     }
 
+    @SuppressWarnings("all")
     public static void showWindow(String resource, String title, int width, int height) {
         Platform.runLater(() -> {
             try {
@@ -124,6 +144,7 @@ public class JavaFxUtils {
                 setIcon(currentStage);
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+                loader.setResources(loadBundle());
                 Parent root = loader.load();
                 currentStage.setScene(new Scene(root, width, height));
                 currentStage.showAndWait();

@@ -23,7 +23,7 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
-            <Label text="Назовём правильно диск">
+            <Label text="%wizard.lets.name.the.disk.label">
                 <font>
                     <Font name="System Bold Italic" size="16.0" />
                 </font>
@@ -34,9 +34,9 @@
         <ListView fx:id="gamesListView" prefHeight="590.0" prefWidth="573.0" BorderPane.alignment="CENTER" />
     </center>
     <right>
-        <VBox prefHeight="590.0" prefWidth="322.0" BorderPane.alignment="CENTER">
-            <TitledPane animated="false" collapsible="false" prefHeight="89.0" prefWidth="310.0" text="Язык">
-                <VBox prefHeight="85.0" prefWidth="308.0">
+        <VBox prefWidth="330.0" BorderPane.alignment="CENTER">
+            <TitledPane animated="false" collapsible="false" text="%wizard.language.titled.pane">
+                <VBox>
                     <HBox spacing="25.0">
                         <RadioButton fx:id="rusRadioButton" mnemonicParsing="false" selected="true" text="Rus">
                             <toggleGroup>
@@ -46,17 +46,17 @@
                         <RadioButton fx:id="japRadioButton" mnemonicParsing="false" text="Jap" toggleGroup="$languageToggleGroup" />
                         <RadioButton fx:id="gerRadioButton" mnemonicParsing="false" text="Ger" toggleGroup="$languageToggleGroup" />
                         <RadioButton fx:id="multiRadioButton" mnemonicParsing="false" text="Multi" toggleGroup="$languageToggleGroup" />
-                        <padding>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </padding>
+                  <padding>
+                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                  </padding>
                     </HBox>
                     <HBox spacing="25.0">
-                        <padding>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </padding>
                         <RadioButton fx:id="engRadioButton" mnemonicParsing="false" text="Eng" toggleGroup="$languageToggleGroup" />
                         <RadioButton fx:id="freRadioButton" mnemonicParsing="false" text="Fre" toggleGroup="$languageToggleGroup" />
                         <RadioButton fx:id="spaRadioButton" mnemonicParsing="false" text="Spa" toggleGroup="$languageToggleGroup" />
+                  <padding>
+                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                  </padding>
                     </HBox>
                 </VBox>
                 <padding>
@@ -64,12 +64,12 @@
                 </padding>
             </TitledPane>
             <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                <VBox alignment="TOP_CENTER" prefHeight="365.0" prefWidth="204.0">
-                    <StackPane alignment="TOP_LEFT" prefHeight="150.0" prefWidth="200.0">
-                        <TitledPane fx:id="translatorTitledPane" animated="false" collapsible="false" prefHeight="292.0" prefWidth="204.0" text="Название переводчика">
+                <VBox alignment="TOP_CENTER" prefWidth="190.0">
+                    <StackPane alignment="TOP_LEFT">
+                        <TitledPane fx:id="translatorTitledPane" animated="false" collapsible="false" prefHeight="292.0" prefWidth="204.0" text="%wizard.translator.titled.pane">
                             <VBox spacing="5.0">
                                 <HBox>
-                                    <RadioButton fx:id="kudosRadioButton" mnemonicParsing="false" prefWidth="100.0" selected="true" text="Kudos" HBox.hgrow="ALWAYS">
+                                    <RadioButton fx:id="kudosRadioButton" mnemonicParsing="false" prefWidth="90.0" selected="true" text="Kudos" HBox.hgrow="ALWAYS">
                                         <toggleGroup>
                                             <ToggleGroup fx:id="translatorToggleGroup" />
                                         </toggleGroup>
@@ -81,7 +81,7 @@
                                     </Label>
                                 </HBox>
                                 <HBox prefHeight="100.0" prefWidth="200.0">
-                                    <RadioButton fx:id="vectorRadioButton" mnemonicParsing="false" prefWidth="100.0" text="Vector" toggleGroup="$translatorToggleGroup" />
+                                    <RadioButton fx:id="vectorRadioButton" mnemonicParsing="false" prefWidth="90.0" text="Vector" toggleGroup="$translatorToggleGroup" />
                                     <Label text="(NoRG)">
                                         <font>
                                             <Font size="11.0" />
@@ -92,7 +92,7 @@
                                 <RadioButton fx:id="paradoxRadioButton" mnemonicParsing="false" text="Paradox" toggleGroup="$translatorToggleGroup" />
                                 <RadioButton fx:id="studiaMaxRadioButton" mnemonicParsing="false" text="Studia Max" toggleGroup="$translatorToggleGroup" />
                                 <HBox prefHeight="100.0" prefWidth="200.0">
-                                    <RadioButton fx:id="redStationRadioButton" mnemonicParsing="false" prefWidth="100.0" text="Red Station" toggleGroup="$translatorToggleGroup" />
+                                    <RadioButton fx:id="redStationRadioButton" mnemonicParsing="false" prefWidth="90.0" text="Red Station" toggleGroup="$translatorToggleGroup" />
                                     <Label text="(=Kudos)">
                                         <font>
                                             <Font size="11.0" />
@@ -100,12 +100,12 @@
                                     </Label>
                                 </HBox>
                                 <RadioButton fx:id="pinachetRadioButton" mnemonicParsing="false" text="Pinachet Game" toggleGroup="$translatorToggleGroup" />
-                                <RadioButton fx:id="unknownTranslatorRadioButton" mnemonicParsing="false" text="Не известно" toggleGroup="$translatorToggleGroup">
+                                <RadioButton fx:id="unknownTranslatorRadioButton" mnemonicParsing="false" text="%wizard.unknown.radio.button" toggleGroup="$translatorToggleGroup">
                                     <padding>
                                         <Insets top="10.0" />
                                     </padding>
                                 </RadioButton>
-                                <RadioButton fx:id="otherTranslatorRadioButton" mnemonicParsing="false" text="Другой" toggleGroup="$translatorToggleGroup">
+                                <RadioButton fx:id="otherTranslatorRadioButton" mnemonicParsing="false" text="%wizard.other.radio.button" toggleGroup="$translatorToggleGroup">
                                     <padding>
                                         <Insets top="10.0" />
                                     </padding>
@@ -113,7 +113,7 @@
                                 <TextField fx:id="translatorTextField" text="Kudos" />
                             </VBox>
                         </TitledPane>
-                        <TitledPane fx:id="regionTitledPane" animated="false" collapsible="false" text="Регион">
+                        <TitledPane fx:id="regionTitledPane" animated="false" collapsible="false" text="%wizard.region.titled.pane">
                             <VBox spacing="5.0">
                                 <RadioButton fx:id="palRadioButton" mnemonicParsing="false" selected="true" text="PAL-E">
                                     <toggleGroup>
@@ -123,7 +123,7 @@
                                 <RadioButton fx:id="ntscuRadioButton" mnemonicParsing="false" text="NTSC-U" toggleGroup="$regionToggleGroup" />
                                 <RadioButton fx:id="ntscjRadioButton" mnemonicParsing="false" text="NTSC-J" toggleGroup="$regionToggleGroup" />
                                 <RadioButton fx:id="ntscPalRadioButton" mnemonicParsing="false" text="NTSC-U, PAL-E" toggleGroup="$regionToggleGroup" />
-                                <RadioButton fx:id="unknownRegionRadioButton" mnemonicParsing="false" text="Не известно" toggleGroup="$regionToggleGroup">
+                                <RadioButton fx:id="unknownRegionRadioButton" mnemonicParsing="false" text="%wizard.unknown.radio.button" toggleGroup="$regionToggleGroup">
                                     <padding>
                                         <Insets bottom="5.0" top="5.0" />
                                     </padding>
@@ -134,18 +134,18 @@
                                         <Insets top="20.0" />
                                     </padding>
                                 </Separator>
-                                <Label text="Издатель (или риппер)" />
+                                <Label text="%wizard.publisher.label" />
                                 <TextField fx:id="publisherTextField" text="-" />
                             </VBox>
                         </TitledPane>
                     </StackPane>
                 </VBox>
                 <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                    <TitledPane animated="false" collapsible="false" text="Число дисков" VBox.vgrow="ALWAYS">
+                    <TitledPane animated="false" collapsible="false" text="%wizard.disks.number.titled.pane" VBox.vgrow="ALWAYS">
                         <VBox prefHeight="113.0" prefWidth="104.0" spacing="5.0">
-                            <Label text="Всего дисков:" />
+                            <Label text="%wizard.total.disks.label" />
                             <Spinner fx:id="disksSpinner" editable="true" />
-                            <Label fx:id="diskLabel" text="Номер диска:">
+                            <Label fx:id="diskLabel" text="%wizard.disk.number.label">
                                 <padding>
                                     <Insets top="5.0" />
                                 </padding>
@@ -153,24 +153,24 @@
                             <Spinner fx:id="diskSpinner" editable="true" />
                         </VBox>
                     </TitledPane>
-                    <TitledPane animated="false" collapsible="false" text="Другие настройки" VBox.vgrow="ALWAYS">
+                    <TitledPane animated="false" collapsible="false" text="%wizard.diff.settings.titled.pane" VBox.vgrow="ALWAYS">
                         <VBox prefHeight="194.0" prefWidth="116.0" spacing="5.0">
-                            <Label text="Бесплатная игра" />
-                            <CheckBox fx:id="homebrewCheckBox" mnemonicParsing="false" text="Homebrew" />
+                            <Label text="%wizard.free.game.label" />
+                            <CheckBox fx:id="homebrewCheckBox" mnemonicParsing="false" text="%wizard.homebrew.check.box" />
                      <Separator prefWidth="200.0">
                         <VBox.margin>
-                           <Insets top="10.0" />
+                           <Insets top="7.0" />
                         </VBox.margin>
                      </Separator>
-                            <Label text="Образ GD-ROM" />
-                            <CheckBox fx:id="gdiCheckBox" mnemonicParsing="false" text="GDI" />
+                            <Label text="%wizard.gd.rom.label" />
+                            <CheckBox fx:id="gdiCheckBox" mnemonicParsing="false" text="%wizard.gdi.check.box" />
                      <Separator prefWidth="200.0">
                         <VBox.margin>
-                           <Insets top="10.0" />
+                           <Insets top="7.0" />
                         </VBox.margin>
                      </Separator>
-                     <Label text="Образ с ошибками?" />
-                     <CheckBox fx:id="badDumpCheckBox" disable="true" mnemonicParsing="false" text="Битый образ" />
+                     <Label text="%wizard.image.error.label" />
+                     <CheckBox fx:id="badDumpCheckBox" disable="true" mnemonicParsing="false" text="%wizard.broken.image.check.box" />
                         </VBox>
                         <padding>
                             <Insets top="5.0" />
@@ -190,24 +190,24 @@
         </VBox>
     </right>
     <bottom>
-        <TitledPane animated="false" collapsible="false" prefHeight="100.0" prefWidth="900.0" text="Результат" BorderPane.alignment="CENTER">
+        <TitledPane animated="false" collapsible="false" prefHeight="100.0" prefWidth="900.0" text="%wizard.result.titled.pane" BorderPane.alignment="CENTER">
             <HBox spacing="5.0">
                 <VBox alignment="BOTTOM_CENTER" HBox.hgrow="ALWAYS">
 
-                    <TextField fx:id="titleTextField" text="Название игры" />
-                    <Label minHeight="22.0" text="название игры" textFill="#00000082" />
+                    <TextField fx:id="titleTextField" text="%wizard.title.text.field" />
+                    <Label minHeight="22.0" text="%wizard.title.label" textFill="#00000082" />
                 </VBox>
                 <VBox alignment="BOTTOM_CENTER">
                     <TextField fx:id="disksTextField" prefHeight="25.0" prefWidth="55.0" />
-                    <Label contentDisplay="CENTER" minHeight="22.0" text="диски (если&gt;1)" textFill="#00000082" />
+                    <Label contentDisplay="CENTER" minHeight="22.0" text="%wizard.disks.label" textFill="#00000082" />
 
                 </VBox>
                 <VBox alignment="BOTTOM_CENTER">
                     <TextField fx:id="tagsTextField" prefHeight="25.0" prefWidth="260.0" text="(Rus) (Kudos)" />
-                    <Label minHeight="22.0" text="другие характеристики" textFill="#00000082" />
+                    <Label minHeight="22.0" text="%wizard.other.tags.label" textFill="#00000082" />
                 </VBox>
                 <VBox alignment="CENTER" spacing="5.0">
-                    <Button fx:id="okButton" mnemonicParsing="false" onAction="#okButtonClick" prefHeight="60.0" prefWidth="60.0" text="Готово!">
+                    <Button fx:id="okButton" mnemonicParsing="false" onAction="#okButtonClick" prefHeight="60.0" prefWidth="60.0" text="%wizard.ready.button">
                         <VBox.margin>
                             <Insets />
                         </VBox.margin>
