@@ -49,7 +49,6 @@ public class JavaFxUtils {
             loader.setResources(loadBundle());
             rootLayout = loader.load();
             controller = loader.getController();
-            System.out.println(controller);
             Scene scene = new Scene(rootLayout, sceneWidth, sceneHeight);
             primaryStage.setScene(scene);
             primaryStage.setOnHiding(event -> {
@@ -70,7 +69,7 @@ public class JavaFxUtils {
     }
 
     private static ResourceBundle loadBundle() {
-        return ResourceBundle.getBundle("lang.languages", Config.locale);
+        return ResourceBundle.getBundle("languages", Config.locale);
     }
 
     public static void showPrimaryPanel() {

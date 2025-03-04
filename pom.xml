@@ -87,13 +87,22 @@
                     <mainClass>md.leonis.dreambeam.MainApp</mainClass>
                     <resourcesList>
                         <list>app.properties</list>
-                        <list>lang.languages_en_US.properties</list>
-                        <list>lang.languages_ru_RU.properties</list>
+                        <list>languages_en_US.properties</list>
+                        <list>languages_ru_RU.properties</list>
+                        <list>icons.icon16.png</list>
+                        <list>icons.icon20.png</list>
+                        <list>icons.icon24.png</list>
+                        <list>icons.icon32.png</list>
+                        <list>icons.icon64.png</list>
+                        <list>icons.icon128.png</list>
+                        <list>icons.icon256.png</list>
                     </resourcesList>
                     <bundlesList>
-                        <list>lang.languages</list>
+                        <list>languages</list>
                     </bundlesList>
                     <reflectionList>
+                        <list>md.leonis.dreambeam.MainApp</list><!--unneeded-->
+                        <list>md.leonis.dreambeam.utils.JavaFxUtils</list><!--unneeded-->
                         <list>md.leonis.dreambeam.view.AboutStageController</list>
                         <list>md.leonis.dreambeam.view.AuditStageController</list>
                         <list>md.leonis.dreambeam.view.BaseStageController</list>
@@ -108,7 +117,10 @@
                         <list>javafx.scene.control.Menu</list>
                         <list>javafx.scene.control.MenuBar</list>
                         <list>javafx.scene.control.MenuItem</list>
+                        <list>javafx.scene.control.RadioButton</list>
+                        <list>javafx.scene.control.Separator</list>
                         <list>javafx.scene.control.SeparatorMenuItem</list>
+                        <list>javafx.scene.control.Spinner</list>
                         <list>javafx.scene.control.TitledPane</list>
                         <list>javafx.scene.image.Image</list>
                         <list>javafx.scene.image.ImageView</list>
@@ -116,9 +128,53 @@
                     <releaseConfiguration>
                         <description>DreamBeam - Dreamcast collectors tool</description>
                         <vendor>Leonis</vendor>
+                        <!--<version>123</version>-->
                     </releaseConfiguration>
                 </configuration>
             </plugin>
+
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        md.leonis.dreambeam.MainApp
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+
+            <!--<plugin>
+                <groupId>org.graalvm.nativeimage</groupId>
+                <artifactId>native-image-maven-plugin</artifactId>
+                <version>21.1.0</version>
+                <configuration>
+                    <buildArgs>-J-Xmx4G -H:+ReportExceptionStackTraces -Djava.awt.headless=true -Dspring.native.remove-unused-autoconfig=true -Dspring.native.remove-yaml-support=true</buildArgs>
+                    <imageName>${project.artifactId}</imageName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>native-image</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>-->
         </plugins>
     </build>
 </project>

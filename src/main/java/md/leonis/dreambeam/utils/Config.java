@@ -108,7 +108,7 @@ public class Config {
     }
 
     private static void doLoadLanguages() throws Exception {
-        try (InputStream inputStream = MainApp.class.getResourceAsStream(String.format("/lang/languages_%s.properties", locale.toString()))) {
+        try (InputStream inputStream = MainApp.class.getResourceAsStream(String.format("/languages_%s.properties", locale.toString()))) {
             languages.load(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8));
         }
     }
@@ -141,6 +141,7 @@ public class Config {
     public static void setUser(String user) {
         Config.user = user;
         properties.put(NAME, user);
+        properties.put(LOCALE, locale.toString());
         if (admin) {
             properties.put(ADMIN, admin);
         }

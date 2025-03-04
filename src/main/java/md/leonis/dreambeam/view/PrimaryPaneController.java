@@ -9,16 +9,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import md.leonis.dreambeam.utils.*;
 
-import javax.swing.filechooser.FileSystemView;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static md.leonis.dreambeam.utils.Config.*;
 
@@ -116,7 +112,7 @@ public class PrimaryPaneController implements Closeable {
         JavaFxUtils.showAlert(strError(), String.format(str("primary.disk.read.error"), file.toString()), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
     }
 
-    private void scanDriveAndOpenViewPane(File driveRoot) throws IOException {
+    private void scanDriveAndOpenViewPane(File driveRoot) throws Exception {
         scanDrive(driveRoot);
 
         JavaFxUtils.log(HR);
@@ -200,7 +196,43 @@ public class PrimaryPaneController implements Closeable {
         }
     }
 
-    private void scanDrive(File driveRoot) throws IOException {
+    private void scanDrive(File driveRoot) throws Exception {
+        String driveLetter = driveRoot.toString().substring(0, 1).toUpperCase();
+        String[] command = new String[]{"PowerShell", "Get-Volume", "-DriveLetter", driveLetter};
+        final Process process = Runtime.getRuntime().exec(command);
+
+        BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        List<String> lines = new ArrayList<>();
+        String line;
+
+        while ((line = input.readLine()) != null) {
+            if (line.startsWith(driveLetter)) {
+                lines.add(line);
+            }
+        }
+
+        process.waitFor();
+
+        if (lines.isEmpty()) {
+            throw new IOException("Volume Label read error");
+        }
+
+        List<String> filtered = Arrays.stream(lines.get(lines.size() - 1).split(" ")).filter(StringUtils::isNotBlank).toList();
+        //[E           DuxRev-RC1   Unknown        CD-ROM    Healthy      OK                          0 B 22.87 MB]
+        //[E, DuxRev-RC1, Unknown, CD-ROM, Healthy, OK, 0, B, 22.87, MB]
+
+        //[F                        Unknown        CD-ROM    Healthy      Unknown                     0 B  0 B]
+        //[F, Unknown, CD-ROM, Healthy, Unknown, 0, B, 0, B]
+
+        if (!filtered.get(filtered.size() - 2).equals("0")) {
+            volumeLabel = filtered.get(1);
+        } else {
+            throw new IOException("Volume Label read error");
+        }
+    }
+
+    /*private void scanDrive(File driveRoot) throws IOException {
+        System.out.println(driveRoot.toString());
         FileSystemView fsv = FileSystemView.getFileSystemView();
 
         if (fsv.getSystemTypeDescription(driveRoot) != null) {
@@ -220,12 +252,12 @@ public class PrimaryPaneController implements Closeable {
             //isDrive: false
             //isFloppyDrive: false
 
-            /*System.out.println("Drive Name: " + driveRoot);
+            *//*System.out.println("Drive Name: " + driveRoot);
             System.out.println("getSystemTypeDescription: " + fsv.getSystemTypeDescription(driveRoot));
             System.out.println("getSystemDisplayName: " + volumeLabel);
             System.out.println("isFileSystem: " + fsv.isFileSystem(driveRoot));
             System.out.println("isDrive: " + fsv.isDrive(driveRoot));
-            System.out.println("isFloppyDrive: " + fsv.isFloppyDrive(driveRoot));*/
+            System.out.println("isFloppyDrive: " + fsv.isFloppyDrive(driveRoot));*//*
             //System.out.println("isComputerNode: " + fsv.isComputerNode(path)); // false
             //System.out.println("isLink: " + fsv.isLink(path)); // false
             //System.out.println("isFileSystemRoot: " + fsv.isFileSystemRoot(path)); // true
@@ -233,11 +265,11 @@ public class PrimaryPaneController implements Closeable {
             //System.out.println("isTraversable: " + fsv.isTraversable(path)); // true
             //System.out.println("isHiddenFile: " + fsv.isHiddenFile(path)); // false
         } else {
-            throw new IOException(String.format(str("primary.drive.is.not.ready.error"), driveRoot.toString()));
+            throw new IOException(Привод не готов);
         }
-    }
+    }*/
 
-    private String formatVolumeLabel(String volumeLabel) {
+    /*private String formatVolumeLabel(String volumeLabel) {
         if (!StringUtils.isBlank(volumeLabel)) {
             int index = volumeLabel.indexOf(") ");
             if (index == -1) {
@@ -251,7 +283,7 @@ public class PrimaryPaneController implements Closeable {
         }
 
         return volumeLabel;
-    }
+    }*/
 
     public void viewBaseButtonClick() {
         JavaFxUtils.showBaseWindow();
