@@ -3,6 +3,7 @@ package md.leonis.dreambeam.view;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import md.leonis.dreambeam.utils.*;
@@ -11,8 +12,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.time.Instant;
 
-import static md.leonis.dreambeam.utils.Config.HR;
-import static md.leonis.dreambeam.utils.Config.str;
+import static md.leonis.dreambeam.utils.Config.*;
 
 public class MainStageController implements Closeable {
 
@@ -34,6 +34,26 @@ public class MainStageController implements Closeable {
         log(HR);
         log(String.format("%s %s", str("main.log.start"), Instant.now()));
         log(HR);
+
+
+        inputUserName();
+    }
+
+    private void inputUserName() {
+        if (!Config.isUser()) {
+            JavaFxUtils.showInputDialog(str("primary.new.user"), str("primary.enter.your.name"), null).ifPresentOrElse(this::setAndSaveUser, this::inputUserName);
+        }
+    }
+
+    private void setAndSaveUser(String user) {
+        Config.setUser(user);
+        try {
+            Config.saveProperties();
+            FileUtils.createDirectories(Config.getUserDir());
+        } catch (IOException e) {
+            JavaFxUtils.showAlert(strError(), str("primary.config.file.save.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            Config.setUser("Anonymous");
+        }
     }
 
     public void exitMenuItemClick() {

@@ -17,8 +17,6 @@ public class Config {
     private static final String ADMIN = "Admin";
     private static final String LOCALE = "Locale";
 
-    public static Properties languageTable;
-
     static final String resourcePath = "/fxml/";
 
     public static List<Path> files;
@@ -90,7 +88,7 @@ public class Config {
             properties.load(inputStream);
             user = properties.getProperty(NAME);
             admin = "true".equals(properties.getProperty(ADMIN));
-            locale = new Locale(properties.getProperty(LOCALE));
+            locale = new Locale(properties.getProperty(LOCALE).substring(0, 2), properties.getProperty(LOCALE).substring(3).toUpperCase());
         } catch (Exception ignored) {
         }
     }
@@ -99,7 +97,7 @@ public class Config {
         try {
             doLoadLanguages();
         } catch (Exception e) {
-            locale = new Locale("en_US");
+            locale = new Locale("en", "US");
             try {
                 doLoadLanguages();
             } catch (Exception ignored) {
@@ -108,7 +106,7 @@ public class Config {
     }
 
     private static void doLoadLanguages() throws Exception {
-        try (InputStream inputStream = MainApp.class.getResourceAsStream(String.format("/languages_%s.properties", locale.toString()))) {
+        try (InputStream inputStream = MainApp.class.getResourceAsStream(String.format("/languages_%s.properties", locale))) {
             languages.load(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8));
         }
     }
@@ -141,7 +139,7 @@ public class Config {
     public static void setUser(String user) {
         Config.user = user;
         properties.put(NAME, user);
-        properties.put(LOCALE, locale.toString());
+        properties.put(LOCALE, locale);
         if (admin) {
             properties.put(ADMIN, admin);
         }
@@ -149,22 +147,5 @@ public class Config {
 
     public static void saveProperties() throws IOException {
         properties.store(new FileOutputStream(getConfigFile().toFile()), "Settings");
-    }
-
-    public static String getKeyByValue(char value) {
-        return getKeyByValue(value + "");
-    }
-
-    public static String getKeyByValue(String value) {
-        return Config.languageTable.entrySet().stream()
-                .filter(e -> {
-                    String val = e.getValue().toString();
-                    if (val.length() == 1) {
-                        return val.equals(value);
-                    } else {
-                        return val.split(";")[0].trim().equals(value);
-                    }
-                }).findFirst()
-                .map(objectEntry -> objectEntry.getKey().toString()).orElse("");
     }
 }

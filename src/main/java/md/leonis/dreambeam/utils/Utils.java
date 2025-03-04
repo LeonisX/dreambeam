@@ -6,10 +6,7 @@ import md.leonis.dreambeam.model.Pair;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Utils {
 
@@ -98,32 +95,32 @@ public class Utils {
                 } else {
                     char firstSymbol = message.isEmpty() ? '-' : message.charAt(0);
 
-                    setStyle(null);
+                    getStyleClass().clear();
                     //setStyle("-fx-font-weight: regular");
 
                     switch (firstSymbol) {
                         case '@' -> {
-                            setStyle("-fx-text-fill: green;");       // @
+                            getStyleClass().add("green");      // @
                             setText(message.substring(1));
                         }
                         case '#' -> {
-                            setStyle("-fx-text-fill: blue;");
-                            setText(message.substring(1));  // #    crc32
+                            getStyleClass().add("blue");       // #    crc32
+                            setText(message.substring(1));
                         }
                         case '?' -> {
-                            setStyle("-fx-text-fill: fuchsia;");    // ?    both
+                            getStyleClass().add("fuchsia");    // ?    both
                             setText(message.substring(1));
                         }
                         case '!' -> {
-                            setStyle("-fx-text-fill: red;");        // !
+                            getStyleClass().add("red");        // !
                             setText(message.substring(1));
                         }
                         case '~' -> {
-                            setStyle("-fx-text-fill: lightgray;");  // ~
+                            getStyleClass().add("lightgray");  // ~
                             setText(message.substring(1));
                         }
                         case '+' -> {
-                            setStyle("-fx-font-weight: bold;");  // +  bold text
+                            getStyleClass().add("bold");       // +  bold text
                             setText(message.substring(1));
                         }
                         default -> {

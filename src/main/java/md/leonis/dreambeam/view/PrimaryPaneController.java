@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import md.leonis.dreambeam.utils.*;
@@ -28,17 +29,17 @@ public class PrimaryPaneController implements Closeable {
     public Label baseFilesCountLabel;
     public VBox cdVBox;
     public Button viewBaseButton;
+    public TextArea dragTextArea;
 
     private Map<String, Path> drives;
     private String volumeLabel;
 
     @FXML
     private void initialize() {
-        inputUserName();
         ServiceUtils.readGamesDat();
-        readUserFilesCount();
         createBaseDir();
 
+        readUserFilesCount();
         userLabel.setText(Config.user);
         userFilesLabel.setText(String.format(str("primary.user.disks.count"), Config.userFiles));
         long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
@@ -60,23 +61,6 @@ public class PrimaryPaneController implements Closeable {
             Config.userFiles = FileUtils.getFilesCount(Config.getUserDir());
         } catch (IOException e) {
             JavaFxUtils.showAlert(strError(), str("primary.base.disks.calculate.count.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    private void inputUserName() {
-        if (!Config.isUser()) {
-            JavaFxUtils.showInputDialog(str("primary.new.user"), str("primary.enter.your.name"), null).ifPresentOrElse(this::setAndSaveUser, this::inputUserName);
-        }
-    }
-
-    private void setAndSaveUser(String user) {
-        Config.setUser(user);
-        try {
-            Config.saveProperties();
-            FileUtils.createDirectories(Config.getUserDir());
-        } catch (IOException e) {
-            JavaFxUtils.showAlert(strError(), str("primary.config.file.save.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-            Config.setUser("Anonymous");
         }
     }
 
@@ -227,7 +211,7 @@ public class PrimaryPaneController implements Closeable {
         if (!filtered.get(filtered.size() - 2).equals("0")) {
             volumeLabel = filtered.get(1);
         } else {
-            throw new IOException("Volume Label read error");
+            throw new IOException(str("primary.volume.label.read.error"));
         }
     }
 

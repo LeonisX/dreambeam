@@ -8,15 +8,17 @@
     <packaging>jar</packaging>
 
     <name>DreamBeam</name>
+    <description>DreamBeam - Dreamcast collectors tool</description>
     <url>http://tv-games.ru</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
-        <javafx.version>17.0.14</javafx.version>
+        <java.version>21</java.version>
+        <javafx.version>23.0.2</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <gluonfx.maven.plugin.version>1.0.23</gluonfx.maven.plugin.version>
+        <mainClass>md.leonis.dreambeam.MainApp</mainClass>
     </properties>
 
     <dependencies>
@@ -64,8 +66,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -73,7 +75,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${javafx.maven.plugin.version}</version>
                 <configuration>
-                    <mainClass>md.leonis.dreambeam.MainApp</mainClass>
+                    <mainClass>${mainClass}</mainClass>
                 </configuration>
             </plugin>
 
@@ -84,7 +86,7 @@
                 <configuration>
                     <target>host</target>
                     <verbose>false</verbose>
-                    <mainClass>md.leonis.dreambeam.MainApp</mainClass>
+                    <mainClass>${mainClass}</mainClass>
                     <resourcesList>
                         <list>app.properties</list>
                         <list>languages_en_US.properties</list>
@@ -117,6 +119,7 @@
                         <list>javafx.scene.control.Menu</list>
                         <list>javafx.scene.control.MenuBar</list>
                         <list>javafx.scene.control.MenuItem</list>
+                        <list>javafx.scene.control.ProgressBar</list>
                         <list>javafx.scene.control.RadioButton</list>
                         <list>javafx.scene.control.Separator</list>
                         <list>javafx.scene.control.SeparatorMenuItem</list>
@@ -126,9 +129,10 @@
                         <list>javafx.scene.image.ImageView</list>
                     </reflectionList>
                     <releaseConfiguration>
-                        <description>DreamBeam - Dreamcast collectors tool</description>
                         <vendor>Leonis</vendor>
-                        <!--<version>123</version>-->
+                        <description>${project.description}</description>
+                        <version>${project.version}</version>
+                        <skipSigning>true</skipSigning>
                     </releaseConfiguration>
                 </configuration>
             </plugin>

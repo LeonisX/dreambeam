@@ -32,9 +32,7 @@ public class JavaFxUtils {
     private static final int sceneWidth = 900;
     private static final int sceneHeight = 700;
 
-    private static final List<Integer> dimensions = List.of(16, 20, 24, 32, 40, 48, 64, 128, 256);
-    private static final String fileFormat = "src/main/resources/icons/icon%s.png";
-    private static final String resourceFormat = "icon%s.png";
+    private static final List<Integer> dimensions = List.of(16, 20, 24, 32, /*40, 48,*/ 64, 128, 256);
 
     public static Closeable currentPaneController;
 
@@ -50,6 +48,7 @@ public class JavaFxUtils {
             rootLayout = loader.load();
             controller = loader.getController();
             Scene scene = new Scene(rootLayout, sceneWidth, sceneHeight);
+            scene.getStylesheets().add(MainApp.class.getResource("/css.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setOnHiding(event -> {
                 try {
@@ -59,7 +58,7 @@ public class JavaFxUtils {
                 }
             });
 
-            setIcon(primaryStage);
+            setIcons(primaryStage);
             showPrimaryPanel();
 
             primaryStage.show();
@@ -101,11 +100,11 @@ public class JavaFxUtils {
         });
     }
 
-    private static void setIcon(Stage stage) {
+    @SuppressWarnings("all")
+    private static void setIcons(Stage stage) {
         try {
-            String format = Files.exists(Paths.get(String.format(fileFormat, 32))) ? fileFormat : resourceFormat;
-            dimensions.forEach(i -> stage.getIcons().add(new Image(String.format(format, i))));
-
+            dimensions.forEach(i -> stage.getIcons()
+                    .add(new Image(MainApp.class.getResourceAsStream(String.format("/icons/icon%s.png", i)))));
         } catch (Exception ignored) {
         }
     }
@@ -140,12 +139,14 @@ public class JavaFxUtils {
             try {
                 currentStage = new Stage();
                 currentStage.setTitle(title);
-                setIcon(currentStage);
+                setIcons(currentStage);
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
                 loader.setResources(loadBundle());
                 Parent root = loader.load();
-                currentStage.setScene(new Scene(root, width, height));
+                Scene scene = new Scene(root, width, height);
+                scene.getStylesheets().add(MainApp.class.getResource("/css.css").toExternalForm());
+                currentStage.setScene(scene);
                 currentStage.showAndWait();
             } catch (IOException e) {
                 throw new RuntimeException(e);

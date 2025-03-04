@@ -18,7 +18,7 @@ import static md.leonis.dreambeam.utils.Config.*;
 
 public class SavePaneController implements Closeable {
 
-    public Button backButton;
+    public Button closeButton;
     public HBox okHBox;
     public HBox nokHBox;
     public Button saveButton;
@@ -47,8 +47,8 @@ public class SavePaneController implements Closeable {
         });
     }
 
-    public void backButtonClick() {
-        JavaFxUtils.showViewPanel();
+    public void closeButtonClick() {
+        JavaFxUtils.showPrimaryPanel();
     }
 
     public void saveButtonClick() {
@@ -100,10 +100,24 @@ public class SavePaneController implements Closeable {
     public void runWizardButtonClick() {
         Config.wizardName = null;
         JavaFxUtils.showWizardWindow();
-        if (StringUtils.isNotBlank(Config.wizardName)) {
-            titleTextField.setText(Config.wizardName);
-            JavaFxUtils.log(str("save.image.name.log"));
-            JavaFxUtils.log(Config.wizardName);
+        Thread thread = new Thread(() -> {
+            while (Config.wizardName == null) {
+                sleep();
+            }
+            if (StringUtils.isNotBlank(Config.wizardName)) {
+                titleTextField.setText(Config.wizardName);
+                JavaFxUtils.log(str("save.image.name.log"));
+                JavaFxUtils.log(Config.wizardName);
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException ignored) {
         }
     }
 

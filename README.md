@@ -1,8 +1,11 @@
 DreamBeam
 =========
 
-native app: не видит ресурсов (конфиг) если указать в конфиге. без настройки оттуда вё ок.java -version
-так же проблема с иконками
+todo 40, 48 icon
+
+todo быстро переключаться Java 17-21, JavaFX 17-23
+
+native app: не показывает прайм если нет ини файла. при сохранении этот файл имеет нулевой размер
 
 - Settings: Выбор языка
 
@@ -91,9 +94,9 @@ Build executable file
 
 1. Install `[GraalVM](https://github.com/gluonhq/graal/releases/latest)`
 2. Install `[Microsoft Visual Studio](https://visualstudio.microsoft.com/downloads/)`
-3. In terminal run `cmd.exe /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"`
-4. `mvn clean gluonfx:compile`
-5. `mvn gluonfx:link`
-6. `mvn gluonfx:nativerun`
+3. In terminal run `cmd.exe /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"` (don't forget last double quote :)
+4. Next `mvn clean gluonfx:build gluonfx:nativerun`
+
+
 
 [Full instruction](https://docs.gluonhq.com/#platforms_windows)

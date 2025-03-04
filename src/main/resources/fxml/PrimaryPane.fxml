@@ -68,7 +68,7 @@
                                     <Button fx:id="rescanDrivesButton" mnemonicParsing="false" onAction="#rescanDrivesButtonClick" text="%primary.rescan.drives.button" />
                                 </VBox>
                             </VBox>
-                            <TextArea promptText="%primary.drag.here.text.area" />
+                            <TextArea fx:id="dragTextArea" promptText="%primary.drag.here.text.area" />
                         </HBox>
                     </center>
                 </BorderPane>
