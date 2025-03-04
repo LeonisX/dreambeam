@@ -32,7 +32,7 @@ public class JavaFxUtils {
     private static final int sceneWidth = 900;
     private static final int sceneHeight = 700;
 
-    private static final List<Integer> dimensions = List.of(16, 20, 24, 32, /*40, 48,*/ 64, 128, 256);
+    private static final List<Integer> dimensions = List.of(16, 20, 24, 32, 40, 48, 64, 128, 256);
 
     public static Closeable currentPaneController;
 
