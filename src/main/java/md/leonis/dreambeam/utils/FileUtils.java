@@ -68,6 +68,13 @@ public class FileUtils {
         Files.writeString(path, text, Charset.forName("windows-1251"));
     }
 
+    public static void renameFileSilently(Path source, Path target) {
+        try {
+            renameFile(source, target);
+        } catch (IOException ignored) {
+        }
+    }
+
     public static void renameFile(Path source, Path target) throws IOException {
         Files.move(source, target);
     }

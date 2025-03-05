@@ -25,6 +25,7 @@ public class PrimaryPaneController implements Closeable {
     public Button readGdiButton;
     public Button rescanDrivesButton;
     public Label userLabel;
+    public Button renameButton;
     public Label userFilesLabel;
     public Label baseFilesCountLabel;
     public VBox cdVBox;
@@ -39,13 +40,18 @@ public class PrimaryPaneController implements Closeable {
         ServiceUtils.readGamesDat();
         createBaseDir();
 
-        readUserFilesCount();
-        userLabel.setText(Config.user);
+        updateUserData();
         userFilesLabel.setText(String.format(str("primary.user.disks.count"), Config.userFiles));
         long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
         baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Config.baseHashes.size(), verifiedCount));
 
         rescanDrivesButtonClick();
+    }
+
+    private void updateUserData() {
+        renameButton.setVisible(!isUser());
+        readUserFilesCount();
+        userLabel.setText(Config.user);
     }
 
     private void createBaseDir() {
@@ -60,7 +66,7 @@ public class PrimaryPaneController implements Closeable {
         try {
             Config.userFiles = FileUtils.getFilesCount(Config.getUserDir());
         } catch (IOException e) {
-            JavaFxUtils.showAlert(strError(), str("primary.base.disks.calculate.count.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            Config.userFiles = 0;
         }
     }
 
@@ -271,6 +277,33 @@ public class PrimaryPaneController implements Closeable {
 
     public void viewBaseButtonClick() {
         JavaFxUtils.showBaseWindow();
+    }
+
+    public void renameButtonClick() {
+        inputUserName();
+    }
+
+    private void inputUserName() {
+        JavaFxUtils.showInputDialog(str("primary.new.user"), str("primary.enter.your.name"), null).ifPresentOrElse(this::setAndSaveUser, this::inputUserName);
+    }
+
+    private void setAndSaveUser(String user) {
+        if (!Objects.equals(Config.user, user)) {
+            Path oldUserDir = Config.getUserDir();
+            Path oldUserLogFile = Config.getUserLogFile();
+            Config.setUser(user);
+            FileUtils.renameFileSilently(oldUserDir, Config.getUserDir());
+            FileUtils.renameFileSilently(oldUserLogFile, Config.getUserLogFile());
+            try {
+                Config.saveProperties();
+                FileUtils.createDirectories(Config.getUserDir());
+            } catch (IOException e) {
+                JavaFxUtils.showAlert(strError(), str("primary.config.file.save.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+                Config.setUser(Config.DEFAULT_USER);
+            }
+        }
+
+        updateUserData();
     }
 
     @Override

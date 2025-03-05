@@ -23,14 +23,19 @@
                                 <padding>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
-                                <Label fx:id="userLabel">
-                                    <font>
-                                        <Font name="System Bold" size="12.0" />
-                                    </font>
-                                    <padding>
-                                        <Insets bottom="5.0" />
-                                    </padding>
-                                </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="7.0">
+                           <children>
+                                      <Label fx:id="userLabel">
+                                          <font>
+                                              <Font name="System Bold" size="12.0" />
+                                          </font>
+                                          <padding>
+                                              <Insets bottom="5.0" />
+                                          </padding>
+                                      </Label>
+                              <Button fx:id="renameButton" mnemonicParsing="false" onAction="#renameButtonClick" style="-fx-background-color: pink;" text="%primary.rename.me.button" />
+                           </children>
+                        </HBox>
                                 <Label fx:id="userFilesLabel" />
                                 <Label fx:id="baseFilesCountLabel">
                                     <padding>

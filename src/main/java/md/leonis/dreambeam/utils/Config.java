@@ -17,6 +17,8 @@ public class Config {
     private static final String ADMIN = "Admin";
     private static final String LOCALE = "Locale";
 
+    public static final String DEFAULT_USER = "Unnamed";
+
     static final String resourcePath = "/fxml/";
 
     public static List<Path> files;
@@ -31,7 +33,7 @@ public class Config {
     public static Properties properties = new Properties();
     public static Properties languages = new Properties();
     public static Locale locale = Locale.getDefault();
-    public static String user;
+    public static String user = DEFAULT_USER;
     public static long userFiles;
     public static boolean admin;
     public static File lastDirectory;
@@ -43,6 +45,9 @@ public class Config {
     public static String projectTime;
 
 
+    public static Path getUserLogFile() {
+        return getRootDir().resolve(user + ".log");
+    }
     public static Path getUserFile(String fileName) {
         return getUserDir().resolve(fileName);
     }
@@ -87,8 +92,11 @@ public class Config {
         try (InputStream inputStream = new FileInputStream(getConfigFile().toFile())) {
             properties.load(inputStream);
             user = properties.getProperty(NAME);
+            if (StringUtils.isBlank(user)) {
+                user = DEFAULT_USER;
+            }
             admin = "true".equals(properties.getProperty(ADMIN));
-            locale = new Locale(properties.getProperty(LOCALE).substring(0, 2), properties.getProperty(LOCALE).substring(3).toUpperCase());
+            locale = Locale.of(properties.getProperty(LOCALE).substring(0, 2), properties.getProperty(LOCALE).substring(3).toUpperCase());
         } catch (Exception ignored) {
         }
     }
@@ -97,7 +105,7 @@ public class Config {
         try {
             doLoadLanguages();
         } catch (Exception e) {
-            locale = new Locale("en", "US");
+            locale = Locale.of("en", "US");
             try {
                 doLoadLanguages();
             } catch (Exception ignored) {
@@ -133,13 +141,13 @@ public class Config {
     }
 
     public static boolean isUser() {
-        return StringUtils.isNotBlank(user);
+        return StringUtils.isNotBlank(user) && !user.equals(DEFAULT_USER);
     }
 
     public static void setUser(String user) {
         Config.user = user;
         properties.put(NAME, user);
-        properties.put(LOCALE, locale);
+        properties.put(LOCALE, locale.toString());
         if (admin) {
             properties.put(ADMIN, admin);
         }
