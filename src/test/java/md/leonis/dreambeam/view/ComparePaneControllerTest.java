@@ -1,262 +1,149 @@
 package md.leonis.dreambeam.view;
 
-import md.leonis.dreambeam.model.Game;
+import md.leonis.dreambeam.model.FileRecord;
+import md.leonis.dreambeam.model.Pair;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static md.leonis.dreambeam.view.ComparePaneController.withNullsList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ComparePaneControllerTest {
 
-    //todo понять почему падают
-    /*@Test
-    void mapGamesListFull() {
-        Map<String, Game> games1 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file2 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-
-        // equals
-        assertEquals("""
-                null
-                null""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games1, true)));
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games1, false)));
-
-        // empty2
-        assertEquals("""
-                !file1 [0 bytes] - 00000000
-                !file2 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, Map.of(), true)));
-        assertEquals("""
-                !file1 [0 bytes] - 00000000
-                !file2 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, Map.of(), false)));
-
-        // empty1
-        assertEquals("""
-                ~file1 [0 bytes] - 00000000
-                ~file2 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(Map.of(), games1, true)));
-        assertEquals("""
-                ~file1 [0 bytes] - 00000000
-                ~file2 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(Map.of(), games1, false)));
-    }
-
     @Test
-    void mapGamesListFull2() {
-        Map<String, Game> games1 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file2 [0 bytes] - 00000000"),
-                Game.parseLine("file3 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-
-        Map<String, Game> games2abs1 = Stream.of(
-                Game.parseLine("file2 [0 bytes] - 00000000"),
-                Game.parseLine("file3 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-
-        Map<String, Game> games2abs2 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file3 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-
-        Map<String, Game> games2abs3 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file2 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-
-        // missing 1
-        assertEquals("""
-                !file1 [0 bytes] - 00000000
-                null
-                null""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2abs1, true)));
-        assertEquals("""
-                !file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2abs1, false)));
-
-        // missing 2
-        assertEquals("""
-                null
-                !file2 [0 bytes] - 00000000
-                null""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2abs2, true)));
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                !file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2abs2, false)));
-
-        // missing3
-        assertEquals("""
-                null
-                null
-                !file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2abs3, true)));
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                !file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2abs3, false)));
-
-        //reverse
-
-        // missing 1
-        assertEquals("""
-                ~file1 [0 bytes] - 00000000
-                null
-                null""", String.join("\n", ComparePaneController.mapGamesListFull(games2abs1, games1, true)));
-        assertEquals("""
-                ~file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games2abs1, games1, false)));
-
-        // missing 2
-        assertEquals("""
-                null
-                ~file2 [0 bytes] - 00000000
-                null""", String.join("\n", ComparePaneController.mapGamesListFull(games2abs2, games1, true)));
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                ~file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games2abs2, games1, false)));
-
-        // missing3
-        assertEquals("""
-                null
-                null
-                ~file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games2abs3, games1, true)));
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                ~file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games2abs3, games1, false)));
-    }
-
-    @Test
-    void mapGamesListFull3() {
-        Map<String, Game> games1 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file2 [0 bytes] - 00000000"),
-                Game.parseLine("file3 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-
-        Map<String, Game> games2 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000001"),
-                Game.parseLine("file2 [1 bytes] - 00000000"),
-                Game.parseLine("file3 [1 bytes] - 00000001")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-
-        //diff
-        assertEquals("""
-                #file1 [0 bytes] - 00000000
-                #file2 [0 bytes] - 00000000
-                ?file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2, true)));
-        assertEquals("""
-                #file1 [0 bytes] - 00000000
-                #file2 [0 bytes] - 00000000
-                ?file3 [0 bytes] - 00000000""", String.join("\n", ComparePaneController.mapGamesListFull(games1, games2, false)));
-
-        //reverse
-        assertEquals("""
-                #file1 [0 bytes] - 00000001
-                #file2 [1 bytes] - 00000000
-                ?file3 [1 bytes] - 00000001""", String.join("\n", ComparePaneController.mapGamesListFull(games2, games1, true)));
-        assertEquals("""
-                #file1 [0 bytes] - 00000001
-                #file2 [1 bytes] - 00000000
-                ?file3 [1 bytes] - 00000001""", String.join("\n", ComparePaneController.mapGamesListFull(games2, games1, false)));
-    }
-
-    @Test
-    void withNullsList() {
-        Map<String, Game> games1 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file2 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+    void testWithNullsList() {
+        Map<String, FileRecord> games1 = Stream.of(
+                FileRecord.parseLine("file1 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file2 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
 
         // empty
         assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000""", String.join("\n",
-                ComparePaneController.withNullsList(games1, new ArrayList<>(games1.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+                file1 [0 bytes] - 00000000 == file1 [0 bytes] - 00000000
+                file2 [0 bytes] - 00000000 == file2 [0 bytes] - 00000000""", formatResult(withNullsList(games1, games1)));
 
         assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000""", String.join("\n",
-                ComparePaneController.withNullsList(games1, new ArrayList<>()).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+                file1 [0 bytes] - 00000000 == null
+                file2 [0 bytes] - 00000000 == null""", formatResult(withNullsList(games1, new HashMap<>())));
 
         assertEquals("""
-                null
-                null""", String.join("\n",
-                ComparePaneController.withNullsList(Map.of(), new ArrayList<>(games1.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+                null == file1 [0 bytes] - 00000000
+                null == file2 [0 bytes] - 00000000""", formatResult(withNullsList(Map.of(), games1)));
+    }
+
+    private String formatResult(List<Pair<FileRecord, FileRecord>> games) {
+        return String.join("\n", games.stream().map(g -> notNull(g.getLeft()) + " == " + notNull(g.getRight())).toList());
+    }
+
+    private String notNull(FileRecord record) {
+        return record == null ? "null" : record.fullTitle();
     }
 
     @Test
     void withNullsList2() {
-        Map<String, Game> games1 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file2 [0 bytes] - 00000000"),
-                Game.parseLine("file3 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+        Map<String, FileRecord> games1 = Stream.of(
+                FileRecord.parseLine("file1 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file2 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file3 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
 
-        Map<String, Game> games2abs1 = Stream.of(
-                Game.parseLine("file2 [0 bytes] - 00000000"),
-                Game.parseLine("file3 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+        Map<String, FileRecord> games2abs1 = Stream.of(
+                FileRecord.parseLine("file2 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file3 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
 
-        Map<String, Game> games2abs2 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file3 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+        compare(games1, games2abs1, """
+                file1 [0 bytes] - 00000000 == null
+                file2 [0 bytes] - 00000000 == file2 [0 bytes] - 00000000
+                file3 [0 bytes] - 00000000 == file3 [0 bytes] - 00000000""");
 
-        Map<String, Game> games2abs3 = Stream.of(
-                Game.parseLine("file1 [0 bytes] - 00000000"),
-                Game.parseLine("file2 [0 bytes] - 00000000")
-        ).collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+        Map<String, FileRecord> games2abs2 = Stream.of(
+                FileRecord.parseLine("file1 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file3 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
 
-        // missing 1
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n",
-                ComparePaneController.withNullsList(games1, new ArrayList<>(games2abs1.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+        compare(games1, games2abs2, """
+                file1 [0 bytes] - 00000000 == file1 [0 bytes] - 00000000
+                file2 [0 bytes] - 00000000 == null
+                file3 [0 bytes] - 00000000 == file3 [0 bytes] - 00000000""");
 
-        // missing 2
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n",
-                ComparePaneController.withNullsList(games1, new ArrayList<>(games2abs2.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+        Map<String, FileRecord> games2abs3 = Stream.of(
+                FileRecord.parseLine("file1 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file2 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
 
-        // missing3
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n",
-                ComparePaneController.withNullsList(games1, new ArrayList<>(games2abs3.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+        compare(games1, games2abs3, """
+                file1 [0 bytes] - 00000000 == file1 [0 bytes] - 00000000
+                file2 [0 bytes] - 00000000 == file2 [0 bytes] - 00000000
+                file3 [0 bytes] - 00000000 == null""");
+    }
 
-        //reverse
+    @Test
+    void withNullsList3() {
+        Map<String, FileRecord> games1 = Stream.of(
+                FileRecord.parseLine("file1 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file2 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file3 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
 
-        // missing 1
-        assertEquals("""
-                null
-                file2 [0 bytes] - 00000000
-                file3 [0 bytes] - 00000000""", String.join("\n",
-                ComparePaneController.withNullsList(games2abs1, new ArrayList<>(games1.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+        Map<String, FileRecord> games2 = Stream.of(
+                FileRecord.parseLine("file1 [0 bytes] - 10000000"),
+                FileRecord.parseLine("file4 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
 
-        // missing 2
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                null
-                file3 [0 bytes] - 00000000""", String.join("\n",
-                ComparePaneController.withNullsList(games2abs2, new ArrayList<>(games1.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
+        compare(games1, games2, """
+                file1 [0 bytes] - 00000000 == file1 [0 bytes] - 10000000
+                file2 [0 bytes] - 00000000 == null
+                file3 [0 bytes] - 00000000 == null
+                null == file4 [0 bytes] - 00000000""");
 
-        // missing3
-        assertEquals("""
-                file1 [0 bytes] - 00000000
-                file2 [0 bytes] - 00000000
-                null""", String.join("\n",
-                ComparePaneController.withNullsList(games2abs3, new ArrayList<>(games1.values())).stream().map(g -> g == null ? "null" : g.fullTitle()).toList()));
-    }*/
+        games2 = Stream.of(
+                FileRecord.parseLine("file2 [0 bytes] - 20000000"),
+                FileRecord.parseLine("file4 [0 bytes] - 00000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
+
+        compare(games1, games2, """
+                file1 [0 bytes] - 00000000 == null
+                file2 [0 bytes] - 00000000 == file2 [0 bytes] - 20000000
+                file3 [0 bytes] - 00000000 == null
+                null == file4 [0 bytes] - 00000000""");
+
+        games2 = Stream.of(
+                FileRecord.parseLine("file0 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file1 [0 bytes] - 10000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
+
+        compare(games1, games2, """
+                null == file0 [0 bytes] - 00000000
+                file1 [0 bytes] - 00000000 == file1 [0 bytes] - 10000000
+                file2 [0 bytes] - 00000000 == null
+                file3 [0 bytes] - 00000000 == null""");
+
+        games2 = Stream.of(
+                FileRecord.parseLine("file0 [0 bytes] - 00000000"),
+                FileRecord.parseLine("file2 [0 bytes] - 20000000")
+        ).collect(Collectors.toMap(FileRecord::title, Function.identity()));
+
+        compare(games1, games2, """
+                null == file0 [0 bytes] - 00000000
+                file1 [0 bytes] - 00000000 == null
+                file2 [0 bytes] - 00000000 == file2 [0 bytes] - 20000000
+                file3 [0 bytes] - 00000000 == null""");
+    }
+
+    private void compare(Map<String, FileRecord> games1, Map<String, FileRecord> games2, String result) {
+        var result1 = formatResult(withNullsList(games1, games2));
+        var result2 = formatResult(withNullsList(games2, games1));
+        assertEquals(result, result1);
+        String reversed = Arrays.stream(result.split("\n")).map(s -> {
+            String left = s.split("==")[0].trim();
+            String right = s.split("==")[1].trim();
+            return String.format("%s == %s", right, left);
+        }).collect(Collectors.joining("\n"));
+        assertEquals(reversed, result2);
+    }
 }

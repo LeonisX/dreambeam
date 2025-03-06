@@ -1,7 +1,7 @@
 DreamBeam
 =========
 
--сравнение дисков сломано
+-сравнение дисков: нет навигации по буквам
 
 
 todo full test eng, rus with scan, save

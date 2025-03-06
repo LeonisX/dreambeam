@@ -1,8 +1,8 @@
 package md.leonis.dreambeam.model;
 
-public record Game(String fullTitle, String title, int size, String hash, boolean isError) {
+public record FileRecord(String fullTitle, String title, int size, String hash, boolean isError) {
 
-    public static Game parseLine(String fullTitle) {
+    public static FileRecord parseLine(String fullTitle) {
         //movies\movie.res [696724 bytes] - 98F6B2D7
         //movies\tennis.sfd [53248000 bytes] - Error!!!
         int index1 = fullTitle.lastIndexOf('[');
@@ -12,6 +12,6 @@ public record Game(String fullTitle, String title, int size, String hash, boolea
         int size = Integer.parseInt(fullTitle.substring(index1 + 1, index2 - 1));
         String hash = fullTitle.substring(index3 + 2);
 
-        return new Game(fullTitle, title, size, hash, hash.contains("!!!"));
+        return new FileRecord(fullTitle, title, size, hash, hash.contains("!!!"));
     }
 }

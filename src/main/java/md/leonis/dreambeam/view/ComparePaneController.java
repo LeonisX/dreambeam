@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import md.leonis.dreambeam.model.Game;
+import md.leonis.dreambeam.model.FileRecord;
 import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static md.leonis.dreambeam.utils.Config.str;
 import static md.leonis.dreambeam.utils.Config.strError;
@@ -56,8 +57,6 @@ public class ComparePaneController implements Closeable {
     private void initialize() {
         leftUserRadioButton.setUserData("v");
         rightUserRadioButton.setUserData("v");
-
-        backButton.setDisable(false);
 
         calculateUserHashes();
 
@@ -139,13 +138,13 @@ public class ComparePaneController implements Closeable {
 
     public void compare() {
         try {
-            List<String> leftLines = loadGames(leftFile, leftUser);
-            List<String> rightLines = loadGames(rightFile, rightUser);
-            Map<String, Game> leftGames = mapGamesList(leftLines);
-            Map<String, Game> rightGames = mapGamesList(rightLines);
+            List<String> leftLines = loadRecords(leftFile, leftUser);
+            List<String> rightLines = loadRecords(rightFile, rightUser);
+            Map<String, FileRecord> leftRecords = mapGamesList(leftLines);
+            Map<String, FileRecord> rightRecords = mapGamesList(rightLines);
 
-            leftLines = mapGamesListFull(leftGames, rightGames, differenceCheckBox.isSelected());
-            rightLines = mapGamesListFull(rightGames, leftGames, differenceCheckBox.isSelected());
+            leftLines = mapGamesListFull(leftRecords, rightRecords, differenceCheckBox.isSelected());
+            rightLines = mapGamesListFull(rightRecords, leftRecords, differenceCheckBox.isSelected());
 
             leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
             rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
@@ -155,73 +154,40 @@ public class ComparePaneController implements Closeable {
         }
     }
 
-    private List<String> loadGames(String file, boolean isUser) throws IOException {
+    private List<String> loadRecords(String file, boolean isUser) throws IOException {
         return FileUtils.readFromFile(getGamePath(file, isUser));
     }
 
-    private Map<String, Game> mapGamesList(List<String> lines) {
-        return lines.subList(1, lines.size() - 1).stream().map(Game::parseLine)
-                .collect(Collectors.toMap(Game::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+    private Map<String, FileRecord> mapGamesList(List<String> lines) {
+        return lines.subList(1, lines.size() - 1).stream().map(FileRecord::parseLine)
+                .collect(Collectors.toMap(FileRecord::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
     }
 
-    public static List<String> mapGamesListFull(Map<String, Game> games1, Map<String, Game> games2, boolean diffOnly) {
-        List<Game> list1 = new ArrayList<>(games1.values());
-        List<Game> list2 = new ArrayList<>(games2.values());
-
+    public static List<String> mapGamesListFull(Map<String, FileRecord> records1, Map<String, FileRecord> records2, boolean diffOnly) {
         //1. найти общие
-        List<Game> list1nulls = withNullsList(games1, list2);
-        List<Game> list2nulls = withNullsList(games2, list1);
+        List<Pair<FileRecord, FileRecord>> table = withNullsList(records1, records2);
 
         List<String> result = new ArrayList<>();
 
-        for (int i = 0; i < list1nulls.size(); i++) {
-            Game game1 = list1nulls.get(i);
-            Game game2 = list2nulls.get(i);
-            if (game1 == null) {
-                result.add("~" + game2.fullTitle());
+        for (Pair<FileRecord, FileRecord> pair : table) {
+            FileRecord left = pair.getLeft();
+            FileRecord right = pair.getRight();
+            if (left == null) {
+                result.add("~" + right.fullTitle());
             } else {
-                result.add(compare(game1, game2, diffOnly));
+                result.add(compare(left, right, diffOnly));
             }
         }
 
         return result.stream().filter(Objects::nonNull).toList();
     }
 
-    public static List<Game> withNullsList(Map<String, Game> games1, List<Game> list2) {
-        List<Game> list1 = new ArrayList<>(games1.values());
-        List<Game> result = new ArrayList<>(list1);
-        List<Pair<Game, Boolean>> common2 = list2.stream().map(g2 -> {
-            Game game1 = games1.get(g2.title());
-            String title = game1 == null ? null : game1.title();
-            return Pair.of(g2, g2.title().equals(title));
-        }).toList();
-
-        //2. добавить между ними оставшиеся
-        int index2 = 0;
-        int index1 = 0;
-
-        for (int i = 0; i < common2.size(); i++) {
-            var pair = common2.get(i);
-            if (pair.getRight()) {
-                index1 = index(list1, pair.getLeft().title(), index1);
-                for (int j = 0; j < i - index2; j++) {
-                    result.add(index1, null);
-                }
-                index1++;
-                index2 = i + 1;
-            }
-        }
-
-        if (index2 < list2.size()) {
-            for (int j = index2; j < list2.size(); j++) {
-                result.add(null);
-            }
-        }
-
-        return result;
+    public static List<Pair<FileRecord, FileRecord>> withNullsList(Map<String, FileRecord> left, Map<String, FileRecord> right) {
+        return Stream.concat(left.entrySet().stream(), right.entrySet().stream()).map(Map.Entry::getKey)
+                .distinct().sorted().map(t -> Pair.of(left.get(t), right.get(t))).toList();
     }
 
-    public static int index(List<Game> list, String title, int index) {
+    public static int index(List<FileRecord> list, String title, int index) {
         for (int i = index; i < list.size(); i++) {
             if (list.get(i).title().equals(title)) {
                 return i;
@@ -230,27 +196,27 @@ public class ComparePaneController implements Closeable {
         throw new IllegalStateException();
     }
 
-    public static String compare(Game game1, Game game2, boolean diffOnly) {
-        CompareStatus status = compare(game1, game2);
+    public static String compare(FileRecord left, FileRecord right, boolean diffOnly) {
+        CompareStatus status = compare(left, right);
         if (diffOnly && status.equals(CompareStatus.EQUALS)) {
             return null;
         } else {
-            return status.getMarker() + game1.fullTitle();
+            return status.getMarker() + left.fullTitle();
         }
     }
 
-    public static CompareStatus compare(Game game1, Game game2) {
-        if (game2 == null) {
+    public static CompareStatus compare(FileRecord left, FileRecord right) {
+        if (right == null) {
             return CompareStatus.ABSENT;
         }
-        if (game1.isError()) {
+        if (left.isError()) {
             return CompareStatus.ERROR;
         }
         int code = 0;
-        if (!game1.hash().equals(game2.hash())) {
+        if (!left.hash().equals(right.hash())) {
             code++;
         }
-        if (game1.size() != game2.size()) {
+        if (left.size() != right.size()) {
             code++;
         }
         return CompareStatus.values()[code];

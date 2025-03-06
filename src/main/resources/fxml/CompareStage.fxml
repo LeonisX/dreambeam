@@ -20,7 +20,7 @@
                <Insets left="15.0" right="15.0" />
             </HBox.margin>
             <Button fx:id="compareButton" mnemonicParsing="false" onAction="#compareButtonClick" prefWidth="80.0" text="%compare.compare.button" />
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonClick" prefWidth="80.0" text="%compare.back.button" />
+            <Button fx:id="backButton" mnemonicParsing="false" disable="true" onAction="#backButtonClick" prefWidth="80.0" text="%compare.back.button" />
          </VBox>
          <TitledPane collapsible="false" text="%compare.left.side.titled.pane">
             <HBox spacing="5.0">
