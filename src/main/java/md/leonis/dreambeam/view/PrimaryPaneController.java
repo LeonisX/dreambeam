@@ -41,7 +41,6 @@ public class PrimaryPaneController implements Closeable {
         createBaseDir();
 
         updateUserData();
-        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Config.userFiles));
         long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
         baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Config.baseHashes.size(), verifiedCount));
 
@@ -50,8 +49,9 @@ public class PrimaryPaneController implements Closeable {
 
     private void updateUserData() {
         renameButton.setVisible(!isUser());
-        readUserFilesCount();
         userLabel.setText(Config.user);
+        readUserFilesCount();
+        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Config.userFiles));
     }
 
     private void createBaseDir() {

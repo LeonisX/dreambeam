@@ -33,7 +33,7 @@
                                               <Insets bottom="5.0" />
                                           </padding>
                                       </Label>
-                              <Button fx:id="renameButton" mnemonicParsing="false" onAction="#renameButtonClick" style="-fx-background-color: pink;" text="%primary.rename.me.button" />
+                              <Button fx:id="renameButton" focusTraversable="false" mnemonicParsing="false" onAction="#renameButtonClick" text="%primary.rename.me.button" textFill="RED" />
                            </children>
                         </HBox>
                                 <Label fx:id="userFilesLabel" />

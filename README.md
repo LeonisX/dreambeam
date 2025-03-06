@@ -1,7 +1,9 @@
 DreamBeam
 =========
 
-native app: не показывает прайм если нет ини файла. при сохранении этот файл имеет нулевой размер
+todo full test eng, rus with scan, save
+
+todo liberica
 
 - Settings: Выбор языка
 

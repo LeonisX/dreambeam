@@ -87,6 +87,7 @@
                     <target>host</target>
                     <verbose>false</verbose>
                     <mainClass>${mainClass}</mainClass>
+                    <!--<linkerArgs>awt.lib</linkerArgs>-->
                     <resourcesList>
                         <list>app.properties</list>
                         <list>languages_en_US.properties</list>
