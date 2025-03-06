@@ -123,8 +123,10 @@ public class ViewPaneController implements Closeable {
                     Config.saveFiles.set(i, Utils.formatRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes)));
 
                     double percents = i * 1.0 / Config.files.size();
-                    Platform.runLater(() -> totalProgressLabel.setText(String.format("%.2f%%", percents * 100)));
-                    Platform.runLater(() -> totalProgressBar.setProgress(percents));
+                    Platform.runLater(() -> {
+                        totalProgressLabel.setText(String.format("%.2f%%", percents * 100));
+                        totalProgressBar.setProgress(percents);
+                    });
                     refreshControls(i);
 
                 } catch (Exception e) {

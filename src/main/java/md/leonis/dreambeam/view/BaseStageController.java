@@ -42,7 +42,6 @@ public class BaseStageController implements Closeable {
         var handler = new ListViewHandler<>(gamesListView);
         gamesListView.setOnKeyPressed(handler::handle);
 
-        ServiceUtils.calculateUserHashes(true);
         ServiceUtils.loadTexts();
 
         showGames();

@@ -1,10 +1,7 @@
 package md.leonis.dreambeam.view;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import md.leonis.dreambeam.utils.Config;
 import md.leonis.dreambeam.utils.FileUtils;
@@ -24,6 +21,7 @@ public class SavePaneController implements Closeable {
     public Button saveButton;
     public TextField titleTextField;
     public Button runWizardButton;
+    public Label okLabel;
 
     private String name;
     private boolean recognized;
@@ -32,6 +30,13 @@ public class SavePaneController implements Closeable {
     private void initialize() {
         name = Config.baseHashes.get(Config.crc32);
         recognized = (name != null);
+        boolean recognizedUser = false;
+
+        if (!recognized) {
+            name = userHashes.get(Config.crc32);
+            recognized = (name != null);
+            recognizedUser = (name != null);
+        }
 
         if (recognized) {
             titleTextField.setText(name);
@@ -39,6 +44,7 @@ public class SavePaneController implements Closeable {
 
         saveButton.setDisable(!recognized);
         nokHBox.setVisible(!recognized);
+        okLabel.setText(recognizedUser ? str("save.user.disk.recognized") : str("save.base.disk.recognized"));
         okHBox.setVisible(recognized);
 
         titleTextField.textProperty().addListener((obs, old, nev) -> {
@@ -87,6 +93,7 @@ public class SavePaneController implements Closeable {
     private void saveAndClose() {
         try {
             FileUtils.writeToFile(Config.getUserFile(name), Config.saveFiles);
+            userHashes.put(Config.crc32, name);
             JavaFxUtils.showPrimaryPanel();
         } catch (IOException e) {
             showFileAlert(e, name);

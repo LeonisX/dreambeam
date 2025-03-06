@@ -95,7 +95,7 @@ public class Utils {
                 } else {
                     char firstSymbol = message.isEmpty() ? '-' : message.charAt(0);
 
-                    getStyleClass().clear();
+                    getStyleClass().removeAll("green", "blue", "fuchsia", "red", "lightgray", "bold");
                     //setStyle("-fx-font-weight: regular");
 
                     switch (firstSymbol) {

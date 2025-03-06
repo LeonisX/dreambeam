@@ -1,6 +1,9 @@
 DreamBeam
 =========
 
+-сравнение дисков сломано
+
+
 todo full test eng, rus with scan, save
 
 todo liberica
@@ -95,9 +98,27 @@ Build executable file
 3. In terminal run `cmd.exe /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"` (don't forget last double quote :)
 4. Next `mvn clean gluonfx:build gluonfx:nativerun`
 
+[Full instruction](https://docs.gluonhq.com/#platforms_windows)
+
 Compile vol.exe
 
 1. cl src\main\c\vol.c & del vol.obj
 
+[VirusTotal report](https://www.virustotal.com/gui/file-analysis/ZjMwOTdkNGEyOTU0NmM0OGI1OWNmMjBhMTUyNmFjM2U6MTc0MTI2MjA2OA==)
 
-[Full instruction](https://docs.gluonhq.com/#platforms_windows)
+4 false-positive reports from 71. You can verify the harmlessness of the file code `vol.c` source code or recompile it yourself.
+
+
+Technical problems
+------------------
+
+### AWT
+
+- https://github.com/oracle/graal/issues/5372
+- https://github.com/gluonhq/gluonfx-maven-plugin/issues/505
+- https://github.com/gluonhq/substrate/pull/1103
+
+### ICONS
+
+- https://stackoverflow.com/questions/70530643/display-of-an-icon-in-a-program-compiled-with-gluonfx
+- https://github.com/gluonhq/substrate/issues/1309

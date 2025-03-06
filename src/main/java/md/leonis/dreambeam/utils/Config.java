@@ -26,7 +26,7 @@ public class Config {
     public static String crc32;
     public static Map<String, String> baseHashes;
     public static Map<String, String> baseDuplicates;
-    public static Map<String, String> userHashes;
+    public static Map<String, String> userHashes = new HashMap<>();
     public static Map<String, String> userDuplicates;
     public static Map<String, String> textMap;
 
