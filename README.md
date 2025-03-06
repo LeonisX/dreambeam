@@ -95,6 +95,9 @@ Build executable file
 3. In terminal run `cmd.exe /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"` (don't forget last double quote :)
 4. Next `mvn clean gluonfx:build gluonfx:nativerun`
 
+Compile vol.exe
+
+1. cl src\main\c\vol.c & del vol.obj
 
 
 [Full instruction](https://docs.gluonhq.com/#platforms_windows)

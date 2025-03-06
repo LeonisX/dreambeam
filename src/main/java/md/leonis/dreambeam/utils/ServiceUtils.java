@@ -30,7 +30,6 @@ public class ServiceUtils {
 
     public static void reportBaseDuplicates() {
         if (Config.baseDuplicates != null && !Config.baseDuplicates.isEmpty()) {
-            Config.baseDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
             JavaFxUtils.showAlert(strError(), str("service.base.duplicates.error"),
                     Config.baseDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
         }
@@ -51,7 +50,6 @@ public class ServiceUtils {
 
     public static void reportUserDuplicates() {
         if (!Config.userDuplicates.isEmpty()) {
-            Config.userDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).forEach(System.out::println);
             JavaFxUtils.showAlert(strError(), str("service.user.duplicates.error"),
                     Config.userDuplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
         }

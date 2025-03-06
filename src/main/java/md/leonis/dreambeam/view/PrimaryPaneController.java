@@ -21,6 +21,11 @@ import static md.leonis.dreambeam.utils.Config.*;
 
 public class PrimaryPaneController implements Closeable {
 
+    private static final String SERIAL = "SERIAL:";
+    private static final String LABEL = "LABEL:";
+    private static final String SYSTEM = "SYSTEM:";
+    private static final String CDFS = "CDFS";
+
     public Button readFsButton;
     public Button readGdiButton;
     public Button rescanDrivesButton;
@@ -34,6 +39,8 @@ public class PrimaryPaneController implements Closeable {
 
     private Map<String, Path> drives;
     private String volumeLabel;
+    private String serialNumber;
+    private String fileSystem;
 
     @FXML
     private void initialize() {
@@ -102,15 +109,32 @@ public class PrimaryPaneController implements Closeable {
         JavaFxUtils.showAlert(strError(), String.format(str("primary.disk.read.error"), file.toString()), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
     }
 
-    private void scanDriveAndOpenViewPane(File driveRoot) throws Exception {
+    private void scanDriveAndOpenViewPane(File driveRoot) {
         scanDrive(driveRoot);
 
         JavaFxUtils.log(HR);
         JavaFxUtils.log(str("primary.disk.read.ok.can.scan"));
-        JavaFxUtils.log(String.format("#%s: %s", str("primary.volume.label"), volumeLabel));
+        if (fileSystem != null) {
+            String prefix = fileSystem.equals(CDFS) ? "#" : "";
+            JavaFxUtils.log(String.format("%s%s: %s", prefix, str("primary.file.system"), fileSystem));
+        }
+        if (volumeLabel != null) {
+            JavaFxUtils.log(String.format("#%s: %s", str("primary.volume.label"), volumeLabel));
+        }
+        if (serialNumber != null) {
+            JavaFxUtils.log(String.format("%s: %s", str("primary.serial.number"), serialNumber));
+        }
+        boolean alIsBad = (volumeLabel == null && serialNumber == null && fileSystem == null);
+        if (alIsBad) {
+            JavaFxUtils.log("!" + str("primary.volume.label.read.error"));
+        }
 
         Config.files = FileUtils.listFiles(driveRoot);
-        JavaFxUtils.showViewPanel();
+        if (files.isEmpty() && alIsBad) {
+            throw new RuntimeException(str("primary.disk.is.not.ready.error"));
+        } else {
+            JavaFxUtils.showViewPanel();
+        }
     }
 
     public void readGdiButtonClick() {
@@ -135,7 +159,7 @@ public class PrimaryPaneController implements Closeable {
             cdVBox.getChildren().clear();
             drives.entrySet().forEach(drive -> cdVBox.getChildren().add(createCdButton(drive)));
         } catch (Exception e) {
-            JavaFxUtils.showAlert(strError(), str("primary.disks.list.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            JavaFxUtils.showAlert(strError(), str("primary.disks.list.read.error"), e.getClass().getName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -186,7 +210,42 @@ public class PrimaryPaneController implements Closeable {
         }
     }
 
-    private void scanDrive(File driveRoot) throws Exception {
+    private void scanDrive(File driveRoot) {
+        volumeLabel = null;
+        serialNumber = null;
+        fileSystem = null;
+        scanDriveC(driveRoot);
+    }
+
+    private void scanDriveC(File driveRoot) {
+        try {
+            String[] command = new String[]{"vol", driveRoot.toString()};
+            final Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            List<String> lines = new ArrayList<>();
+            String line;
+
+            while ((line = input.readLine()) != null) {
+                lines.add(line);
+            }
+
+            process.waitFor();
+
+            if (lines.size() == 3) {
+                volumeLabel = lines.get(1).replace(LABEL, "").trim();
+                fileSystem = lines.get(2).replace(SYSTEM, "").trim();
+
+                String sn = lines.get(0).replace(SERIAL, "").trim();
+                sn = String.format("%08X", Long.parseLong(sn));
+                serialNumber = String.format("%s-%s", sn.substring(0, 4), sn.substring(4));
+            }
+        } catch (Exception e) {
+            JavaFxUtils.log("!" + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    /*private void scanDrivePowerShell(File driveRoot) throws Exception {
         String driveLetter = driveRoot.toString().substring(0, 1).toUpperCase();
         String[] command = new String[]{"PowerShell", "Get-Volume", "-DriveLetter", driveLetter};
         final Process process = Runtime.getRuntime().exec(command);
@@ -204,7 +263,7 @@ public class PrimaryPaneController implements Closeable {
         process.waitFor();
 
         if (lines.isEmpty()) {
-            throw new IOException("Volume Label read error");
+            throw new IOException(str("primary.volume.label.read.error"));
         }
 
         List<String> filtered = Arrays.stream(lines.get(lines.size() - 1).split(" ")).filter(StringUtils::isNotBlank).toList();
@@ -219,8 +278,9 @@ public class PrimaryPaneController implements Closeable {
         } else {
             throw new IOException(str("primary.volume.label.read.error"));
         }
-    }
+    }*/
 
+    // AWT problem :(
     /*private void scanDrive(File driveRoot) throws IOException {
         System.out.println(driveRoot.toString());
         FileSystemView fsv = FileSystemView.getFileSystemView();
