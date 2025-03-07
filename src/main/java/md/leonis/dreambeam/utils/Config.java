@@ -153,7 +153,11 @@ public class Config {
 
     public static void setUser(String user) {
         Config.user = user;
+    }
+
+    public static void saveProperties() throws IOException {
         updateProperties();
+        properties.store(new FileOutputStream(getConfigFile().toFile()), "Settings");
     }
 
     public static void updateProperties() {
@@ -164,9 +168,5 @@ public class Config {
         if (admin) {
             properties.put(ADMIN, admin);
         }
-    }
-
-    public static void saveProperties() throws IOException {
-        properties.store(new FileOutputStream(getConfigFile().toFile()), "Settings");
     }
 }

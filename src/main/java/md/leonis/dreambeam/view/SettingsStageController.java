@@ -43,7 +43,6 @@ public class SettingsStageController implements Closeable {
         Config.locale = locales.get(languageComboBox.getSelectionModel().getSelectedIndex());
         Config.updateNotification = updateNotificationCheckBox.isSelected();
         try {
-            Config.updateProperties();
             Config.saveProperties();
             //FileUtils.createDirectories(Config.getUserDir());
         } catch (IOException e) {

@@ -11,6 +11,8 @@ import javafx.stage.DirectoryChooser;
 import md.leonis.dreambeam.utils.*;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -54,15 +56,41 @@ public class PrimaryPaneController implements Closeable {
         baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Config.baseHashes.size(), verifiedCount));
 
         rescanDrivesButtonClick();
+
+        checkForUpdates();
+    }
+
+    private void checkForUpdates() {
+        new Thread(() -> {
+            try {
+                URL link = URI.create("https://github.com/LeonisX/dreambeam/blob/main/src/main/resources/app.properties").toURL();
+                try (InputStream inputStream = link.openStream()) {
+                    Properties prop = new Properties();
+                    prop.load(inputStream);
+
+                    var remoteProjectVersion = prop.getProperty("version", projectVersion);
+                    if (!notifiedVersion.equals(remoteProjectVersion)) {
+                        JavaFxUtils.showAlert(str("primary.update.notification.alert"), str("primary.new.version.available.alert"),
+                                String.format("DreamBeam %s", remoteProjectVersion), Alert.AlertType.INFORMATION);
+                        notifiedVersion = remoteProjectVersion;
+                        saveProperties();
+                    } else {
+                        JavaFxUtils.log(str("primary.log.no.update"));
+                    }
+                }
+            } catch (Exception e) {
+                JavaFxUtils.log(String.format("!%s: %s: %s", str("primary.log.new.version.verification.error"), e.getClass().getSimpleName(), e.getMessage()));
+            }
+        }).start();
     }
 
     private void readUserHashes() {
         new Thread(() -> {
             try {
                 ServiceUtils.calculateUserHashes(true, true);
-                JavaFxUtils.log("#" + str("primary.user.files.loaded"));
+                JavaFxUtils.log("#" + str("primary.log.user.files.loaded"));
             } catch (Exception e) {
-                JavaFxUtils.log("!" + str("primary.user.files.not.loaded"));
+                JavaFxUtils.log("!" + str("primary.log.user.files.not.loaded"));
             }
         }).start();
     }
@@ -136,20 +164,20 @@ public class PrimaryPaneController implements Closeable {
         scanDrive(driveRoot);
 
         JavaFxUtils.log(HR);
-        JavaFxUtils.log(str("primary.disk.read.ok.can.scan"));
+        JavaFxUtils.log(str("primary.log.disk.read.ok.can.scan"));
         if (fileSystem != null) {
             String prefix = fileSystem.equals(CDFS) ? "#" : "";
-            JavaFxUtils.log(String.format("%s%s: %s", prefix, str("primary.file.system"), fileSystem));
+            JavaFxUtils.log(String.format("%s%s: %s", prefix, str("primary.log.file.system"), fileSystem));
         }
         if (volumeLabel != null) {
-            JavaFxUtils.log(String.format("#%s: %s", str("primary.volume.label"), volumeLabel));
+            JavaFxUtils.log(String.format("#%s: %s", str("primary.log.volume.label"), volumeLabel));
         }
         if (serialNumber != null) {
-            JavaFxUtils.log(String.format("%s: %s", str("primary.serial.number"), serialNumber));
+            JavaFxUtils.log(String.format("%s: %s", str("primary.log.serial.number"), serialNumber));
         }
         boolean alIsBad = (volumeLabel == null && serialNumber == null && fileSystem == null);
         if (alIsBad) {
-            JavaFxUtils.log("!" + str("primary.volume.label.read.error"));
+            JavaFxUtils.log("!" + str("primary.log.volume.label.read.error"));
         }
 
         Config.files = FileUtils.listFiles(driveRoot);
