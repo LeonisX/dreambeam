@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static md.leonis.dreambeam.utils.Config.str;
 
@@ -41,8 +44,8 @@ public class StatsStageController implements Closeable {
 
     private volatile List<String> userGames;
     private volatile List<String> baseGames;
-    private volatile List<String> userFilteredGames;
-    private volatile List<String> baseFilteredGames;
+    private volatile Set<String> userFilteredGames;
+    private volatile Set<String> baseFilteredGames;
 
     @FXML
     private void initialize() {
@@ -107,14 +110,14 @@ public class StatsStageController implements Closeable {
             }
         }
 
-        userFilteredGames = userGames.stream().filter(g -> g.contains(filter)).toList();
-        baseFilteredGames = baseGames.stream().filter(g -> g.contains(filter)).toList();
+        userFilteredGames = userGames.stream().filter(g -> g.contains(filter)).collect(Collectors.toSet());
+        baseFilteredGames = baseGames.stream().filter(g -> g.contains(filter)).collect(Collectors.toSet());
 
-        List<String> list1nulls = withNullsList(userFilteredGames, baseFilteredGames);
-        List<String> list2nulls = withNullsList(baseFilteredGames, userFilteredGames);
+        List<Pair<String, String>> table1 = withNullsList(userFilteredGames, baseFilteredGames);
+        List<Pair<String, String>> table2 = withNullsList(baseFilteredGames, userFilteredGames);
 
-        List<String> leftLines = mapGamesListFull(list1nulls, list2nulls, differenceCheckBox.isSelected());
-        List<String> rightLines = mapGamesListFull(list2nulls, list1nulls, differenceCheckBox.isSelected()).stream().filter(g -> g.contains(filter)).toList();
+        List<String> leftLines = withNullsList(table1, differenceCheckBox.isSelected());
+        List<String> rightLines = withNullsList(table2, differenceCheckBox.isSelected());
 
         leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
         rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
@@ -133,19 +136,19 @@ public class StatsStageController implements Closeable {
         return list.size();
     }
 
-    public static List<String> mapGamesListFull(List<String> games1, List<String> games2, boolean diffOnly) {
+    public static List<String> withNullsList(List<Pair<String, String>> table, boolean diffOnly) {
         List<String> result = new ArrayList<>();
 
-        for (int i = 0; i < games1.size(); i++) {
-            String game1 = games1.get(i);
-            String game2 = games2.get(i);
-            if (game1 == null) {
+        for (Pair<String, String> stringStringPair : table) {
+            String left = stringStringPair.getLeft();
+            String right = stringStringPair.getRight();
+            if (left == null) {
                 if (!diffOnly) {
-                    result.add("~" + game2);
+                    result.add("~" + right);
                 }
             } else {
-                if (!diffOnly || !game1.equals(game2)) {
-                    result.add(checkStatus(game1));
+                if (!diffOnly || !left.equals(right)) {
+                    result.add(checkStatus(left));
                 }
             }
         }
@@ -153,31 +156,9 @@ public class StatsStageController implements Closeable {
         return result.stream().filter(Objects::nonNull).toList();
     }
 
-    public static List<String> withNullsList(List<String> games1, List<String> games2) {
-        List<String> result = new ArrayList<>(games1);
-        List<Pair<String, Boolean>> common2 = games2.stream().map(g2 -> Pair.of(g2, result.contains(g2))).toList();
-
-        int count = 0;
-
-        for (Pair<String, Boolean> pair : common2) {
-            if (pair.getRight()) {
-                int index1 = result.indexOf(pair.getLeft());
-                for (int j = 0; j < count; j++) {
-                    result.add(index1, null);
-                }
-                count = 0;
-            } else {
-                count++;
-            }
-        }
-
-        if (count > 0) {
-            for (int j = 0; j < count; j++) {
-                result.add(null);
-            }
-        }
-
-        return result;
+    public static List<Pair<String, String>> withNullsList(Set<String> left, Set<String> right) {
+        return Stream.concat(left.stream(), right.stream()).distinct().sorted()
+                .map(t -> Pair.of(left.contains(t) ? t : null, right.contains(t) ? t : null)).toList();
     }
 
     public static String checkStatus(String game1) {
