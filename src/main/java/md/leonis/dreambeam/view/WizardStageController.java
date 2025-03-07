@@ -127,7 +127,6 @@ public class WizardStageController implements Closeable {
         regionTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
         publisherTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
 
-
         languageToggleGroupListen();
     }
 
@@ -172,10 +171,6 @@ public class WizardStageController implements Closeable {
 
         if (homebrewCheckBox.isSelected()) {
             tags.add("Homebrew");
-        }
-
-        if (gdiCheckBox.isSelected()) {
-            tags.add("GDI");
         }
 
         if (gdiCheckBox.isSelected()) {

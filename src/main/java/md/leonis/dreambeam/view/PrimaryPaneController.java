@@ -83,7 +83,7 @@ public class PrimaryPaneController implements Closeable {
     }
 
     private void createUserDir() {
-        if (isUser()) {
+        if (StringUtils.isNotBlank(Config.user)) {
             try {
                 FileUtils.createDirectories(Config.getUserDir());
             } catch (IOException e) {
