@@ -124,7 +124,7 @@ public class Utils {
                             setText(message.substring(1));
                         }
                         default -> {
-                            setStyle(null);
+                            //setStyle(null);
                             //setStyle("-fx-text-fill: -fx-text-base-color;");
                             setText(message);
                         }

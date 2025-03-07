@@ -103,7 +103,7 @@ public class AuditStageController implements Closeable {
     }
 
     public void reloadFilesButtonClick() {
-        ServiceUtils.calculateUserHashes(false);
+        ServiceUtils.calculateUserHashes(false, true);
         ServiceUtils.calculateBaseHashes(false);
     }
 

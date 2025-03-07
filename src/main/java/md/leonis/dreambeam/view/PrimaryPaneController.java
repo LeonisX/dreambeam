@@ -47,11 +47,24 @@ public class PrimaryPaneController implements Closeable {
         ServiceUtils.readGamesDat();
         createBaseDir();
 
+        createUserDir();
+        readUserHashes();
         updateUserData();
         long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
         baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Config.baseHashes.size(), verifiedCount));
 
         rescanDrivesButtonClick();
+    }
+
+    private void readUserHashes() {
+        new Thread(() -> {
+            try {
+                ServiceUtils.calculateUserHashes(true, true);
+                JavaFxUtils.log("#" + str("primary.user.files.loaded"));
+            } catch (Exception e) {
+                JavaFxUtils.log("!" + str("primary.user.files.not.loaded"));
+            }
+        }).start();
     }
 
     private void updateUserData() {
@@ -66,6 +79,16 @@ public class PrimaryPaneController implements Closeable {
             FileUtils.createDirectories(Config.getBaseGamesDir());
         } catch (IOException e) {
             JavaFxUtils.showAlert(strError(), str("primary.create.base.directory.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void createUserDir() {
+        if (isUser()) {
+            try {
+                FileUtils.createDirectories(Config.getUserDir());
+            } catch (IOException e) {
+                JavaFxUtils.showAlert(strError(), str("primary.create.user.directory.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+            }
         }
     }
 

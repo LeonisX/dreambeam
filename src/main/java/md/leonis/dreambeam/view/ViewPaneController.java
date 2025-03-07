@@ -167,14 +167,6 @@ public class ViewPaneController implements Closeable {
                     //e
                 }
 
-                String name = Config.baseHashes.get(Config.crc32);
-
-                if (name != null) {
-                    JavaFxUtils.log(String.format("@%s: %s", str("view.disk.recognized.as"), name));
-                } else {
-                    JavaFxUtils.log(String.format("#%s", str("view.unknown.disk")));
-                }
-
                 JavaFxUtils.showSavePanel();
             }
         }).start();

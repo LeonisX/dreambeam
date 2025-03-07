@@ -42,6 +42,14 @@ public class SavePaneController implements Closeable {
             titleTextField.setText(name);
         }
 
+        if (recognizedUser) {
+            JavaFxUtils.log(String.format("@%s %s %s", str("save.disk.recognized.as"), name, str("save.user.database")));
+        } else if (recognized) {
+            JavaFxUtils.log(String.format("@%s %s", str("save.disk.recognized.as"), name));
+        } else {
+            JavaFxUtils.log(String.format("#%s", str("save.unknown.disk")));
+        }
+
         saveButton.setDisable(!recognized);
         nokHBox.setVisible(!recognized);
         okLabel.setText(recognizedUser ? str("save.user.disk.recognized") : str("save.base.disk.recognized"));

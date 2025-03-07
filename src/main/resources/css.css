@@ -1,4 +1,7 @@
 * {
+    .dummy {
+    }
+
     .green {
         -fx-text-fill: green;
     }

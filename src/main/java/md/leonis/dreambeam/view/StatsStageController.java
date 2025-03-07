@@ -57,7 +57,8 @@ public class StatsStageController implements Closeable {
         japRadioButton.setUserData("jap");
         homeRadioButton.setUserData("home");
         gdiRadioButton.setUserData("gdi");
-        ServiceUtils.calculateUserHashes(true);
+
+        ServiceUtils.calculateUserHashes(true, false);
 
         baseGames = Config.baseHashes.values().stream().sorted().toList();
         userGames = Config.userHashes.values().stream().sorted().toList();

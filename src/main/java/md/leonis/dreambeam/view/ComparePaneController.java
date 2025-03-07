@@ -10,10 +10,7 @@ import md.leonis.dreambeam.model.FileRecord;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
-import md.leonis.dreambeam.utils.Config;
-import md.leonis.dreambeam.utils.FileUtils;
-import md.leonis.dreambeam.utils.JavaFxUtils;
-import md.leonis.dreambeam.utils.Utils;
+import md.leonis.dreambeam.utils.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -59,7 +56,7 @@ public class ComparePaneController implements Closeable {
         leftUserRadioButton.setUserData("v");
         rightUserRadioButton.setUserData("v");
 
-        calculateUserHashes();
+        ServiceUtils.calculateUserHashes(true, false);
 
         baseGames = Config.baseHashes.values().stream().sorted().toList();
         userGames = Config.userHashes.values().stream().sorted().toList();
@@ -97,23 +94,6 @@ public class ComparePaneController implements Closeable {
         }
     }
 
-    private void calculateUserHashes() {
-        try {
-            var pair = Utils.calculateHashes(Config.getUserDir());
-            Config.userHashes = pair.getLeft();
-            reportDuplicates(pair.getRight());
-        } catch (IOException e) {
-            JavaFxUtils.showAlert(strError(), str("compare.user.files.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    private void reportDuplicates(Map<String, String> duplicates) {
-        if (!duplicates.isEmpty()) {
-            JavaFxUtils.showAlert(strError(), str("compare.user.duplicates.error"),
-                    duplicates.entrySet().stream().map(e -> e.getKey() + " == " + e.getValue()).collect(Collectors.joining("\n")), Alert.AlertType.WARNING);
-        }
-    }
-
     private void showLists() {
         showList(leftListView, leftUser);
         showList(rightListView, rightUser);
@@ -143,6 +123,9 @@ public class ComparePaneController implements Closeable {
 
         leftFile = leftListView.getSelectionModel().getSelectedItem();
         rightFile = rightListView.getSelectionModel().getSelectedItem();
+
+        leftListView.scrollTo(0);
+        rightListView.scrollTo(0);
 
         compare();
     }
@@ -239,6 +222,9 @@ public class ComparePaneController implements Closeable {
 
     public void backButtonClick() {
         showLists();
+
+        leftListView.scrollTo(0);
+        rightListView.scrollTo(0);
         backButton.setDisable(true);
         compareButton.setDisable(false);
     }

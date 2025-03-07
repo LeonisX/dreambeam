@@ -35,14 +35,19 @@ public class ServiceUtils {
         }
     }
 
-    public static void calculateUserHashes(boolean reportDuplicates) {
+    public static void calculateUserHashes(boolean reportDuplicates, boolean force) {
+        if (Config.userHashesLoaded && !force) {
+            return;
+        }
         try {
+            Config.userHashesLoaded = false;
             var pair = Utils.calculateHashes(Config.getUserDir());
             Config.userHashes = pair.getLeft();
             Config.userDuplicates = pair.getRight();
             if (reportDuplicates) {
                 reportUserDuplicates();
             }
+            Config.userHashesLoaded = true;
         } catch (IOException e) {
             JavaFxUtils.showAlert(strError(), str("service.user.files.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }

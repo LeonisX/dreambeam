@@ -27,6 +27,7 @@ public class Config {
     public static Map<String, String> baseHashes;
     public static Map<String, String> baseDuplicates;
     public static Map<String, String> userHashes = new HashMap<>();
+    public static volatile boolean userHashesLoaded = false;
     public static Map<String, String> userDuplicates;
     public static Map<String, String> textMap;
 
