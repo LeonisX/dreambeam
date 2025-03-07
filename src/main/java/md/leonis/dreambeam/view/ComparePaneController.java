@@ -230,9 +230,7 @@ public class ComparePaneController implements Closeable {
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
-        Node source = (Node) actionEvent.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
+        JavaFxUtils.closeStage(actionEvent);
     }
 
     @Override

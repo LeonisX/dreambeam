@@ -2,11 +2,10 @@ package md.leonis.dreambeam.view;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.utils.JavaFxUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -24,9 +23,7 @@ public class AboutStageController implements Closeable {
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
-        Node source = (Node) actionEvent.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
+        JavaFxUtils.closeStage(actionEvent);
     }
 
     @Override

@@ -16,6 +16,8 @@ public class Config {
     private static final String NAME = "Name";
     private static final String ADMIN = "Admin";
     private static final String LOCALE = "Locale";
+    private static final String UPDATE_NOTIFICATION = "UpdateNotification";
+    private static final String NOTIFIED_VERSION = "NotifiedVersion";
 
     public static final String DEFAULT_USER = "Unnamed";
 
@@ -31,9 +33,14 @@ public class Config {
     public static Map<String, String> userDuplicates;
     public static Map<String, String> textMap;
 
+    public static String projectVersion;
+    public static String projectTime;
+
     public static Properties properties = new Properties();
     public static Properties languages = new Properties();
     public static Locale locale = Locale.getDefault();
+    public static boolean updateNotification;
+    public static String notifiedVersion;
     public static String user = DEFAULT_USER;
     public static long userFiles;
     public static boolean admin;
@@ -41,9 +48,6 @@ public class Config {
     public static boolean isDirectory;
     public static String wizardName;
     public static boolean error;
-
-    public static String projectVersion;
-    public static String projectTime;
 
 
     public static Path getUserLogFile() {
@@ -96,6 +100,8 @@ public class Config {
             if (StringUtils.isBlank(user)) {
                 user = DEFAULT_USER;
             }
+            updateNotification = "true".equals(properties.getProperty(UPDATE_NOTIFICATION));
+            notifiedVersion = properties.getProperty(NOTIFIED_VERSION, projectVersion);
             admin = "true".equals(properties.getProperty(ADMIN));
             locale = Locale.of(properties.getProperty(LOCALE).substring(0, 2), properties.getProperty(LOCALE).substring(3).toUpperCase());
         } catch (Exception ignored) {
@@ -147,8 +153,14 @@ public class Config {
 
     public static void setUser(String user) {
         Config.user = user;
+        updateProperties();
+    }
+
+    public static void updateProperties() {
         properties.put(NAME, user);
         properties.put(LOCALE, locale.toString());
+        properties.put(UPDATE_NOTIFICATION, Boolean.toString(updateNotification));
+        properties.put(NOTIFIED_VERSION, notifiedVersion);
         if (admin) {
             properties.put(ADMIN, admin);
         }

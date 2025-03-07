@@ -3,13 +3,12 @@ package md.leonis.dreambeam.view;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.ServiceUtils;
 import md.leonis.dreambeam.utils.Utils;
 
@@ -179,9 +178,7 @@ public class StatsStageController implements Closeable {
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
-        Node source = (Node) actionEvent.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
+        JavaFxUtils.closeStage(actionEvent);
     }
 
     @Override

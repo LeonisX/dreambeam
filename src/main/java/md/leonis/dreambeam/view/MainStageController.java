@@ -18,6 +18,7 @@ public class MainStageController implements Closeable {
 
     public ListView<String> logListView;
     public MenuItem exitMenuItem;
+    public MenuItem settingsMenuItem;
 
     @FXML
     private void initialize() {
@@ -34,6 +35,10 @@ public class MainStageController implements Closeable {
         log(HR);
         log(String.format("%s %s", str("main.log.start"), Instant.now()));
         log(HR);
+    }
+
+    public void settingsMenuItemClick() {
+        JavaFxUtils.showSettingsWindow();
     }
 
     public void exitMenuItemClick() {

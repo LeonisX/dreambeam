@@ -12,16 +12,18 @@
     <top>
         <MenuBar maxHeight="28.0" BorderPane.alignment="CENTER">
             <Menu mnemonicParsing="false" text="%menu.file">
+                <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" onAction="#settingsMenuItemClick" text="%menu.file.settings" />
+                <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#exitMenuItemClick" text="%menu.file.exit" />
             </Menu>
-            <Menu mnemonicParsing="false" text="%menu.commands">
-                <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="%menu.commands.compare.disks" />
-                <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="%menu.commands.statistics" />
+            <Menu mnemonicParsing="false" text="%menu.tools">
+                <MenuItem mnemonicParsing="false" onAction="#compareDisks" text="%menu.tools.compare.disks" />
+                <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="%menu.tools.statistics" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#recalculateShortDb" text="%menu.commands.calculate.sort.db"/>
-                <MenuItem mnemonicParsing="false" onAction="#showAudit" text="%menu.commands.audit" />
+                <MenuItem mnemonicParsing="false" onAction="#recalculateShortDb" text="%menu.tools.calculate.sort.db"/>
+                <MenuItem mnemonicParsing="false" onAction="#showAudit" text="%menu.tools.audit" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="%menu.commands.disk.name.wizard" />
+                <MenuItem mnemonicParsing="false" onAction="#showDiskNameWizard" text="%menu.tools.disk.name.wizard" />
             </Menu>
             <Menu mnemonicParsing="false" text="%menu.help">
                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%menu.help.about" />

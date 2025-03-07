@@ -1,7 +1,9 @@
 package md.leonis.dreambeam.utils;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -133,6 +135,10 @@ public class JavaFxUtils {
         showWindow("AboutStage.fxml", str("about.title"), 320, 280);
     }
 
+    public static void showSettingsWindow() {
+        showWindow("SettingsStage.fxml", str("settings.title"), 320, 280);
+    }
+
     @SuppressWarnings("all")
     public static void showWindow(String resource, String title, int width, int height) {
         Platform.runLater(() -> {
@@ -210,6 +216,12 @@ public class JavaFxUtils {
         });
 
         return dialog.showAndWait();
+    }
+
+    public static void closeStage(ActionEvent actionEvent) {
+        Node source = (Node) actionEvent.getSource();
+        Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
     }
 
     public static void log(String message) {
