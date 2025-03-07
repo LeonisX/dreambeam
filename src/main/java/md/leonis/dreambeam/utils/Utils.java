@@ -133,4 +133,6 @@ public class Utils {
             }
         };
     }
+
+    public static List<String> prefs = List.of("@", "#", "?", "!", "~", "+");
 }

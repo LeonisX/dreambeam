@@ -39,7 +39,7 @@ public class BaseStageController implements Closeable {
         gamesListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> showText(newValue));
 
         //навигация набором букв
-        var handler = new ListViewHandler<>(gamesListView);
+        var handler = new ListViewHandler<>(gamesListView, null);
         gamesListView.setOnKeyPressed(handler::handle);
 
         ServiceUtils.loadTexts();

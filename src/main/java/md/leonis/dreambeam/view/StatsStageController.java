@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
@@ -121,6 +122,16 @@ public class StatsStageController implements Closeable {
 
         leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
         rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
+
+        var leftHandler = new ListViewHandler<>(leftListView, rightListView);
+        leftListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
+                -> leftHandler.sync(newValue));
+        leftListView.setOnKeyPressed(leftHandler::handle);
+
+        var rightHandler = new ListViewHandler<>(rightListView, leftListView);
+        rightListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
+                -> rightHandler.sync(newValue));
+        rightListView.setOnKeyPressed(rightHandler::handle);
 
         long baseBest = baseFilteredGames.stream().filter(g -> g.contains("[!]")).count();
         int userUnique = gerUserUniqueGamesCount();

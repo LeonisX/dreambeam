@@ -118,7 +118,7 @@ public class WizardStageController implements Closeable {
                 -> titleTextField.setText(gamesListView.getSelectionModel().getSelectedItem()));
 
         //навигация набором букв
-        var handler = new ListViewHandler<>(gamesListView);
+        var handler = new ListViewHandler<>(gamesListView, null);
         gamesListView.setOnKeyPressed(handler::handle);
 
         badDumpCheckBox.setSelected(Config.error);

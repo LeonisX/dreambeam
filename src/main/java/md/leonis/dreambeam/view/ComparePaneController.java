@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.model.FileRecord;
+import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.utils.Config;
@@ -74,6 +75,16 @@ public class ComparePaneController implements Closeable {
 
         leftListView.setCellFactory(Utils::colorLines);
         rightListView.setCellFactory(Utils::colorLines);
+
+        var leftHandler = new ListViewHandler<>(leftListView, rightListView);
+        leftListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
+                -> leftHandler.sync(newValue));
+        leftListView.setOnKeyPressed(leftHandler::handle);
+
+        var rightHandler = new ListViewHandler<>(rightListView, leftListView);
+        rightListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
+                -> rightHandler.sync(newValue));
+        rightListView.setOnKeyPressed(rightHandler::handle);
 
         differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());
 
