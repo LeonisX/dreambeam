@@ -15,6 +15,7 @@ import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import md.leonis.dreambeam.model.FileRecord;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.BinaryUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
@@ -26,13 +27,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static md.leonis.dreambeam.statik.Config.str;
 
 public class ViewPaneController implements Closeable {
 
-    public ListView<String> filesListView;
+    public ListView<FileRecord> filesListView;
     public Label timeLabel;
     public Button scanButton;
     public Button backButton;
@@ -54,12 +54,7 @@ public class ViewPaneController implements Closeable {
     private void initialize() {
         progressVBox.setManaged(false);
 
-        update();
-    }
-
-    private void update() {
-        Storage.imageProcessingFiles = Storage.imageFiles.stream().map(Path::toString).collect(Collectors.toList());
-        filesListView.setItems(FXCollections.observableList(Storage.imageProcessingFiles));
+        filesListView.setItems(FXCollections.observableList(Storage.diskImage.getRecords()));
         filesListView.scrollTo(0);
     }
 
@@ -91,12 +86,12 @@ public class ViewPaneController implements Closeable {
         new Thread(() -> {
             long totalSize = 0;
 
-            for (int i = 0; i < Storage.imageFiles.size(); i++) {
+            for (int i = 0; i < Storage.diskImage.getFiles().size(); i++) {
                 if (breaked) {
                     break;
                 }
 
-                Path file = Storage.imageFiles.get(i);
+                Path file = Storage.diskImage.getFiles().get(i);
                 long size;
                 try {
                     size = Files.size(file);
@@ -105,24 +100,22 @@ public class ViewPaneController implements Closeable {
                 }
                 totalSize += size;
 
-                String currentFile = Storage.isDirectory
-                        ? file.toString().replace(Storage.lastDirectory.getAbsolutePath(), "").substring(1).toLowerCase()
-                        : file.subpath(0, file.getNameCount()).toString().toLowerCase();
+                String currentFile = Storage.diskImage.getViewFileName(file);
 
                 Platform.runLater(() -> fileProgressLabel.setText(currentFile));
 
                 try {
                     //todo читать блоками а не целиком
-                    byte[] bytes = Files.readAllBytes(Storage.imageFiles.get(i));
+                    byte[] bytes = Files.readAllBytes(file);
 
                     //сравнивать на всякий случай с size
                     if (bytes.length != size) {
                         throw new RuntimeException(String.format("%s: %s: %s != %s !", file, str("view.size.is.different.error"), bytes.length, size));
                     }
 
-                    Storage.imageProcessingFiles.set(i, Utils.formatRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes)));
+                    Storage.diskImage.getRecords().set(i, new FileRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes), false));
 
-                    double percents = i * 1.0 / Storage.imageFiles.size();
+                    double percents = i * 1.0 / Storage.diskImage.getFiles().size();
                     Platform.runLater(() -> {
                         totalProgressLabel.setText(String.format("%.2f%%", percents * 100));
                         totalProgressBar.setProgress(percents);
@@ -131,7 +124,7 @@ public class ViewPaneController implements Closeable {
 
                 } catch (Exception e) {
                     error = true;
-                    Storage.imageProcessingFiles.set(i, Utils.formatRecord(currentFile, size, "Error!!!"));
+                    Storage.diskImage.getRecords().set(i, new FileRecord(currentFile, size, "", true));
                     refreshControls(i);
                     JavaFxUtils.log(String.format("%s: %s", file, str("view.read.error")));
                 }
@@ -143,11 +136,9 @@ public class ViewPaneController implements Closeable {
                 long duration = java.time.Duration.between(start, Instant.now()).toMillis();
                 JavaFxUtils.log(String.format("@%s: %s", str("view.scan.time"), Utils.formatSeconds(duration)));
 
-                Storage.imageProcessingFiles.add(0, String.format("Total size: %s bytes.", totalSize));
-                //Storage.saveFiles.add(""); // костыль конечно, но так работал код на Delphi :(
-
-                Storage.error = error;
-                Storage.crc32 = BinaryUtils.crc32String((String.join("\r\n", Storage.imageProcessingFiles) + "\r\n").getBytes());// костыль конечно, но так работал код на Delphi :(
+                Storage.diskImage.setSize(totalSize);
+                Storage.diskImage.calculateCrc32();
+                Storage.diskImage.setError(error);
 
                 if (error) {
                     //todo если были ошибки - получить размер файла и поискать похожие

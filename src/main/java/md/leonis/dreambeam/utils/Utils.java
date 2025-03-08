@@ -64,10 +64,6 @@ public class Utils {
         }).distinct().sorted().toList();
     }
 
-    public static String formatRecord(String title, long size, String hash) {
-        return String.format("%s [%s bytes] - %s", title, size, hash);
-    }
-
     public static String formatSeconds(long millis) {
         return formatDuration(millis, ":");
     }

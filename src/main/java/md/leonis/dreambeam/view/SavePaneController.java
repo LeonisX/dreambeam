@@ -14,7 +14,6 @@ import java.io.IOException;
 
 import static md.leonis.dreambeam.statik.Config.str;
 import static md.leonis.dreambeam.statik.Config.strError;
-import static md.leonis.dreambeam.statik.Storage.userHashes;
 
 public class SavePaneController implements Closeable {
 
@@ -31,12 +30,12 @@ public class SavePaneController implements Closeable {
 
     @FXML
     private void initialize() {
-        name = Storage.baseHashes.get(Storage.crc32);
+        name = Storage.baseHashes.get(Storage.diskImage.getCrc32());
         recognized = (name != null);
         boolean recognizedUser = false;
 
         if (!recognized) {
-            name = Storage.userHashes.get(Storage.crc32);
+            name = Storage.userHashes.get(Storage.diskImage.getCrc32());
             recognized = (name != null);
             recognizedUser = (name != null);
         }

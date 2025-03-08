@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import md.leonis.dreambeam.model.DiskImage;
 import md.leonis.dreambeam.model.Version;
 import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.statik.Storage;
@@ -136,9 +137,8 @@ public class PrimaryPaneController implements Closeable {
 
     public void readCdButtonClick(ActionEvent actionEvent) {
         File file = new File(((Button) actionEvent.getSource()).getUserData().toString());
-        Storage.isDirectory = false;
         try {
-            scanDriveAndOpenViewPane(file);
+            scanDriveAndOpenViewPane(file, false);
         } catch (Exception e) {
             showReadDiskAlert(file, e);
         }
@@ -148,17 +148,16 @@ public class PrimaryPaneController implements Closeable {
         try {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle(str("primary.select.directory"));
-            if (Storage.lastDirectory != null) {
-                directoryChooser.setInitialDirectory(Storage.lastDirectory);
+            if (Config.lastDirectory != null) {
+                directoryChooser.setInitialDirectory(Config.lastDirectory);
             }
-            Storage.lastDirectory = directoryChooser.showDialog(readFsButton.getScene().getWindow());
+            Config.lastDirectory = directoryChooser.showDialog(readFsButton.getScene().getWindow());
 
-            if (Storage.lastDirectory != null && Storage.lastDirectory.exists()) {
-                Storage.isDirectory = true;
-                scanDriveAndOpenViewPane(Storage.lastDirectory);
+            if (Config.lastDirectory != null && Config.lastDirectory.exists()) {
+                scanDriveAndOpenViewPane(Config.lastDirectory, true);
             }
         } catch (Exception e) {
-            showReadDiskAlert(Storage.lastDirectory, e);
+            showReadDiskAlert(Config.lastDirectory, e);
         }
     }
 
@@ -166,7 +165,7 @@ public class PrimaryPaneController implements Closeable {
         JavaFxUtils.showAlert(strError(), String.format(str("primary.disk.read.error"), file.toString()), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
     }
 
-    private void scanDriveAndOpenViewPane(File driveRoot) {
+    private void scanDriveAndOpenViewPane(File driveRoot, boolean isDirectory) {
         scanDrive(driveRoot);
 
         JavaFxUtils.log(Storage.HR);
@@ -186,8 +185,8 @@ public class PrimaryPaneController implements Closeable {
             JavaFxUtils.log("!" + str("primary.log.volume.label.read.error"));
         }
 
-        Storage.imageFiles = FileUtils.listFiles(driveRoot);
-        if (Storage.imageFiles.isEmpty() && allIsBad) {
+        Storage.diskImage = new DiskImage(FileUtils.listFiles(driveRoot), isDirectory, Config.lastDirectory);
+        if (Storage.diskImage.getFiles().isEmpty() && allIsBad) {
             throw new RuntimeException(str("primary.disk.is.not.ready.error"));
         } else {
             JavaFxUtils.showViewPanel();

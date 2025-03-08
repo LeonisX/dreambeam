@@ -29,6 +29,9 @@ public class Config {
     public static String user = DEFAULT_USER;
     public static boolean admin;
 
+    // UI settings
+    public static File lastDirectory; // Last directory for DirectoryChooser. //todo save to file
+
     public static void loadProperties() {
         try (InputStream inputStream = new FileInputStream(FileUtils.getConfigFile().toFile())) {
             properties.load(inputStream);

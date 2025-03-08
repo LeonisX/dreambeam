@@ -120,7 +120,7 @@ public class WizardStageController implements Closeable {
         var handler = new ListViewHandler<>(gamesListView, null);
         gamesListView.setOnKeyPressed(handler::handle);
 
-        badDumpCheckBox.setSelected(Storage.error);
+        badDumpCheckBox.setSelected(Storage.diskImage.isError());
 
         translatorTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
         regionTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
