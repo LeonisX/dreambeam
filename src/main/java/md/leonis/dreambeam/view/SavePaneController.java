@@ -3,7 +3,7 @@ package md.leonis.dreambeam.view;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.StringUtils;
@@ -11,7 +11,7 @@ import md.leonis.dreambeam.utils.StringUtils;
 import java.io.Closeable;
 import java.io.IOException;
 
-import static md.leonis.dreambeam.utils.Config.*;
+import static md.leonis.dreambeam.statik.Config.*;
 
 public class SavePaneController implements Closeable {
 

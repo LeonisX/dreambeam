@@ -6,7 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 
 import java.io.Closeable;
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import static md.leonis.dreambeam.utils.Config.str;
-import static md.leonis.dreambeam.utils.Config.strError;
+import static md.leonis.dreambeam.statik.Config.str;
+import static md.leonis.dreambeam.statik.Config.strError;
 
 public class SettingsStageController implements Closeable {
     public ComboBox<String> languageComboBox;

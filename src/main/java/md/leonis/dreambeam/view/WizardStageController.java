@@ -5,7 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import md.leonis.dreambeam.model.ListViewHandler;
-import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.StringUtils;
 import md.leonis.dreambeam.utils.Utils;

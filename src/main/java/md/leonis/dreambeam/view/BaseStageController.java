@@ -3,10 +3,9 @@ package md.leonis.dreambeam.view;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import md.leonis.dreambeam.model.ListViewHandler;
+import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.*;
 
 import java.io.Closeable;
@@ -17,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static md.leonis.dreambeam.utils.Config.str;
-import static md.leonis.dreambeam.utils.Config.strError;
+import static md.leonis.dreambeam.statik.Config.str;
+import static md.leonis.dreambeam.statik.Config.strError;
 
 public class BaseStageController implements Closeable {
 

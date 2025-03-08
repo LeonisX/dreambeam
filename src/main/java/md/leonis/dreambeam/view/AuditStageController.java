@@ -2,12 +2,10 @@ package md.leonis.dreambeam.view;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
-import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.ServiceUtils;
@@ -20,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static md.leonis.dreambeam.utils.Config.str;
-import static md.leonis.dreambeam.utils.Config.strError;
+import static md.leonis.dreambeam.statik.Config.str;
+import static md.leonis.dreambeam.statik.Config.strError;
 
 public class AuditStageController implements Closeable {
 

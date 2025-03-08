@@ -14,17 +14,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import md.leonis.dreambeam.MainApp;
+import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.view.MainStageController;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static md.leonis.dreambeam.utils.Config.str;
+import static md.leonis.dreambeam.statik.Config.str;
 
 public class JavaFxUtils {
 

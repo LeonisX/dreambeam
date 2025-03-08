@@ -1,6 +1,7 @@
 package md.leonis.dreambeam.utils;
 
 import javafx.scene.control.Alert;
+import md.leonis.dreambeam.statik.Config;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static md.leonis.dreambeam.utils.Config.str;
-import static md.leonis.dreambeam.utils.Config.strError;
+import static md.leonis.dreambeam.statik.Config.str;
+import static md.leonis.dreambeam.statik.Config.strError;
 
 public class ServiceUtils {
 

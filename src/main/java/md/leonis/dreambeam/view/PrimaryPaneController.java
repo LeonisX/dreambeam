@@ -8,18 +8,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import md.leonis.dreambeam.model.Version;
+import md.leonis.dreambeam.statik.Config;
+import md.leonis.dreambeam.statik.VersionConfig;
 import md.leonis.dreambeam.utils.*;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static md.leonis.dreambeam.utils.Config.*;
+import static md.leonis.dreambeam.statik.Config.*;
 
 public class PrimaryPaneController implements Closeable {
 
@@ -63,20 +64,15 @@ public class PrimaryPaneController implements Closeable {
     private void checkForUpdates() {
         new Thread(() -> {
             try {
-                URL link = URI.create("https://github.com/LeonisX/dreambeam/blob/main/src/main/resources/app.properties").toURL();
-                try (InputStream inputStream = link.openStream()) {
-                    Properties prop = new Properties();
-                    prop.load(inputStream);
+                Version remoteVersion = VersionConfig.loadRemote();
 
-                    var remoteProjectVersion = prop.getProperty("version", projectVersion);
-                    if (!notifiedVersion.equals(remoteProjectVersion)) {
-                        JavaFxUtils.showAlert(str("primary.update.notification.alert"), str("primary.new.version.available.alert"),
-                                String.format("DreamBeam %s", remoteProjectVersion), Alert.AlertType.INFORMATION);
-                        notifiedVersion = remoteProjectVersion;
-                        saveProperties();
-                    } else {
-                        JavaFxUtils.log(str("primary.log.no.update"));
-                    }
+                if (!notifiedVersion.equals(remoteVersion.version())) {
+                    JavaFxUtils.showAlert(str("primary.update.notification.alert"), str("primary.new.version.available.alert"),
+                            String.format("DreamBeam %s", remoteVersion.version()), Alert.AlertType.INFORMATION);
+                    notifiedVersion = remoteVersion.version();
+                    saveProperties();
+                } else {
+                    JavaFxUtils.log(str("primary.log.no.update"));
                 }
             } catch (Exception e) {
                 JavaFxUtils.log(String.format("!%s: %s: %s", str("primary.log.new.version.verification.error"), e.getClass().getSimpleName(), e.getMessage()));

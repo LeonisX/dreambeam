@@ -4,6 +4,8 @@ package md.leonis.dreambeam.utils;
 // Нужна для уменьшения размера исполняемого файла.
 public class StringUtils {
 
+    //todo сюда %08 и подобные
+
     public static boolean isBlank(final CharSequence cs) {
         final int strLen = length(cs);
         if (strLen == 0) {

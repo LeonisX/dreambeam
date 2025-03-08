@@ -16,7 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import md.leonis.dreambeam.utils.BinaryUtils;
-import md.leonis.dreambeam.utils.Config;
+import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.Utils;
 
@@ -28,7 +28,7 @@ import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static md.leonis.dreambeam.utils.Config.str;
+import static md.leonis.dreambeam.statik.Config.str;
 
 public class ViewPaneController implements Closeable {
 

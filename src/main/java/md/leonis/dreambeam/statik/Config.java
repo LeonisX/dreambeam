@@ -1,6 +1,7 @@
-package md.leonis.dreambeam.utils;
+package md.leonis.dreambeam.statik;
 
 import md.leonis.dreambeam.MainApp;
+import md.leonis.dreambeam.utils.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +14,7 @@ public class Config {
     //todo may be not need
     public static final String HR = "------------------------------------------------------------------";
 
+    //todo нормальные названия настроек
     private static final String NAME = "Name";
     private static final String ADMIN = "Admin";
     private static final String LOCALE = "Locale";
@@ -21,7 +23,7 @@ public class Config {
 
     public static final String DEFAULT_USER = "Unnamed";
 
-    static final String resourcePath = "/fxml/";
+    public static final String resourcePath = "/fxml/";
 
     public static List<Path> files;
     public static List<String> saveFiles;
@@ -32,9 +34,6 @@ public class Config {
     public static volatile boolean userHashesLoaded = false;
     public static Map<String, String> userDuplicates;
     public static Map<String, String> textMap;
-
-    public static String projectVersion;
-    public static String projectTime;
 
     public static Properties properties = new Properties();
     public static Properties languages = new Properties();
@@ -101,7 +100,7 @@ public class Config {
                 user = DEFAULT_USER;
             }
             updateNotification = "true".equals(properties.getProperty(UPDATE_NOTIFICATION));
-            notifiedVersion = properties.getProperty(NOTIFIED_VERSION, projectVersion);
+            notifiedVersion = properties.getProperty(NOTIFIED_VERSION, VersionConfig.getVersion());
             admin = "true".equals(properties.getProperty(ADMIN));
             locale = Locale.of(properties.getProperty(LOCALE).substring(0, 2), properties.getProperty(LOCALE).substring(3).toUpperCase());
         } catch (Exception ignored) {
@@ -135,16 +134,7 @@ public class Config {
     }
 
     public static void loadAppProperties() {
-        Properties prop = new Properties();
-        try (InputStream inputStream = MainApp.class.getResourceAsStream("/app.properties")) {
-            prop.load(inputStream);
 
-            projectVersion = prop.getProperty("version", "@!#?@!");
-            projectTime = prop.getProperty("date", "");
-            projectTime = StringUtils.isBlank(projectTime) ? projectTime : String.format("(%s)", projectTime);
-
-        } catch (Exception ignored) {
-        }
     }
 
     public static boolean isUser() {
