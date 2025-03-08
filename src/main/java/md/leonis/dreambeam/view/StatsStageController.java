@@ -9,7 +9,6 @@ import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.JavaFxUtils;
-import md.leonis.dreambeam.utils.ServiceUtils;
 import md.leonis.dreambeam.utils.Utils;
 
 import java.io.Closeable;
@@ -57,7 +56,7 @@ public class StatsStageController implements Closeable {
         homeRadioButton.setUserData("home");
         gdiRadioButton.setUserData("gdi");
 
-        ServiceUtils.calculateUserHashes(true, false);
+        MainStageController.calculateUserHashes(true, false);
 
         baseGames = Storage.baseHashes.values().stream().sorted().toList();
         userGames = Storage.userHashes.values().stream().sorted().toList();

@@ -58,8 +58,8 @@ public class ViewPaneController implements Closeable {
     }
 
     private void update() {
-        Storage.saveFiles = Storage.files.stream().map(Path::toString).collect(Collectors.toList());
-        filesListView.setItems(FXCollections.observableList(Storage.saveFiles));
+        Storage.imageProcessingFiles = Storage.imageFiles.stream().map(Path::toString).collect(Collectors.toList());
+        filesListView.setItems(FXCollections.observableList(Storage.imageProcessingFiles));
         filesListView.scrollTo(0);
     }
 
@@ -91,12 +91,12 @@ public class ViewPaneController implements Closeable {
         new Thread(() -> {
             long totalSize = 0;
 
-            for (int i = 0; i < Storage.files.size(); i++) {
+            for (int i = 0; i < Storage.imageFiles.size(); i++) {
                 if (breaked) {
                     break;
                 }
 
-                Path file = Storage.files.get(i);
+                Path file = Storage.imageFiles.get(i);
                 long size;
                 try {
                     size = Files.size(file);
@@ -113,16 +113,16 @@ public class ViewPaneController implements Closeable {
 
                 try {
                     //todo читать блоками а не целиком
-                    byte[] bytes = Files.readAllBytes(Storage.files.get(i));
+                    byte[] bytes = Files.readAllBytes(Storage.imageFiles.get(i));
 
                     //сравнивать на всякий случай с size
                     if (bytes.length != size) {
                         throw new RuntimeException(String.format("%s: %s: %s != %s !", file, str("view.size.is.different.error"), bytes.length, size));
                     }
 
-                    Storage.saveFiles.set(i, Utils.formatRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes)));
+                    Storage.imageProcessingFiles.set(i, Utils.formatRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes)));
 
-                    double percents = i * 1.0 / Storage.files.size();
+                    double percents = i * 1.0 / Storage.imageFiles.size();
                     Platform.runLater(() -> {
                         totalProgressLabel.setText(String.format("%.2f%%", percents * 100));
                         totalProgressBar.setProgress(percents);
@@ -131,7 +131,7 @@ public class ViewPaneController implements Closeable {
 
                 } catch (Exception e) {
                     error = true;
-                    Storage.saveFiles.set(i, Utils.formatRecord(currentFile, size, "Error!!!"));
+                    Storage.imageProcessingFiles.set(i, Utils.formatRecord(currentFile, size, "Error!!!"));
                     refreshControls(i);
                     JavaFxUtils.log(String.format("%s: %s", file, str("view.read.error")));
                 }
@@ -143,11 +143,11 @@ public class ViewPaneController implements Closeable {
                 long duration = java.time.Duration.between(start, Instant.now()).toMillis();
                 JavaFxUtils.log(String.format("@%s: %s", str("view.scan.time"), Utils.formatSeconds(duration)));
 
-                Storage.saveFiles.add(0, String.format("Total size: %s bytes.", totalSize));
+                Storage.imageProcessingFiles.add(0, String.format("Total size: %s bytes.", totalSize));
                 //Storage.saveFiles.add(""); // костыль конечно, но так работал код на Delphi :(
 
                 Storage.error = error;
-                Storage.crc32 = BinaryUtils.crc32String((String.join("\r\n", Storage.saveFiles) + "\r\n").getBytes());// костыль конечно, но так работал код на Delphi :(
+                Storage.crc32 = BinaryUtils.crc32String((String.join("\r\n", Storage.imageProcessingFiles) + "\r\n").getBytes());// костыль конечно, но так работал код на Delphi :(
 
                 if (error) {
                     //todo если были ошибки - получить размер файла и поискать похожие

@@ -14,7 +14,6 @@ import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.statik.VersionConfig;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
-import md.leonis.dreambeam.utils.ServiceUtils;
 import md.leonis.dreambeam.utils.StringUtils;
 
 import java.io.*;
@@ -51,7 +50,7 @@ public class PrimaryPaneController implements Closeable {
 
     @FXML
     private void initialize() {
-        ServiceUtils.readGamesDat();
+        readGamesDat();
         createBaseDir();
 
         createUserDir();
@@ -63,6 +62,27 @@ public class PrimaryPaneController implements Closeable {
         rescanDrivesButtonClick();
 
         checkForUpdates();
+    }
+
+    private void readGamesDat() {
+        Path path = FileUtils.getBaseGamesDatFile().normalize().toAbsolutePath();
+        try {
+            if (FileUtils.exists(path)) {
+                try {
+                    Storage.readGamesDat(path);
+                } catch (Exception e) {
+                    JavaFxUtils.showAlert(strError(), String.format(str("primary.short.list.file.read.error"), path), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
+                    FileUtils.deleteSilently(path);
+                    Storage.recalculateBaseHashes();
+                    MainStageController.reportBaseDuplicates();
+                }
+            } else {
+                Storage.recalculateBaseHashes();
+                MainStageController.reportBaseDuplicates();
+            }
+        } catch (Exception ex) {
+            JavaFxUtils.showAlert(strError(), String.format(str("primary.short.list.file.read.error"), path), ex.getClass().getSimpleName() + ": " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void checkForUpdates() {
@@ -86,20 +106,16 @@ public class PrimaryPaneController implements Closeable {
 
     private void readUserHashes() {
         new Thread(() -> {
-            try {
-                ServiceUtils.calculateUserHashes(true, true);
-                JavaFxUtils.log("#" + str("primary.log.user.files.loaded"));
-            } catch (Exception e) {
-                JavaFxUtils.log("!" + str("primary.log.user.files.not.loaded"));
-            }
+            MainStageController.calculateUserHashes(true, true);
+            JavaFxUtils.log("#" + str("primary.log.user.files.loaded"));
         }).start();
     }
 
     private void updateUserData() {
         renameButton.setVisible(!isUser());
         userLabel.setText(Config.user);
-        readUserFilesCount();
-        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Storage.userFiles));
+        Storage.readUserFilesCount();
+        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Storage.userFilesCount));
     }
 
     private void createBaseDir() {
@@ -117,14 +133,6 @@ public class PrimaryPaneController implements Closeable {
             } catch (IOException e) {
                 JavaFxUtils.showAlert(strError(), str("primary.create.user.directory.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
             }
-        }
-    }
-
-    private void readUserFilesCount() {
-        try {
-            Storage.userFiles = FileUtils.getFilesCount(FileUtils.getUserDir());
-        } catch (IOException e) {
-            Storage.userFiles = 0;
         }
     }
 
@@ -175,13 +183,13 @@ public class PrimaryPaneController implements Closeable {
         if (serialNumber != null) {
             JavaFxUtils.log(String.format("%s: %s", str("primary.log.serial.number"), serialNumber));
         }
-        boolean alIsBad = (volumeLabel == null && serialNumber == null && fileSystem == null);
-        if (alIsBad) {
+        boolean allIsBad = (volumeLabel == null && serialNumber == null && fileSystem == null);
+        if (allIsBad) {
             JavaFxUtils.log("!" + str("primary.log.volume.label.read.error"));
         }
 
-        Storage.files = FileUtils.listFiles(driveRoot);
-        if (Storage.files.isEmpty() && alIsBad) {
+        Storage.imageFiles = FileUtils.listFiles(driveRoot);
+        if (Storage.imageFiles.isEmpty() && allIsBad) {
             throw new RuntimeException(str("primary.disk.is.not.ready.error"));
         } else {
             JavaFxUtils.showViewPanel();

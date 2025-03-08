@@ -9,7 +9,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.statik.Storage;
-import md.leonis.dreambeam.utils.*;
+import md.leonis.dreambeam.utils.FileUtils;
+import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.StringUtils;
+import md.leonis.dreambeam.utils.Utils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -44,7 +47,7 @@ public class BaseStageController implements Closeable {
         var handler = new ListViewHandler<>(gamesListView, null);
         gamesListView.setOnKeyPressed(handler::handle);
 
-        ServiceUtils.loadTexts();
+        MainStageController.loadTexts();
 
         showGames();
         gamesListView.getSelectionModel().selectFirst();

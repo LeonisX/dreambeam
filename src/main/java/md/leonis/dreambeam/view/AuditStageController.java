@@ -8,7 +8,6 @@ import javafx.scene.control.TextArea;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
-import md.leonis.dreambeam.utils.ServiceUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -88,7 +87,7 @@ public class AuditStageController implements Closeable {
     }
 
     public void textsButtonClick() {
-        ServiceUtils.loadTexts();
+        MainStageController.loadTexts();
         List<String> lines = new ArrayList<>();
         Storage.textMap.forEach((key, value) -> {
             if (!Storage.baseHashes.containsKey(key)) {
@@ -101,8 +100,8 @@ public class AuditStageController implements Closeable {
     }
 
     public void reloadFilesButtonClick() {
-        ServiceUtils.calculateUserHashes(false, true);
-        ServiceUtils.calculateBaseHashes(false);
+        MainStageController.calculateUserHashes(false, true);
+        MainStageController.calculateBaseHashes(false);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {

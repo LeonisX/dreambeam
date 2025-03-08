@@ -36,7 +36,7 @@ public class SavePaneController implements Closeable {
         boolean recognizedUser = false;
 
         if (!recognized) {
-            name = userHashes.get(Storage.crc32);
+            name = Storage.userHashes.get(Storage.crc32);
             recognized = (name != null);
             recognizedUser = (name != null);
         }
@@ -94,19 +94,18 @@ public class SavePaneController implements Closeable {
     private void saveToBase() {
         try {
             if (Config.admin) {
-                FileUtils.writeToFile(FileUtils.getBaseGamesFile(name), Storage.saveFiles);
+                Storage.saveUserFileToBase(name);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             showFileAlert(e, name);
         }
     }
 
     private void saveAndClose() {
         try {
-            FileUtils.writeToFile(FileUtils.getUserFile(name), Storage.saveFiles);
-            userHashes.put(Storage.crc32, name);
+            Storage.saveUserFile(name);
             JavaFxUtils.showPrimaryPanel();
-        } catch (IOException e) {
+        } catch (Exception e) {
             showFileAlert(e, name);
         }
     }

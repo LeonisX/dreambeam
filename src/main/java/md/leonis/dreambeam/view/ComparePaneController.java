@@ -11,7 +11,6 @@ import md.leonis.dreambeam.model.enums.CompareStatus;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
-import md.leonis.dreambeam.utils.ServiceUtils;
 import md.leonis.dreambeam.utils.Utils;
 
 import java.io.Closeable;
@@ -58,7 +57,7 @@ public class ComparePaneController implements Closeable {
         leftUserRadioButton.setUserData("v");
         rightUserRadioButton.setUserData("v");
 
-        ServiceUtils.calculateUserHashes(true, false);
+        MainStageController.calculateUserHashes(true, false);
 
         baseGames = Storage.baseHashes.values().stream().sorted().toList();
         userGames = Storage.userHashes.values().stream().sorted().toList();

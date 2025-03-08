@@ -30,7 +30,6 @@ public class VersionConfig {
     }
 
     public static Version loadRemote() throws Exception {
-        System.out.println(getRemoteURL());
         try (InputStream inputStream = getRemoteURL().openStream()) {
             return readProperties(inputStream);
         }
@@ -39,7 +38,6 @@ public class VersionConfig {
     private static Version readProperties(InputStream inputStream) throws Exception {
         Properties prop = new Properties();
         prop.load(inputStream);
-        System.out.println(prop);
         version = prop.getProperty("version", "@!#?@!");
         date = prop.getProperty("date", "");
         remote = prop.getProperty("remote", REMOTE);
