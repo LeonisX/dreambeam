@@ -73,12 +73,10 @@ public class PrimaryPaneController implements Closeable {
                 } catch (Exception e) {
                     JavaFxUtils.showAlert(strError(), String.format(str("primary.short.list.file.read.error"), path), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
                     FileUtils.deleteSilently(path);
-                    Storage.recalculateBaseHashes();
-                    MainStageController.reportBaseDuplicates();
+                    MainStageController.calculateBaseHashesAndSave();
                 }
             } else {
-                Storage.recalculateBaseHashes();
-                MainStageController.reportBaseDuplicates();
+                MainStageController.calculateBaseHashesAndSave();
             }
         } catch (Exception ex) {
             JavaFxUtils.showAlert(strError(), String.format(str("primary.short.list.file.read.error"), path), ex.getClass().getSimpleName() + ": " + ex.getMessage(), Alert.AlertType.ERROR);

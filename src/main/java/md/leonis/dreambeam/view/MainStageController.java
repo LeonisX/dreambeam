@@ -65,7 +65,7 @@ public class MainStageController implements Closeable {
     }
 
     public void log(String message) {
-        Platform.runLater( () -> {
+        Platform.runLater(() -> {
             logListView.getItems().add(message);
             logListView.scrollTo(logListView.getItems().size());
         });
@@ -94,8 +94,7 @@ public class MainStageController implements Closeable {
     public void recalculateShortDb() {
         try {
             Instant start = Instant.now();
-            Storage.recalculateBaseHashes();
-            MainStageController.reportBaseDuplicates();
+            Storage.calculateBaseHashesAndSave();
             String time = Utils.formatSeconds(Duration.between(start, Instant.now()).toMillis());
             JavaFxUtils.showAlert("DreamBeam", str("main.short.list.created"), String.format("%s: %s s", str("main.run.time"), time), Alert.AlertType.INFORMATION);
 
@@ -104,12 +103,17 @@ public class MainStageController implements Closeable {
         }
     }
 
+    public static void calculateBaseHashesAndSave() throws Exception {
+        Storage.calculateBaseHashesAndSave();
+        reportBaseDuplicates();
+    }
+
     public static void calculateBaseHashes(boolean reportDuplicates) {
         try {
             Storage.calculateBaseHashes();
-        if (reportDuplicates) {
-            reportBaseDuplicates();
-        }
+            if (reportDuplicates) {
+                reportBaseDuplicates();
+            }
         } catch (Exception e) {
             JavaFxUtils.showAlert(strError(), str("main.base.files.read.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }

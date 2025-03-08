@@ -46,7 +46,7 @@ public class Storage {
         baseDuplicates = pair.getRight();
     }
 
-    public static void recalculateBaseHashes() throws Exception {
+    public static void calculateBaseHashesAndSave() throws Exception {
         calculateBaseHashes();
         FileUtils.writeToFile(FileUtils.getBaseGamesDatFile(), baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> e.getValue() + " - " + e.getKey()).toList());
     }
