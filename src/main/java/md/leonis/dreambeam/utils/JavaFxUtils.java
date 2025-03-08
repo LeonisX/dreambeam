@@ -44,7 +44,7 @@ public class JavaFxUtils {
         primaryStage.setTitle("DreamBeam");
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(Config.resourcePath + "MainStage.fxml"));
+            loader.setLocation(MainApp.class.getResource(FileUtils.resourcePath + "MainStage.fxml"));
             loader.setResources(loadBundle());
             rootLayout = loader.load();
             controller = loader.getController();
@@ -89,7 +89,7 @@ public class JavaFxUtils {
         Platform.runLater(() -> {
             try {
                 FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+                loader.setLocation(MainApp.class.getResource(FileUtils.resourcePath + resource));
                 loader.setResources(loadBundle());
                 Region innerPane = loader.load();
                 currentPaneController = loader.getController();
@@ -146,7 +146,7 @@ public class JavaFxUtils {
                 currentStage.setTitle(title);
                 setIcons(currentStage);
                 FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(MainApp.class.getResource(Config.resourcePath + resource));
+                loader.setLocation(MainApp.class.getResource(FileUtils.resourcePath + resource));
                 loader.setResources(loadBundle());
                 Parent root = loader.load();
                 Scene scene = new Scene(root, width, height);

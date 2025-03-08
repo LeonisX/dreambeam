@@ -8,8 +8,11 @@ import md.leonis.dreambeam.model.FileRecord;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
-import md.leonis.dreambeam.statik.Config;
-import md.leonis.dreambeam.utils.*;
+import md.leonis.dreambeam.statik.Storage;
+import md.leonis.dreambeam.utils.FileUtils;
+import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.ServiceUtils;
+import md.leonis.dreambeam.utils.Utils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -57,8 +60,8 @@ public class ComparePaneController implements Closeable {
 
         ServiceUtils.calculateUserHashes(true, false);
 
-        baseGames = Config.baseHashes.values().stream().sorted().toList();
-        userGames = Config.userHashes.values().stream().sorted().toList();
+        baseGames = Storage.baseHashes.values().stream().sorted().toList();
+        userGames = Storage.userHashes.values().stream().sorted().toList();
 
         leftToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> {
             leftUser = newToggle.getUserData() != null;
@@ -216,7 +219,7 @@ public class ComparePaneController implements Closeable {
     }
 
     private Path getGamePath(String fileName, boolean isUser) {
-        return isUser ? Config.getUserFile(fileName) : Config.getBaseGamesFile(fileName);
+        return isUser ? FileUtils.getUserFile(fileName) : FileUtils.getBaseGamesFile(fileName);
     }
 
     public void backButtonClick() {

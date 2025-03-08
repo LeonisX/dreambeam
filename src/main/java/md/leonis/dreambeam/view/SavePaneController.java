@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import md.leonis.dreambeam.statik.Config;
+import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.StringUtils;
@@ -11,7 +12,9 @@ import md.leonis.dreambeam.utils.StringUtils;
 import java.io.Closeable;
 import java.io.IOException;
 
-import static md.leonis.dreambeam.statik.Config.*;
+import static md.leonis.dreambeam.statik.Config.str;
+import static md.leonis.dreambeam.statik.Config.strError;
+import static md.leonis.dreambeam.statik.Storage.userHashes;
 
 public class SavePaneController implements Closeable {
 
@@ -28,12 +31,12 @@ public class SavePaneController implements Closeable {
 
     @FXML
     private void initialize() {
-        name = Config.baseHashes.get(Config.crc32);
+        name = Storage.baseHashes.get(Storage.crc32);
         recognized = (name != null);
         boolean recognizedUser = false;
 
         if (!recognized) {
-            name = userHashes.get(Config.crc32);
+            name = userHashes.get(Storage.crc32);
             recognized = (name != null);
             recognizedUser = (name != null);
         }
@@ -66,10 +69,10 @@ public class SavePaneController implements Closeable {
     }
 
     public void saveButtonClick() {
-        if (FileUtils.exists(Config.getBaseGamesFile(name)) && !recognized) {
+        if (FileUtils.exists(FileUtils.getBaseGamesFile(name)) && !recognized) {
             JavaFxUtils.showAlert(str("save.base.image.exists"), str("save.alt.version"), String.format("%s, %s (Alt)", str("save.for.example"), name), Alert.AlertType.WARNING);
 
-        } else if (FileUtils.exists(Config.getUserFile(name))) {
+        } else if (FileUtils.exists(FileUtils.getUserFile(name))) {
             var buttonType = JavaFxUtils.showConfirmation(str("save.user.image.exists"), str("save.overwrite"), name);
             if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
                 logSave();
@@ -85,13 +88,13 @@ public class SavePaneController implements Closeable {
 
     private void logSave() {
         JavaFxUtils.log(str("save.image.saved.log"));
-        JavaFxUtils.log(HR);
+        JavaFxUtils.log(Storage.HR);
     }
 
     private void saveToBase() {
         try {
             if (Config.admin) {
-                FileUtils.writeToFile(Config.getBaseGamesFile(name), Config.saveFiles);
+                FileUtils.writeToFile(FileUtils.getBaseGamesFile(name), Storage.saveFiles);
             }
         } catch (IOException e) {
             showFileAlert(e, name);
@@ -100,8 +103,8 @@ public class SavePaneController implements Closeable {
 
     private void saveAndClose() {
         try {
-            FileUtils.writeToFile(Config.getUserFile(name), Config.saveFiles);
-            userHashes.put(Config.crc32, name);
+            FileUtils.writeToFile(FileUtils.getUserFile(name), Storage.saveFiles);
+            userHashes.put(Storage.crc32, name);
             JavaFxUtils.showPrimaryPanel();
         } catch (IOException e) {
             showFileAlert(e, name);
@@ -113,16 +116,16 @@ public class SavePaneController implements Closeable {
     }
 
     public void runWizardButtonClick() {
-        Config.wizardName = null;
+        Storage.wizardName = null;
         JavaFxUtils.showWizardWindow();
         Thread thread = new Thread(() -> {
-            while (Config.wizardName == null) {
+            while (Storage.wizardName == null) {
                 sleep();
             }
-            if (StringUtils.isNotBlank(Config.wizardName)) {
-                titleTextField.setText(Config.wizardName);
+            if (StringUtils.isNotBlank(Storage.wizardName)) {
+                titleTextField.setText(Storage.wizardName);
                 JavaFxUtils.log(str("save.image.name.log"));
-                JavaFxUtils.log(Config.wizardName);
+                JavaFxUtils.log(Storage.wizardName);
             }
         });
         thread.setDaemon(true);

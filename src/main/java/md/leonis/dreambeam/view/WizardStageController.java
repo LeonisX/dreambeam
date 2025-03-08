@@ -5,7 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import md.leonis.dreambeam.model.ListViewHandler;
-import md.leonis.dreambeam.statik.Config;
+import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.StringUtils;
 import md.leonis.dreambeam.utils.Utils;
@@ -99,7 +99,7 @@ public class WizardStageController implements Closeable {
         showDisks();
 
         //todo добавлять ещё свои свежие игры
-        List<String> games = Utils.cleanAndSortGameNames(Config.baseHashes.values());
+        List<String> games = Utils.cleanAndSortGameNames(Storage.baseHashes.values());
         gamesListView.setItems(FXCollections.observableList(games));
 
         //todo было бы хорошо выводить предыдущие результаты
@@ -120,7 +120,7 @@ public class WizardStageController implements Closeable {
         var handler = new ListViewHandler<>(gamesListView, null);
         gamesListView.setOnKeyPressed(handler::handle);
 
-        badDumpCheckBox.setSelected(Config.error);
+        badDumpCheckBox.setSelected(Storage.error);
 
         translatorTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
         regionTextField.textProperty().addListener((observable, oldValue, newValue) -> updateTags());
@@ -195,7 +195,7 @@ public class WizardStageController implements Closeable {
     }
 
     public void okButtonClick(ActionEvent actionEvent) {
-        Config.wizardName = Stream.of(titleTextField, disksTextField, tagsTextField)
+        Storage.wizardName = Stream.of(titleTextField, disksTextField, tagsTextField)
                 .map(f -> f.getText().trim()).filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(" "));
         close(actionEvent);

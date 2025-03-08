@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import md.leonis.dreambeam.statik.Config;
+import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.ServiceUtils;
@@ -49,13 +49,13 @@ public class AuditStageController implements Closeable {
     }
 
     private List<String> getUserUniqueGames() {
-        var list = new ArrayList<>(Config.userHashes.values());
-        list.removeAll(Config.baseHashes.values());
+        var list = new ArrayList<>(Storage.userHashes.values());
+        list.removeAll(Storage.baseHashes.values());
         return list.stream().sorted().collect(Collectors.toList());
     }
 
     public void userDuplicatesButtonClick() {
-        var duplicates = Config.userDuplicates.entrySet().stream().sorted(Map.Entry.comparingByKey())
+        var duplicates = Storage.userDuplicates.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .map(e -> String.format("%s == %s", e.getKey(), e.getValue())).collect(Collectors.toList());
         duplicates.add(0, String.format(str("audit.user.duplicates"), duplicates.size()));
         duplicates.add(1, "");
@@ -64,8 +64,8 @@ public class AuditStageController implements Closeable {
 
     public void userTitlesButtonClick() {
         oldTitlesMap = new HashMap<>();
-        Config.userHashes.forEach((key, value) -> {
-            String baseTitle = Config.baseHashes.get(key);
+        Storage.userHashes.forEach((key, value) -> {
+            String baseTitle = Storage.baseHashes.get(key);
             if (baseTitle != null && !baseTitle.equals(value)) {
                 oldTitlesMap.put(baseTitle, value);
             }
@@ -80,7 +80,7 @@ public class AuditStageController implements Closeable {
     }
 
     public void baseDuplicatesButtonClick() {
-        var duplicates = Config.baseDuplicates.entrySet().stream().sorted(Map.Entry.comparingByKey())
+        var duplicates = Storage.baseDuplicates.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .map(e -> String.format("%s == %s", e.getKey(), e.getValue())).collect(Collectors.toList());
         duplicates.add(0, String.format(str("audit.base.duplicates"), duplicates.size()));
         duplicates.add(1, "");
@@ -90,8 +90,8 @@ public class AuditStageController implements Closeable {
     public void textsButtonClick() {
         ServiceUtils.loadTexts();
         List<String> lines = new ArrayList<>();
-        Config.textMap.forEach((key, value) -> {
-            if (!Config.baseHashes.containsKey(key)) {
+        Storage.textMap.forEach((key, value) -> {
+            if (!Storage.baseHashes.containsKey(key)) {
                 lines.add(key);
             }
         });
@@ -117,7 +117,7 @@ public class AuditStageController implements Closeable {
         renameButton.setDisable(true);
         try {
             for (Map.Entry<String, String> entry : oldTitlesMap.entrySet()) {
-                FileUtils.renameFile(Config.getUserFile(entry.getValue()), Config.getUserFile(entry.getKey()));
+                FileUtils.renameFile(FileUtils.getUserFile(entry.getValue()), FileUtils.getUserFile(entry.getKey()));
                 JavaFxUtils.log(String.format(str("audit.renamed"), entry.getValue(), entry.getKey()));
             }
         } catch (Exception e) {

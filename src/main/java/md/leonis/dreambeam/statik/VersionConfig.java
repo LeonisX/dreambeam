@@ -12,7 +12,7 @@ import java.util.Properties;
 public class VersionConfig {
 
     private static final String FILE_NAME = "version.properties";
-    private static final String REMOTE = "https://github.com/LeonisX/dreambeam/blob/main/src/main/resources/";
+    private static final String REMOTE = "https://raw.githubusercontent.com/LeonisX/dreambeam/refs/heads/main/src/main/resources/";
 
     private static String version;
     private static String date;
@@ -30,6 +30,7 @@ public class VersionConfig {
     }
 
     public static Version loadRemote() throws Exception {
+        System.out.println(getRemoteURL());
         try (InputStream inputStream = getRemoteURL().openStream()) {
             return readProperties(inputStream);
         }
@@ -38,13 +39,13 @@ public class VersionConfig {
     private static Version readProperties(InputStream inputStream) throws Exception {
         Properties prop = new Properties();
         prop.load(inputStream);
+        System.out.println(prop);
         version = prop.getProperty("version", "@!#?@!");
         date = prop.getProperty("date", "");
         remote = prop.getProperty("remote", REMOTE);
 
         return new Version(version, date, null);
     }
-
 
     public static String getVersion() {
         return version;

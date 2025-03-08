@@ -10,8 +10,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import md.leonis.dreambeam.model.Version;
 import md.leonis.dreambeam.statik.Config;
+import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.statik.VersionConfig;
-import md.leonis.dreambeam.utils.*;
+import md.leonis.dreambeam.utils.FileUtils;
+import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.ServiceUtils;
+import md.leonis.dreambeam.utils.StringUtils;
 
 import java.io.*;
 import java.nio.file.FileStore;
@@ -53,8 +57,8 @@ public class PrimaryPaneController implements Closeable {
         createUserDir();
         readUserHashes();
         updateUserData();
-        long verifiedCount = Config.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
-        baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Config.baseHashes.size(), verifiedCount));
+        long verifiedCount = Storage.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
+        baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Storage.baseHashes.size(), verifiedCount));
 
         rescanDrivesButtonClick();
 
@@ -95,12 +99,12 @@ public class PrimaryPaneController implements Closeable {
         renameButton.setVisible(!isUser());
         userLabel.setText(Config.user);
         readUserFilesCount();
-        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Config.userFiles));
+        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Storage.userFiles));
     }
 
     private void createBaseDir() {
         try {
-            FileUtils.createDirectories(Config.getBaseGamesDir());
+            FileUtils.createDirectories(FileUtils.getBaseGamesDir());
         } catch (IOException e) {
             JavaFxUtils.showAlert(strError(), str("primary.create.base.directory.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
         }
@@ -109,7 +113,7 @@ public class PrimaryPaneController implements Closeable {
     private void createUserDir() {
         if (StringUtils.isNotBlank(Config.user)) {
             try {
-                FileUtils.createDirectories(Config.getUserDir());
+                FileUtils.createDirectories(FileUtils.getUserDir());
             } catch (IOException e) {
                 JavaFxUtils.showAlert(strError(), str("primary.create.user.directory.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
             }
@@ -118,15 +122,15 @@ public class PrimaryPaneController implements Closeable {
 
     private void readUserFilesCount() {
         try {
-            Config.userFiles = FileUtils.getFilesCount(Config.getUserDir());
+            Storage.userFiles = FileUtils.getFilesCount(FileUtils.getUserDir());
         } catch (IOException e) {
-            Config.userFiles = 0;
+            Storage.userFiles = 0;
         }
     }
 
     public void readCdButtonClick(ActionEvent actionEvent) {
         File file = new File(((Button) actionEvent.getSource()).getUserData().toString());
-        Config.isDirectory = false;
+        Storage.isDirectory = false;
         try {
             scanDriveAndOpenViewPane(file);
         } catch (Exception e) {
@@ -138,17 +142,17 @@ public class PrimaryPaneController implements Closeable {
         try {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle(str("primary.select.directory"));
-            if (Config.lastDirectory != null) {
-                directoryChooser.setInitialDirectory(Config.lastDirectory);
+            if (Storage.lastDirectory != null) {
+                directoryChooser.setInitialDirectory(Storage.lastDirectory);
             }
-            Config.lastDirectory = directoryChooser.showDialog(readFsButton.getScene().getWindow());
+            Storage.lastDirectory = directoryChooser.showDialog(readFsButton.getScene().getWindow());
 
-            if (Config.lastDirectory != null && Config.lastDirectory.exists()) {
-                Config.isDirectory = true;
-                scanDriveAndOpenViewPane(Config.lastDirectory);
+            if (Storage.lastDirectory != null && Storage.lastDirectory.exists()) {
+                Storage.isDirectory = true;
+                scanDriveAndOpenViewPane(Storage.lastDirectory);
             }
         } catch (Exception e) {
-            showReadDiskAlert(Config.lastDirectory, e);
+            showReadDiskAlert(Storage.lastDirectory, e);
         }
     }
 
@@ -159,7 +163,7 @@ public class PrimaryPaneController implements Closeable {
     private void scanDriveAndOpenViewPane(File driveRoot) {
         scanDrive(driveRoot);
 
-        JavaFxUtils.log(HR);
+        JavaFxUtils.log(Storage.HR);
         JavaFxUtils.log(str("primary.log.disk.read.ok.can.scan"));
         if (fileSystem != null) {
             String prefix = fileSystem.equals(CDFS) ? "#" : "";
@@ -176,8 +180,8 @@ public class PrimaryPaneController implements Closeable {
             JavaFxUtils.log("!" + str("primary.log.volume.label.read.error"));
         }
 
-        Config.files = FileUtils.listFiles(driveRoot);
-        if (files.isEmpty() && alIsBad) {
+        Storage.files = FileUtils.listFiles(driveRoot);
+        if (Storage.files.isEmpty() && alIsBad) {
             throw new RuntimeException(str("primary.disk.is.not.ready.error"));
         } else {
             JavaFxUtils.showViewPanel();
@@ -396,14 +400,14 @@ public class PrimaryPaneController implements Closeable {
 
     private void setAndSaveUser(String user) {
         if (!Objects.equals(Config.user, user)) {
-            Path oldUserDir = Config.getUserDir();
-            Path oldUserLogFile = Config.getUserLogFile();
+            Path oldUserDir = FileUtils.getUserDir();
+            Path oldUserLogFile = FileUtils.getUserLogFile();
             Config.setUser(user);
-            FileUtils.renameFileSilently(oldUserDir, Config.getUserDir());
-            FileUtils.renameFileSilently(oldUserLogFile, Config.getUserLogFile());
+            FileUtils.renameFileSilently(oldUserDir, FileUtils.getUserDir());
+            FileUtils.renameFileSilently(oldUserLogFile, FileUtils.getUserLogFile());
             try {
                 Config.saveProperties();
-                FileUtils.createDirectories(Config.getUserDir());
+                FileUtils.createDirectories(FileUtils.getUserDir());
             } catch (IOException e) {
                 JavaFxUtils.showAlert(strError(), str("primary.config.file.save.error"), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
                 Config.setUser(Config.DEFAULT_USER);

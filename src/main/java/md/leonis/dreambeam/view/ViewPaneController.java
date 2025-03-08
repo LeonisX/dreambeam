@@ -15,8 +15,8 @@ import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.BinaryUtils;
-import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.Utils;
 
@@ -58,8 +58,8 @@ public class ViewPaneController implements Closeable {
     }
 
     private void update() {
-        Config.saveFiles = Config.files.stream().map(Path::toString).collect(Collectors.toList());
-        filesListView.setItems(FXCollections.observableList(Config.saveFiles));
+        Storage.saveFiles = Storage.files.stream().map(Path::toString).collect(Collectors.toList());
+        filesListView.setItems(FXCollections.observableList(Storage.saveFiles));
         filesListView.scrollTo(0);
     }
 
@@ -91,12 +91,12 @@ public class ViewPaneController implements Closeable {
         new Thread(() -> {
             long totalSize = 0;
 
-            for (int i = 0; i < Config.files.size(); i++) {
+            for (int i = 0; i < Storage.files.size(); i++) {
                 if (breaked) {
                     break;
                 }
 
-                Path file = Config.files.get(i);
+                Path file = Storage.files.get(i);
                 long size;
                 try {
                     size = Files.size(file);
@@ -105,24 +105,24 @@ public class ViewPaneController implements Closeable {
                 }
                 totalSize += size;
 
-                String currentFile = Config.isDirectory
-                        ? file.toString().replace(Config.lastDirectory.getAbsolutePath(), "").substring(1).toLowerCase()
+                String currentFile = Storage.isDirectory
+                        ? file.toString().replace(Storage.lastDirectory.getAbsolutePath(), "").substring(1).toLowerCase()
                         : file.subpath(0, file.getNameCount()).toString().toLowerCase();
 
                 Platform.runLater(() -> fileProgressLabel.setText(currentFile));
 
                 try {
                     //todo читать блоками а не целиком
-                    byte[] bytes = Files.readAllBytes(Config.files.get(i));
+                    byte[] bytes = Files.readAllBytes(Storage.files.get(i));
 
                     //сравнивать на всякий случай с size
                     if (bytes.length != size) {
                         throw new RuntimeException(String.format("%s: %s: %s != %s !", file, str("view.size.is.different.error"), bytes.length, size));
                     }
 
-                    Config.saveFiles.set(i, Utils.formatRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes)));
+                    Storage.saveFiles.set(i, Utils.formatRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes)));
 
-                    double percents = i * 1.0 / Config.files.size();
+                    double percents = i * 1.0 / Storage.files.size();
                     Platform.runLater(() -> {
                         totalProgressLabel.setText(String.format("%.2f%%", percents * 100));
                         totalProgressBar.setProgress(percents);
@@ -131,7 +131,7 @@ public class ViewPaneController implements Closeable {
 
                 } catch (Exception e) {
                     error = true;
-                    Config.saveFiles.set(i, Utils.formatRecord(currentFile, size, "Error!!!"));
+                    Storage.saveFiles.set(i, Utils.formatRecord(currentFile, size, "Error!!!"));
                     refreshControls(i);
                     JavaFxUtils.log(String.format("%s: %s", file, str("view.read.error")));
                 }
@@ -143,11 +143,11 @@ public class ViewPaneController implements Closeable {
                 long duration = java.time.Duration.between(start, Instant.now()).toMillis();
                 JavaFxUtils.log(String.format("@%s: %s", str("view.scan.time"), Utils.formatSeconds(duration)));
 
-                Config.saveFiles.add(0, String.format("Total size: %s bytes.", totalSize));
-                //Config.saveFiles.add(""); // костыль конечно, но так работал код на Delphi :(
+                Storage.saveFiles.add(0, String.format("Total size: %s bytes.", totalSize));
+                //Storage.saveFiles.add(""); // костыль конечно, но так работал код на Delphi :(
 
-                Config.error = error;
-                Config.crc32 = BinaryUtils.crc32String((String.join("\r\n", Config.saveFiles) + "\r\n").getBytes());// костыль конечно, но так работал код на Delphi :(
+                Storage.error = error;
+                Storage.crc32 = BinaryUtils.crc32String((String.join("\r\n", Storage.saveFiles) + "\r\n").getBytes());// костыль конечно, но так работал код на Delphi :(
 
                 if (error) {
                     //todo если были ошибки - получить размер файла и поискать похожие

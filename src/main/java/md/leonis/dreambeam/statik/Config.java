@@ -1,18 +1,16 @@
 package md.leonis.dreambeam.statik;
 
 import md.leonis.dreambeam.MainApp;
+import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Properties;
 
 public class Config {
-
-    //todo may be not need
-    public static final String HR = "------------------------------------------------------------------";
 
     //todo нормальные названия настроек
     private static final String NAME = "Name";
@@ -23,77 +21,16 @@ public class Config {
 
     public static final String DEFAULT_USER = "Unnamed";
 
-    public static final String resourcePath = "/fxml/";
-
-    public static List<Path> files;
-    public static List<String> saveFiles;
-    public static String crc32;
-    public static Map<String, String> baseHashes;
-    public static Map<String, String> baseDuplicates;
-    public static Map<String, String> userHashes = new HashMap<>();
-    public static volatile boolean userHashesLoaded = false;
-    public static Map<String, String> userDuplicates;
-    public static Map<String, String> textMap;
-
     public static Properties properties = new Properties();
     public static Properties languages = new Properties();
     public static Locale locale = Locale.getDefault();
     public static boolean updateNotification;
     public static String notifiedVersion;
     public static String user = DEFAULT_USER;
-    public static long userFiles;
     public static boolean admin;
-    public static File lastDirectory;
-    public static boolean isDirectory;
-    public static String wizardName;
-    public static boolean error;
-
-
-    public static Path getUserLogFile() {
-        return getRootDir().resolve(user + ".log");
-    }
-    public static Path getUserFile(String fileName) {
-        return getUserDir().resolve(fileName);
-    }
-
-    public static Path getUserDir() {
-        return getRootDir().resolve(user);
-    }
-
-    public static Path getConfigFile() {
-        return getRootDir().resolve("DreamBeam.ini");
-    }
-
-    public static Path getTextFile(String fileName) {
-        return getTextsDir().resolve(fileName);
-    }
-
-    public static Path getTextsDir() {
-        return getBaseDir().resolve("txtz");
-    }
-
-    public static Path getBaseGamesDatFile() {
-        return getBaseDir().resolve("games.dat");
-    }
-
-    public static Path getBaseGamesFile(String fileName) {
-        return getBaseGamesDir().resolve(fileName);
-    }
-
-    public static Path getBaseGamesDir() {
-        return getBaseDir().resolve("games");
-    }
-
-    public static Path getBaseDir() {
-        return getRootDir().resolve("Base");
-    }
-
-    public static Path getRootDir() {
-        return Paths.get(".");
-    }
 
     public static void loadProperties() {
-        try (InputStream inputStream = new FileInputStream(getConfigFile().toFile())) {
+        try (InputStream inputStream = new FileInputStream(FileUtils.getConfigFile().toFile())) {
             properties.load(inputStream);
             user = properties.getProperty(NAME);
             if (StringUtils.isBlank(user)) {
@@ -133,10 +70,6 @@ public class Config {
         return languages.getProperty("error", "error");
     }
 
-    public static void loadAppProperties() {
-
-    }
-
     public static boolean isUser() {
         return StringUtils.isNotBlank(user) && !user.equals(DEFAULT_USER);
     }
@@ -147,7 +80,7 @@ public class Config {
 
     public static void saveProperties() throws IOException {
         updateProperties();
-        properties.store(new FileOutputStream(getConfigFile().toFile()), "Settings");
+        properties.store(new FileOutputStream(FileUtils.getConfigFile().toFile()), "Settings");
     }
 
     public static void updateProperties() {

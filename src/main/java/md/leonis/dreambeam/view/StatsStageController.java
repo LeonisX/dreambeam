@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
 import md.leonis.dreambeam.model.enums.CompareStatus;
-import md.leonis.dreambeam.statik.Config;
+import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.ServiceUtils;
 import md.leonis.dreambeam.utils.Utils;
@@ -59,8 +59,8 @@ public class StatsStageController implements Closeable {
 
         ServiceUtils.calculateUserHashes(true, false);
 
-        baseGames = Config.baseHashes.values().stream().sorted().toList();
-        userGames = Config.userHashes.values().stream().sorted().toList();
+        baseGames = Storage.baseHashes.values().stream().sorted().toList();
+        userGames = Storage.userHashes.values().stream().sorted().toList();
 
         leftListView.setCellFactory(Utils::colorLines);
         rightListView.setCellFactory(Utils::colorLines);

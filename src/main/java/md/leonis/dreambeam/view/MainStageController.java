@@ -6,13 +6,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import md.leonis.dreambeam.statik.Config;
-import md.leonis.dreambeam.utils.*;
+import md.leonis.dreambeam.statik.Storage;
+import md.leonis.dreambeam.utils.FileUtils;
+import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.ServiceUtils;
+import md.leonis.dreambeam.utils.Utils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Instant;
 
-import static md.leonis.dreambeam.statik.Config.HR;
 import static md.leonis.dreambeam.statik.Config.str;
 
 public class MainStageController implements Closeable {
@@ -27,15 +30,15 @@ public class MainStageController implements Closeable {
 
         if (Config.user != null) {
             try {
-                logListView.setItems(FXCollections.observableList(FileUtils.readFromFile(Config.getRootDir().resolve(Config.getUserLogFile()))));
+                logListView.setItems(FXCollections.observableList(FileUtils.readFromFile(FileUtils.getRootDir().resolve(FileUtils.getUserLogFile()))));
             } catch (IOException ignored) {
             }
         }
 
         log("");
-        log(HR);
+        log(Storage.HR);
         log(String.format("%s %s", str("main.log.start"), Instant.now()));
-        log(HR);
+        log(Storage.HR);
     }
 
     public void settingsMenuItemClick() {
@@ -48,12 +51,12 @@ public class MainStageController implements Closeable {
 
     public void saveLogsAndClose() {
         log("");
-        log(HR);
+        log(Storage.HR);
         log(String.format("%s %s", str("main.log.finish"), Instant.now()));
-        log(HR);
+        log(Storage.HR);
 
         try {
-            FileUtils.writeToFile(Config.getRootDir().resolve(Config.user + ".log"), logListView.getItems());
+            FileUtils.writeToFile(FileUtils.getRootDir().resolve(Config.user + ".log"), logListView.getItems());
         } catch (IOException ignored) {
         }
     }

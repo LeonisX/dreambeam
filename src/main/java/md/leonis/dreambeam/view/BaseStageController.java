@@ -3,9 +3,12 @@ package md.leonis.dreambeam.view;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import md.leonis.dreambeam.model.ListViewHandler;
-import md.leonis.dreambeam.statik.Config;
+import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.*;
 
 import java.io.Closeable;
@@ -53,8 +56,8 @@ public class BaseStageController implements Closeable {
         prevListIndex = gamesListView.getSelectionModel().getSelectedIndex();
         if (line.startsWith("+")) {
             String hash = hashes.get(prevListIndex);
-            textArea.setText(Config.textMap.get(hash));
-            prevText = Config.textMap.get(hash);
+            textArea.setText(Storage.textMap.get(hash));
+            prevText = Storage.textMap.get(hash);
         } else {
             textArea.clear();
             prevText = "";
@@ -68,16 +71,16 @@ public class BaseStageController implements Closeable {
     private void saveText(boolean needToSave) {
         if (needToSave) {
             String hash = hashes.get(prevListIndex);
-            Path path = Config.getTextFile(hash).normalize().toAbsolutePath();
+            Path path = FileUtils.getTextFile(hash).normalize().toAbsolutePath();
             if (StringUtils.isNotBlank(textArea.getText())) {
                 try {
-                    Config.textMap.put(hash, textArea.getText());
+                    Storage.textMap.put(hash, textArea.getText());
                     FileUtils.writeToRussianFile(path, textArea.getText());
                 } catch (IOException e) {
                     JavaFxUtils.showAlert(strError(), String.format(str("base.error.save.text"), path), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
                 }
             } else {
-                Config.textMap.remove(hash);
+                Storage.textMap.remove(hash);
                 FileUtils.deleteSilently(path);
             }
 
@@ -95,7 +98,7 @@ public class BaseStageController implements Closeable {
 
     private void showGames() {
         textArea.clear();
-        list = Config.baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> {
+        list = Storage.baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> {
             hashes.add(e.getKey());
             return addTextMark(e);
         }).collect(Collectors.toList());
@@ -111,7 +114,7 @@ public class BaseStageController implements Closeable {
     }
 
     private boolean hasText(String hash) {
-        return Config.textMap.containsKey(hash);
+        return Storage.textMap.containsKey(hash);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
