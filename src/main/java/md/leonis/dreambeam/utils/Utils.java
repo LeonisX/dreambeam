@@ -2,6 +2,7 @@ package md.leonis.dreambeam.utils;
 
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import md.leonis.dreambeam.model.DiskImage;
 import md.leonis.dreambeam.model.Pair;
 
 import java.io.IOException;
@@ -17,22 +18,20 @@ public class Utils {
             int index = line.lastIndexOf("-");
             String hash = line.substring(index + 2).trim();
             String file = line.substring(0, index - 1).trim();
-            Utils.addHash(hash, file, hashes, duplicates);
+            addHash(hash, file, hashes, duplicates);
         });
 
         return Pair.of(hashes, duplicates);
     }
 
-    public static Pair<Map<String, String>, Map<String, String>> calculateHashes(Path basePath) throws IOException {
-        Map<String, String> hashes = new HashMap<>();
-        Map<String, String> duplicates = new HashMap<>();
+    public static void loadFiles(Path basePath, Map<String, DiskImage> images, Map<String, String> hashes, Map<String, String> duplicates) throws IOException {
         for (Path path : FileUtils.getFilesList(basePath)) {
-            String hash = BinaryUtils.crc32String((String.join("\r\n", FileUtils.readFromFile(path)) + "\r\n").getBytes());
+            DiskImage diskImage = new DiskImage(FileUtils.readFromFile(path));
+            String hash = diskImage.getCrc32();
             String file = path.getFileName().toString();
             addHash(hash, file, hashes, duplicates);
+            images.put(hash, diskImage);
         }
-
-        return Pair.of(hashes, duplicates);
     }
 
     public static void addHash(String hash, String file, Map<String, String> hashes, Map<String, String> duplicates) {

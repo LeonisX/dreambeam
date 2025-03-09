@@ -24,7 +24,8 @@ public class Storage {
     public static Map<String, DiskImage> userFiles = new HashMap<>();
     public static Map<String, String> baseHashes; // crc32/fileName
     public static Map<String, String> userHashes = new HashMap<>(); // crc32/fileName
-    public static volatile boolean userHashesLoaded = false;
+    public static volatile boolean baseFilesLoaded = false;
+    public static volatile boolean userFilesLoaded = false;
     public static Map<String, String> baseDuplicates;
     public static Map<String, String> userDuplicates;
 
@@ -39,26 +40,34 @@ public class Storage {
         baseDuplicates = pair.getRight();
     }
 
-    public static void calculateBaseHashesAndSave() throws Exception {
-        calculateBaseHashes();
+    public static void calculateBaseHashesAndSave() throws Exception { //todo rename
+        loadBaseFiles(true);
         FileUtils.writeToFile(FileUtils.getBaseGamesDatFile(), baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> e.getValue() + " - " + e.getKey()).toList());
     }
 
-    public static void calculateBaseHashes() throws Exception { //todo сделать по аналогии с calculateUserHashes
-        var pair = Utils.calculateHashes(FileUtils.getBaseGamesDir());
-        baseHashes = pair.getLeft();
-        baseDuplicates = pair.getRight();
-    }
-
-    public static void calculateUserHashes(boolean force) throws Exception {
-        if (userHashesLoaded && !force) {
+    public static void loadBaseFiles(boolean force) throws Exception { //todo rename
+        if (baseFilesLoaded && !force) {
             return;
         }
-        userHashesLoaded = false;
-        var pair = Utils.calculateHashes(FileUtils.getUserDir());
-        userHashes = pair.getLeft();
-        userDuplicates = pair.getRight();
-        userHashesLoaded = true;
+        baseFilesLoaded = false;
+        loadFiles(baseFiles, baseHashes, baseDuplicates);
+        baseFilesLoaded = true;
+    }
+
+    public static void loadUserFiles(boolean force) throws Exception {
+        if (userFilesLoaded && !force) {
+            return;
+        }
+        userFilesLoaded = false;
+        loadFiles(userFiles, userHashes, userDuplicates);
+        userFilesLoaded = true;
+    }
+
+    public static void loadFiles(Map<String, DiskImage> images, Map<String, String> hashes, Map<String, String> duplicates) throws Exception {
+        images = new HashMap<>();
+        hashes = new HashMap<>(); //todo избавиться бы
+        duplicates = new HashMap<>();
+        Utils.loadFiles(FileUtils.getBaseGamesDir(), images, hashes, duplicates);
     }
 
     public static void readUserFilesCount() {

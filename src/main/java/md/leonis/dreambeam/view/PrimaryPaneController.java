@@ -62,7 +62,7 @@ public class PrimaryPaneController implements Closeable {
         createBaseDir();
 
         createUserDir();
-        readUserHashes();
+        readFiles();
         updateUserData();
         long verifiedCount = Storage.baseHashes.values().stream().filter(v -> v.contains("[!]")).count();
         baseFilesCountLabel.setText(String.format(str("primary.base.disks.count"), Storage.baseHashes.size(), verifiedCount));
@@ -110,10 +110,12 @@ public class PrimaryPaneController implements Closeable {
         }).start();
     }
 
-    private void readUserHashes() {
+    private void readFiles() {
         new Thread(() -> {
             MainStageController.calculateUserHashes(true, true);
             JavaFxUtils.log("#" + str("primary.log.user.files.loaded"));
+            MainStageController.calculateBaseHashes(true, true);
+            JavaFxUtils.log("#" + str("primary.log.base.files.loaded"));
         }).start();
     }
 

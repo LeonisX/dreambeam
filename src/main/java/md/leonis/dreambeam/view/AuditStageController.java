@@ -101,7 +101,7 @@ public class AuditStageController implements Closeable {
 
     public void reloadFilesButtonClick() {
         MainStageController.calculateUserHashes(false, true);
-        MainStageController.calculateBaseHashes(false);
+        MainStageController.calculateBaseHashes(false, true);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {

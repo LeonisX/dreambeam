@@ -108,9 +108,9 @@ public class MainStageController implements Closeable {
         reportBaseDuplicates();
     }
 
-    public static void calculateBaseHashes(boolean reportDuplicates) {
+    public static void calculateBaseHashes(boolean reportDuplicates, boolean force) {
         try {
-            Storage.calculateBaseHashes();
+            Storage.loadBaseFiles(force);
             if (reportDuplicates) {
                 reportBaseDuplicates();
             }
@@ -128,7 +128,7 @@ public class MainStageController implements Closeable {
 
     public static void calculateUserHashes(boolean reportDuplicates, boolean force) {
         try {
-            Storage.calculateUserHashes(force);
+            Storage.loadUserFiles(force);
             if (reportDuplicates) {
                 reportUserDuplicates();
             }

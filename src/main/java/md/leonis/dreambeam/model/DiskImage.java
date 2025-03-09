@@ -42,6 +42,7 @@ public class DiskImage {
         this.calculatedSize = Long.parseLong(lines.remove(0).split(" ")[2]); // Total size: 962839979 bytes.
         this.records = lines.stream().map(FileRecord::parseLine).collect(Collectors.toList());
         this.isDirectory = false;
+        calculateCrc32();
     }
 
     public List<String> getSaveLines() {
