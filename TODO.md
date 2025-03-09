@@ -19,6 +19,8 @@ DreamBeam (TODO List)
 
 todo liberica - надо удалить все другие дистрибутивы
 
+remove C code if not need more
+
 ### Level2
 
 Насканировать время создания файлов и сравнивать его тоже.

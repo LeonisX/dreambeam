@@ -32,17 +32,7 @@ http://tv-games.ru/news/read/dreamcast_collection.html
 Run
 ---
 
-### Editor:
-
     mvn clean javafx:run
-
-### Resources extractor:
-
-    mvn clean javafx:run@extractor
-
-### The right way
-
-https://stackoverflow.com/questions/53668630/how-to-run-javafx-applications-in-intellij-idea-ide
 
 
 Build executable file
@@ -54,14 +44,6 @@ Build executable file
 4. Next `mvn clean gluonfx:build gluonfx:nativerun`
 
 [Full instruction](https://docs.gluonhq.com/#platforms_windows)
-
-Compile vol.exe
-
-1. cl src\main\c\vol.c & del vol.obj
-
-[VirusTotal report](https://www.virustotal.com/gui/file-analysis/ZjMwOTdkNGEyOTU0NmM0OGI1OWNmMjBhMTUyNmFjM2U6MTc0MTI2MjA2OA==)
-
-4 false-positive reports from 71. You can verify the harmlessness of the file code `vol.c` source code or recompile it yourself.
 
 
 Technical problems

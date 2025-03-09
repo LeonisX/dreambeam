@@ -136,27 +136,9 @@ public class ViewPaneController implements Closeable {
                 long duration = java.time.Duration.between(start, Instant.now()).toMillis();
                 JavaFxUtils.log(String.format("@%s: %s", str("view.scan.time"), Utils.formatSeconds(duration)));
 
-                Storage.diskImage.setSize(totalSize);
+                Storage.diskImage.setCalculatedSize(totalSize);
                 Storage.diskImage.calculateCrc32();
                 Storage.diskImage.setError(error);
-
-                if (error) {
-                    //todo если были ошибки - получить размер файла и поискать похожие
-                    // на самом деле, лучше дождаться сравнения по файликам.
-                    //По размеру образ совпадает с:
-                    //Dreamsoft (Rus) (RGR)
-                    //В базе данных не удалось найти похожий образ диска
-
-                    //if getfilesize(Dir+SearchRec.name)=j then
-                    //  begin
-                    //   journal.memo2.SelAttributes.Color:= clgreen;journal.memo2.Lines.add('@По размеру образ совпадает с:');
-                    //   journal.memo2.SelAttributes.Color:= clgreen;journal.memo2.Lines.add(@searchrec.name);memo1.perform(wm_vscroll, sb_linedown,0);flu:=true;
-                    //  end;
-                    // until FindNext(SearchRec)<>0;
-                    // FindClose(SearchRec);
-                    // if flu=false then journal.memo2.SelAttributes.Color:= clred;journal.memo2.Lines.add('!В базе данных не удалось найти похожий образ диска');memo1.perform(wm_vscroll, sb_linedown,0);
-                    //e
-                }
 
                 JavaFxUtils.showSavePanel();
             }

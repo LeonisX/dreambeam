@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import md.leonis.dreambeam.model.DiskImage;
 import md.leonis.dreambeam.model.FileRecord;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
@@ -133,13 +134,11 @@ public class ComparePaneController implements Closeable {
 
     public void compare() {
         try {
-            List<String> leftLines = loadRecords(leftFile, leftUser);
-            List<String> rightLines = loadRecords(rightFile, rightUser);
-            Map<String, FileRecord> leftRecords = mapGamesList(leftLines);
-            Map<String, FileRecord> rightRecords = mapGamesList(rightLines);
+            Map<String, FileRecord> leftRecords = loadRecords(leftFile, leftUser);
+            Map<String, FileRecord> rightRecords = loadRecords(rightFile, rightUser);
 
-            leftLines = mapGamesListFull(leftRecords, rightRecords, differenceCheckBox.isSelected());
-            rightLines = mapGamesListFull(rightRecords, leftRecords, differenceCheckBox.isSelected());
+            List<String> leftLines = mapGamesListFull(leftRecords, rightRecords, differenceCheckBox.isSelected());
+            List<String> rightLines = mapGamesListFull(rightRecords, leftRecords, differenceCheckBox.isSelected());
 
             leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
             rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
@@ -149,12 +148,8 @@ public class ComparePaneController implements Closeable {
         }
     }
 
-    private List<String> loadRecords(String file, boolean isUser) throws IOException {
-        return FileUtils.readFromFile(getGamePath(file, isUser));
-    }
-
-    private Map<String, FileRecord> mapGamesList(List<String> lines) {
-        return lines.subList(1, lines.size() - 1).stream().map(FileRecord::parseLine)
+    private Map<String, FileRecord> loadRecords(String file, boolean isUser) throws IOException { //todo в перспективе брать из хранилища
+        return new DiskImage(FileUtils.readFromFile(getGamePath(file, isUser))).getCompareRecords().stream()
                 .collect(Collectors.toMap(FileRecord::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
     }
 

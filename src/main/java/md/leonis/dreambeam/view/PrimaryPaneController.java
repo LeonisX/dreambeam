@@ -17,20 +17,24 @@ import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.StringUtils;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static md.leonis.dreambeam.statik.Config.*;
 
 public class PrimaryPaneController implements Closeable {
 
-    private static final String SERIAL = "SERIAL:";
+    /*private static final String SERIAL = "SERIAL:";
     private static final String LABEL = "LABEL:";
-    private static final String SYSTEM = "SYSTEM:";
+    private static final String SYSTEM = "SYSTEM:";*/
     private static final String CDFS = "CDFS";
 
     public Button readFsButton;
@@ -48,6 +52,9 @@ public class PrimaryPaneController implements Closeable {
     private String volumeLabel;
     private String serialNumber;
     private String fileSystem;
+    private long totalSpace;
+    private long usableSpace;
+    private long unallocatedSpace;
 
     @FXML
     private void initialize() {
@@ -180,12 +187,19 @@ public class PrimaryPaneController implements Closeable {
         if (serialNumber != null) {
             JavaFxUtils.log(String.format("%s: %s", str("primary.log.serial.number"), serialNumber));
         }
+        if (totalSpace != -1) {
+            JavaFxUtils.log(String.format("%s: %s", str("primary.total.space"), totalSpace));
+        }
+        if (usableSpace != 0 || unallocatedSpace != 0) {
+            JavaFxUtils.log(String.format("%s: %s: %s", str("primary.wrong.disk.space.data"), usableSpace, unallocatedSpace));
+        }
         boolean allIsBad = (volumeLabel == null && serialNumber == null && fileSystem == null);
         if (allIsBad) {
             JavaFxUtils.log("!" + str("primary.log.volume.label.read.error"));
         }
 
-        Storage.diskImage = new DiskImage(FileUtils.listFiles(driveRoot), isDirectory, Config.lastDirectory);
+        Storage.diskImage = new DiskImage(totalSpace, usableSpace, unallocatedSpace, fileSystem,
+                volumeLabel, serialNumber, FileUtils.listFiles(driveRoot), isDirectory, Config.lastDirectory);
         if (Storage.diskImage.getFiles().isEmpty() && allIsBad) {
             throw new RuntimeException(str("primary.disk.is.not.ready.error"));
         } else {
@@ -235,21 +249,23 @@ public class PrimaryPaneController implements Closeable {
             try {
                 FileStore fileStore = Files.getFileStore(root);
 
+                //name: DuxRev-RC1
+                //type: CDFS
                 //getTotalSpace: 23982080
                 //getUsableSpace: 0
                 //getUnallocatedSpace: 0
                 //bytesPerSector: 2048
-                //getTotalSpace: 23982080
                 //volume:vsn: 1233317977
                 //volume:isRemovable: false
                 //volume:isCdrom: true
 
-                /*System.out.println("getTotalSpace: " + fileStore.getTotalSpace());
+                /*System.out.println("name: " + fileStore.name());
+                System.out.println("type: " + fileStore.type());
+                System.out.println("getTotalSpace: " + fileStore.getTotalSpace());
                 System.out.println("getUsableSpace: " + fileStore.getUsableSpace());
                 System.out.println("getUnallocatedSpace: " + fileStore.getUnallocatedSpace());
                 System.out.println("bytesPerSector: " + fileStore.getBlockSize());
-                System.out.println("getTotalSpace: " + fileStore.getTotalSpace());
-                System.out.println("volume:vsn: " + fileStore.getAttribute("volume:vsn"));
+                System.out.println("volume:vsn: " + fileStore.getAttribute("volume:vsn")); // Serial number
                 System.out.println("volume:isRemovable: " + fileStore.getAttribute("volume:isRemovable"));
                 System.out.println("volume:isCdrom: " + fileStore.getAttribute("volume:isCdrom"));*/
 
@@ -267,6 +283,30 @@ public class PrimaryPaneController implements Closeable {
     }
 
     private void scanDrive(File driveRoot) {
+        volumeLabel = null;
+        serialNumber = null;
+        fileSystem = null;
+        totalSpace = -1;
+
+        try {
+            FileStore fileStore = Files.getFileStore(driveRoot.toPath());
+
+            volumeLabel = fileStore.name();
+            fileSystem = fileStore.type();
+            serialNumber = StringUtils.formatSerialNumber((int) fileStore.getAttribute("volume:vsn"));
+
+            if (fileSystem.equals(CDFS)) {
+                totalSpace = fileStore.getTotalSpace();
+                usableSpace = fileStore.getUsableSpace();
+                unallocatedSpace = fileStore.getUnallocatedSpace();
+            }
+        } catch (Exception e) {
+            JavaFxUtils.log("!" + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    // C code (vol.exe)
+    /*private void scanDrive(File driveRoot) {
         volumeLabel = null;
         serialNumber = null;
         fileSystem = null;
@@ -291,15 +331,12 @@ public class PrimaryPaneController implements Closeable {
             if (lines.size() == 3) {
                 volumeLabel = lines.get(1).replace(LABEL, "").trim();
                 fileSystem = lines.get(2).replace(SYSTEM, "").trim();
-
-                String sn = lines.get(0).replace(SERIAL, "").trim();
-                sn = String.format("%08X", Long.parseLong(sn));
-                serialNumber = String.format("%s-%s", sn.substring(0, 4), sn.substring(4));
+                serialNumber = StringUtils.formatSerialNumber(Integer.parseInt(lines.get(0).replace(SERIAL, "").trim()));
             }
         } catch (Exception e) {
             JavaFxUtils.log("!" + e.getClass().getName() + ": " + e.getMessage());
         }
-    }
+    }*/
 
     /*private void scanDrivePowerShell(File driveRoot) throws Exception {
         String driveLetter = driveRoot.toString().substring(0, 1).toUpperCase();

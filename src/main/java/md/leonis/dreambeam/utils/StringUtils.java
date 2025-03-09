@@ -4,7 +4,14 @@ package md.leonis.dreambeam.utils;
 // Нужна для уменьшения размера исполняемого файла.
 public class StringUtils {
 
-    //todo сюда %08 и подобные
+    public static String formatHex(int value) {
+        return String.format("%08X", value);
+    }
+
+    public static String formatSerialNumber(int value) {
+        String sn = formatHex(value);
+        return String.format("%s-%s", sn.substring(0, 4), sn.substring(4));
+    }
 
     public static boolean isBlank(final CharSequence cs) {
         final int strLen = length(cs);

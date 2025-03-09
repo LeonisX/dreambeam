@@ -13,8 +13,10 @@ public record FileRecord(String title, long size, String hash, boolean isError) 
     }
 
     public String formatRecord() {
-        if (StringUtils.isBlank(hash)) {
-            return String.format(title);
+        if (size < 0) {
+            return String.format("%s: %s", title, hash);
+        } else if (StringUtils.isBlank(hash)) {
+            return title;
         } else {
             return String.format("%s [%s bytes] - %s", title, size, isError ? ERROR : hash);
         }

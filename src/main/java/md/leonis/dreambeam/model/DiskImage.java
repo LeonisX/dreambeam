@@ -4,30 +4,55 @@ import md.leonis.dreambeam.utils.BinaryUtils;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DiskImage {
 
-    private long size;                      // Calculated size
-    //todo label, serial, actual size, something else
-    private final List<Path> files;
+    private long totalSpace;                // UNUSED, Total disk space
+    private long usableSpace;               // UNUSED, Total disk space
+    private long unallocatedSpace;          // UNUSED, Total disk space
+    private String fileSystem;              // UNUSED, File System, CDFS, NTFS, FAT32, exFAT
+    private String volumeLabel;             // UNUSED, Volume Label
+    private String serialNumber;            // UNUSED, Serial Number (HEX)
+
+    private long calculatedSize;            // Calculated size
+    private List<Path> files;               // Paths to every file/directory on disk
     private final boolean isDirectory;      // CD or FS directory
-    private final File lastDirectory;       // Last directory for DirectoryChooser.
-    private final List<FileRecord> records;
-    private String crc32;
+    private File lastDirectory;             // Last directory for DirectoryChooser.
+    private final List<FileRecord> records; // File records
+    private String crc32;                   // Level-1 CRC32
     private boolean error;                  // Broken files on CD
 
-    public DiskImage(List<Path> files, boolean isDirectory, File lastDirectory) {
+    public DiskImage(long totalSpace, long usableSpace, long unallocatedSpace, String fileSystem, String volumeLabel, String serialNumber, List<Path> files, boolean isDirectory, File lastDirectory) {
+        this.totalSpace = totalSpace;
+        this.usableSpace = usableSpace;
+        this.unallocatedSpace = unallocatedSpace;
+        this.fileSystem = fileSystem;
+        this.volumeLabel = volumeLabel;
+        this.serialNumber = serialNumber;
         this.files = files;
         this.isDirectory = isDirectory;
         this.lastDirectory = lastDirectory;
         this.records = files.stream().map(FileRecord::new).collect(Collectors.toList());
     }
 
+    public DiskImage(List<String> lines) {
+        this.calculatedSize = Long.parseLong(lines.remove(0).split(" ")[2]); // Total size: 962839979 bytes.
+        this.records = lines.stream().map(FileRecord::parseLine).collect(Collectors.toList());
+        this.isDirectory = false;
+    }
+
     public List<String> getSaveLines() {
         List<String> lines = records.stream().map(FileRecord::formatRecord).collect(Collectors.toList());
-        lines.add(0, String.format("Total size: %s bytes.", size));
+        lines.add(0, String.format("Total size: %s bytes.", calculatedSize));
+        return lines;
+    }
+
+    public List<FileRecord> getCompareRecords() {
+        List<FileRecord> lines = new ArrayList<>(records);
+        lines.add(0, new FileRecord(" size", -1, Long.toString(calculatedSize), false));
         return lines;
     }
 
@@ -37,12 +62,16 @@ public class DiskImage {
                 : file.subpath(0, file.getNameCount()).toString().toLowerCase();
     }
 
-    public long getSize() {
-        return size;
+    public long getTotalSpace() {
+        return totalSpace;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public long getCalculatedSize() {
+        return calculatedSize;
+    }
+
+    public void setCalculatedSize(long calculatedSize) {
+        this.calculatedSize = calculatedSize;
     }
 
     public void calculateCrc32() {
