@@ -4,11 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import md.leonis.dreambeam.model.DiskImage;
-import md.leonis.dreambeam.model.FileRecord;
-import md.leonis.dreambeam.model.ListViewHandler;
-import md.leonis.dreambeam.model.Pair;
-import md.leonis.dreambeam.model.enums.CompareStatus;
+import md.leonis.dreambeam.model.*;
+import md.leonis.dreambeam.model.enums.Style;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
@@ -41,17 +38,17 @@ public class ComparePaneController implements Closeable {
 
     public CheckBox differenceCheckBox;
 
-    public ListView<String> leftListView;
-    public ListView<String> rightListView;
+    public ListView<Triple<Style, String, Object>> leftListView;
+    public ListView<Triple<Style, String, Object>> rightListView;
 
     private boolean leftUser = true;
     private boolean rightUser = false;
 
-    private String leftFile;
-    private String rightFile;
+    private Triple<Style, String, Object> leftFile;
+    private Triple<Style, String, Object> rightFile;
 
-    private volatile List<String> userGames;
-    private volatile List<String> baseGames;
+    private volatile List<Triple<Style, String, Object>> userGames;
+    private volatile List<Triple<Style, String, Object>> baseGames;
 
     @FXML
     private void initialize() {
@@ -60,8 +57,8 @@ public class ComparePaneController implements Closeable {
 
         MainStageController.calculateUserHashes(true, false);
 
-        baseGames = Storage.baseHashes.values().stream().sorted().toList();
-        userGames = Storage.userHashes.values().stream().sorted().toList();
+        baseGames = Storage.baseHashes.values().stream().sorted().map(s -> Triple.of(Style.DEFAULT, s, null)).toList();
+        userGames = Storage.userHashes.values().stream().sorted().map(s -> Triple.of(Style.DEFAULT, s, null)).toList();
 
         leftToggleGroup.selectedToggleProperty().addListener((group, oldToggle, newToggle) -> {
             leftUser = newToggle.getUserData() != null;
@@ -72,15 +69,15 @@ public class ComparePaneController implements Closeable {
             showLists();
         });
 
-        leftListView.setCellFactory(Utils::colorLines);
-        rightListView.setCellFactory(Utils::colorLines);
+        leftListView.setCellFactory(Utils::colorLines2);
+        rightListView.setCellFactory(Utils::colorLines2);
 
-        var leftHandler = new ListViewHandler<>(leftListView, rightListView);
+        var leftHandler = new ListViewHandler(leftListView, rightListView);
         leftListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
                 -> leftHandler.sync(newValue));
         leftListView.setOnKeyPressed(leftHandler::handle);
 
-        var rightHandler = new ListViewHandler<>(rightListView, leftListView);
+        var rightHandler = new ListViewHandler(rightListView, leftListView);
         rightListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
                 -> rightHandler.sync(newValue));
         rightListView.setOnKeyPressed(rightHandler::handle);
@@ -103,7 +100,7 @@ public class ComparePaneController implements Closeable {
         rightListView.getSelectionModel().selectFirst();
     }
 
-    private void showList(ListView<String> listView, boolean isUser) {
+    private void showList(ListView<Triple<Style, String, Object>> listView, boolean isUser) {
         if (isUser) {
             showMyGames(listView);
         } else {
@@ -111,11 +108,11 @@ public class ComparePaneController implements Closeable {
         }
     }
 
-    private void showMyGames(ListView<String> leftListView) {
+    private void showMyGames(ListView<Triple<Style, String, Object>> leftListView) {
         leftListView.setItems(FXCollections.observableList(userGames));
     }
 
-    private void showBaseGames(ListView<String> leftListView) {
+    private void showBaseGames(ListView<Triple<Style, String, Object>> leftListView) {
         leftListView.setItems(FXCollections.observableList(baseGames));
     }
 
@@ -137,8 +134,8 @@ public class ComparePaneController implements Closeable {
             Map<String, FileRecord> leftRecords = loadRecords(leftFile, leftUser);
             Map<String, FileRecord> rightRecords = loadRecords(rightFile, rightUser);
 
-            List<String> leftLines = mapGamesListFull(leftRecords, rightRecords, differenceCheckBox.isSelected());
-            List<String> rightLines = mapGamesListFull(rightRecords, leftRecords, differenceCheckBox.isSelected());
+            List<Triple<Style, String, Object>> leftLines = mapGamesListFull(leftRecords, rightRecords, differenceCheckBox.isSelected());
+            List<Triple<Style, String, Object>> rightLines = mapGamesListFull(rightRecords, leftRecords, differenceCheckBox.isSelected());
 
             leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
             rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
@@ -148,22 +145,22 @@ public class ComparePaneController implements Closeable {
         }
     }
 
-    private Map<String, FileRecord> loadRecords(String file, boolean isUser) throws IOException { //todo в перспективе брать из хранилища
-        return new DiskImage(FileUtils.readFromFile(getGamePath(file, isUser))).getCompareRecords().stream()
+    private Map<String, FileRecord> loadRecords(Triple<Style, String, Object> row, boolean isUser) throws IOException { //todo в перспективе брать из хранилища
+        return new DiskImage(FileUtils.readFromFile(getGamePath(row.getCenter(), isUser))).getCompareRecords().stream()
                 .collect(Collectors.toMap(FileRecord::title, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
     }
 
-    public static List<String> mapGamesListFull(Map<String, FileRecord> records1, Map<String, FileRecord> records2, boolean diffOnly) {
+    public static List<Triple<Style, String, Object>> mapGamesListFull(Map<String, FileRecord> records1, Map<String, FileRecord> records2, boolean diffOnly) {
         //1. найти общие
         List<Pair<FileRecord, FileRecord>> table = withNullsList(records1, records2);
 
-        List<String> result = new ArrayList<>();
+        List<Triple<Style, String, Object>> result = new ArrayList<>();
 
         for (Pair<FileRecord, FileRecord> pair : table) {
             FileRecord left = pair.getLeft();
             FileRecord right = pair.getRight();
             if (left == null) {
-                result.add("~" + right.fullTitle());
+                result.add(Triple.of(Style.LIGHT_GRAY, right.fullTitle(), null));
             } else {
                 result.add(compare(left, right, diffOnly));
             }
@@ -186,21 +183,18 @@ public class ComparePaneController implements Closeable {
         throw new IllegalStateException();
     }
 
-    public static String compare(FileRecord left, FileRecord right, boolean diffOnly) {
-        CompareStatus status = compare(left, right);
-        if (diffOnly && status.equals(CompareStatus.EQUALS)) {
+    public static Triple<Style, String, Object> compare(FileRecord left, FileRecord right, boolean diffOnly) {
+        Style style = compare(left, right);
+        if (diffOnly && style.equals(Style.DEFAULT)) {
             return null;
         } else {
-            return status.getMarker() + left.fullTitle();
+            return Triple.of(style, left.fullTitle(), null);
         }
     }
 
-    public static CompareStatus compare(FileRecord left, FileRecord right) {
-        if (right == null) {
-            return CompareStatus.ABSENT;
-        }
-        if (left.isError()) {
-            return CompareStatus.ERROR;
+    public static Style compare(FileRecord left, FileRecord right) {
+        if (right == null || left.isError()) {
+            return Style.RED;
         }
         int code = 0;
         if (!left.hash().equals(right.hash())) {
@@ -209,7 +203,11 @@ public class ComparePaneController implements Closeable {
         if (left.size() != right.size()) {
             code++;
         }
-        return CompareStatus.values()[code];
+        return switch (code) {
+            case 1 -> Style.BLUE;
+            case 2 -> Style.FUCHSIA;
+            default -> Style.DEFAULT;
+        };
     }
 
     private Path getGamePath(String fileName, boolean isUser) {

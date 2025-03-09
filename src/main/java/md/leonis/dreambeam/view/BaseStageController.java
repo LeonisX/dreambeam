@@ -7,7 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import md.leonis.dreambeam.model.ListViewHandler;
+import md.leonis.dreambeam.model.SimpleListViewHandler;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.FileUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
@@ -40,11 +40,11 @@ public class BaseStageController implements Closeable {
     private void initialize() {
         JavaFxUtils.currentStage.setOnHiding(e -> showText(""));
 
-        gamesListView.setCellFactory(Utils::colorLines);
+        gamesListView.setCellFactory(Utils::colorSimpleLines);
         gamesListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> showText(newValue));
 
         //навигация набором букв
-        var handler = new ListViewHandler<>(gamesListView, null);
+        var handler = new SimpleListViewHandler<>(gamesListView, null);
         gamesListView.setOnKeyPressed(handler::handle);
 
         MainStageController.loadTexts();

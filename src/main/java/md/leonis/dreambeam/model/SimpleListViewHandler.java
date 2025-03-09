@@ -6,11 +6,13 @@ import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import md.leonis.dreambeam.model.enums.Style;
+import md.leonis.dreambeam.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ListViewHandler {
+//https://stackoverflow.com/questions/14357515/javafx-close-window-on-pressing-esc
+public class SimpleListViewHandler<T> {
 
     /**
      * Amount of time to wait between key presses that typing a subsequent key is considered part of the same search, in milliseconds.
@@ -20,10 +22,10 @@ public class ListViewHandler {
     private String searchString = "";
     private int mSearchSkip = 0;
     private long mLastTyped = System.currentTimeMillis();
-    private final ListView<Triple<Style, String, Object>> listView;
-    private final ListView<Triple<Style, String, Object>> rightListView;
+    private final ListView<T> listView;
+    private final ListView<T> rightListView;
 
-    public ListViewHandler(final ListView<Triple<Style, String, Object>> listView, final ListView<Triple<Style, String, Object>> rightListView) {
+    public SimpleListViewHandler(final ListView<T> listView, final ListView<T> rightListView) {
         this.listView = listView;
         this.rightListView = rightListView;
     }
@@ -52,8 +54,8 @@ public class ListViewHandler {
 
         boolean found = false;
         int skipped = 0;
-        for (final Triple<Style, String, Object> item : listView.getItems()) {
-            var string = item.getCenter().toUpperCase();
+        for (final T item : listView.getItems()) {
+            var string = cleanString(item.toString().toUpperCase());
 
             if (string.startsWith(searchString)) {
                 if (mSearchSkip > skipped) {
@@ -86,7 +88,7 @@ public class ListViewHandler {
         }
     }
 
-    private int limitScroll(ListView<Triple<Style, String, Object>> listView, int index) {
+    private int limitScroll(ListView<T> listView, int index) {
         if (index < 0) {
             index = 0;
         } else {
@@ -97,12 +99,11 @@ public class ListViewHandler {
         return index;
     }
 
-    public void sync(Triple<Style, String, Object> row) {
+    public void sync(String searchString) {
         if (rightListView.getUserData() != null) {
             return;
         }
         listView.setUserData("!");
-        String searchString = (row == null) ? null : row.getCenter();
 
         while (true) {
             searchString = searchString == null ? "" : searchString.toUpperCase();
@@ -130,9 +131,9 @@ public class ListViewHandler {
         listView.setUserData(null);
     }
 
-    private boolean find(ListView<Triple<Style, String, Object>> listView, String searchString) {
-        for (final Triple<Style, String, Object> item : listView.getItems()) {
-            var string = item.getCenter().toUpperCase();
+    private boolean find(ListView<T> listView, String searchString) {
+        for (final T item : listView.getItems()) {
+            var string = cleanString(item.toString().toUpperCase());
 
             if (string.startsWith(searchString)) {
                 listView.getSelectionModel().select(item);
@@ -140,6 +141,15 @@ public class ListViewHandler {
             }
         }
         return false;
+    }
+
+    private String cleanString(String string) {
+        for (String s : Style.prefs) {
+            if (string.startsWith(s)) {
+                string = string.substring(1);
+            }
+        }
+        return string;
     }
 
     public int getVisibleCount(ListView<?> listView) {

@@ -4,7 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import md.leonis.dreambeam.model.ListViewHandler;
+import md.leonis.dreambeam.model.SimpleListViewHandler;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.StringUtils;
@@ -117,7 +117,7 @@ public class WizardStageController implements Closeable {
                 -> titleTextField.setText(gamesListView.getSelectionModel().getSelectedItem()));
 
         //навигация набором букв
-        var handler = new ListViewHandler<>(gamesListView, null);
+        var handler = new SimpleListViewHandler<>(gamesListView, null);
         gamesListView.setOnKeyPressed(handler::handle);
 
         badDumpCheckBox.setSelected(Storage.diskImage.isError());

@@ -29,7 +29,7 @@ public class MainStageController implements Closeable {
 
     @FXML
     private void initialize() {
-        logListView.setCellFactory(Utils::colorLines);
+        logListView.setCellFactory(Utils::colorSimpleLines);
 
         if (Config.user != null) {
             try {

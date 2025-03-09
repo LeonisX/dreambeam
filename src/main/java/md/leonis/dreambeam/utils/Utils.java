@@ -4,6 +4,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import md.leonis.dreambeam.model.DiskImage;
 import md.leonis.dreambeam.model.Pair;
+import md.leonis.dreambeam.model.Triple;
+import md.leonis.dreambeam.model.enums.Style;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -78,7 +80,7 @@ public class Utils {
         return String.format("%02d%s%02d", minutes, separator, seconds);
     }
 
-    public static ListCell<String> colorLines(ListView<String> ignoredParam) {
+    public static ListCell<String> colorSimpleLines(ListView<String> ignoredParam) {
         return new ListCell<>() {
             @Override
             protected void updateItem(String message, boolean empty) {
@@ -88,46 +90,41 @@ public class Utils {
                     setText(null);
 
                 } else {
-                    char firstSymbol = message.isEmpty() ? '-' : message.charAt(0);
-
                     getStyleClass().removeAll("green", "blue", "fuchsia", "red", "lightgray", "bold");
-                    //setStyle("-fx-font-weight: regular");
 
-                    switch (firstSymbol) {
-                        case '@' -> {
-                            getStyleClass().add("green");      // @
-                            setText(message.substring(1));
-                        }
-                        case '#' -> {
-                            getStyleClass().add("blue");       // #    crc32
-                            setText(message.substring(1));
-                        }
-                        case '?' -> {
-                            getStyleClass().add("fuchsia");    // ?    both
-                            setText(message.substring(1));
-                        }
-                        case '!' -> {
-                            getStyleClass().add("red");        // !
-                            setText(message.substring(1));
-                        }
-                        case '~' -> {
-                            getStyleClass().add("lightgray");  // ~
-                            setText(message.substring(1));
-                        }
-                        case '+' -> {
-                            getStyleClass().add("bold");       // +  bold text
-                            setText(message.substring(1));
-                        }
-                        default -> {
-                            //setStyle(null);
-                            //setStyle("-fx-text-fill: -fx-text-base-color;");
-                            setText(message);
-                        }
+                    String prefix = message.isEmpty() ? "" : message.substring(0, 1);
+                    Style style = Style.getByPrefix(prefix);
+
+                    if (style != Style.DEFAULT) {
+                        getStyleClass().add(style.getStyle());
+                        setText(message.substring(1));
+                    } else {
+                        setText(message);
                     }
                 }
             }
         };
     }
 
-    public static List<String> prefs = List.of("@", "#", "?", "!", "~", "+");
+    public static ListCell<Triple<Style, String, Object>> colorLines2(ListView<Triple<Style, String, Object>> ignoredParam) {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(Triple<Style, String, Object> message, boolean empty) {
+                super.updateItem(message, empty);
+
+                if (empty || message == null || message.getCenter() == null) {
+                    setText(null);
+
+                } else {
+                    getStyleClass().removeAll("green", "blue", "fuchsia", "red", "lightgray", "bold");
+
+                    if (Objects.requireNonNull(message.getLeft()) != Style.DEFAULT) {
+                        getStyleClass().add(message.getLeft().getStyle());
+                    }
+
+                    setText(message.getCenter());
+                }
+            }
+        };
+    }
 }

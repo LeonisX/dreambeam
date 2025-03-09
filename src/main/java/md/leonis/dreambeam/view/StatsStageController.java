@@ -6,7 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import md.leonis.dreambeam.model.ListViewHandler;
 import md.leonis.dreambeam.model.Pair;
-import md.leonis.dreambeam.model.enums.CompareStatus;
+import md.leonis.dreambeam.model.Triple;
+import md.leonis.dreambeam.model.enums.Style;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 import md.leonis.dreambeam.utils.Utils;
@@ -28,8 +29,8 @@ public class StatsStageController implements Closeable {
 
     public CheckBox differenceCheckBox;
 
-    public ListView<String> leftListView;
-    public ListView<String> rightListView;
+    public ListView<Triple<Style, String, Object>> leftListView;
+    public ListView<Triple<Style, String, Object>> rightListView;
     public Label userLabel;
     public Label baseLabel;
     public RadioButton allRadioButton;
@@ -61,8 +62,8 @@ public class StatsStageController implements Closeable {
         baseGames = Storage.baseHashes.values().stream().sorted().toList();
         userGames = Storage.userHashes.values().stream().sorted().toList();
 
-        leftListView.setCellFactory(Utils::colorLines);
-        rightListView.setCellFactory(Utils::colorLines);
+        leftListView.setCellFactory(Utils::colorLines2);
+        rightListView.setCellFactory(Utils::colorLines2);
 
         differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> compare());
 
@@ -116,20 +117,18 @@ public class StatsStageController implements Closeable {
         List<Pair<String, String>> table1 = withNullsList(userFilteredGames, baseFilteredGames);
         List<Pair<String, String>> table2 = withNullsList(baseFilteredGames, userFilteredGames);
 
-        List<String> leftLines = withNullsList(table1, differenceCheckBox.isSelected());
-        List<String> rightLines = withNullsList(table2, differenceCheckBox.isSelected());
+        List<Triple<Style, String, Object>> leftLines = withNullsList(table1, differenceCheckBox.isSelected());
+        List<Triple<Style, String, Object>> rightLines = withNullsList(table2, differenceCheckBox.isSelected());
 
         leftListView.setItems(FXCollections.observableList(Objects.requireNonNull(leftLines)));
         rightListView.setItems(FXCollections.observableList(Objects.requireNonNull(rightLines)));
 
-        var leftHandler = new ListViewHandler<>(leftListView, rightListView);
-        leftListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
-                -> leftHandler.sync(newValue));
+        var leftHandler = new ListViewHandler(leftListView, rightListView);
+        leftListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> leftHandler.sync(newValue));
         leftListView.setOnKeyPressed(leftHandler::handle);
 
-        var rightHandler = new ListViewHandler<>(rightListView, leftListView);
-        rightListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
-                -> rightHandler.sync(newValue));
+        var rightHandler = new ListViewHandler(rightListView, leftListView);
+        rightListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> rightHandler.sync(newValue));
         rightListView.setOnKeyPressed(rightHandler::handle);
 
         long baseBest = baseFilteredGames.stream().filter(g -> g.contains("[!]")).count();
@@ -140,21 +139,26 @@ public class StatsStageController implements Closeable {
                 userFilteredGames.size(), text, userUnique, userFilteredGames.size() - userUnique));
     }
 
+    public static List<Pair<String, String>> withNullsList(Set<String> left, Set<String> right) {
+        return Stream.concat(left.stream(), right.stream()).distinct().sorted()
+                .map(t -> Pair.of(left.contains(t) ? t : null, right.contains(t) ? t : null)).toList();
+    }
+
     private int gerUserUniqueGamesCount() {
         var list = new ArrayList<>(userFilteredGames);
         list.removeAll(baseFilteredGames);
         return list.size();
     }
 
-    public static List<String> withNullsList(List<Pair<String, String>> table, boolean diffOnly) {
-        List<String> result = new ArrayList<>();
+    public static List<Triple<Style, String, Object>> withNullsList(List<Pair<String, String>> table, boolean diffOnly) {
+        List<Triple<Style, String, Object>> result = new ArrayList<>();
 
         for (Pair<String, String> stringStringPair : table) {
             String left = stringStringPair.getLeft();
             String right = stringStringPair.getRight();
             if (left == null) {
                 if (!diffOnly) {
-                    result.add("~" + right);
+                    result.add(Triple.of(Style.LIGHT_GRAY, right, null));
                 }
             } else {
                 if (!diffOnly || !left.equals(right)) {
@@ -166,14 +170,9 @@ public class StatsStageController implements Closeable {
         return result.stream().filter(Objects::nonNull).toList();
     }
 
-    public static List<Pair<String, String>> withNullsList(Set<String> left, Set<String> right) {
-        return Stream.concat(left.stream(), right.stream()).distinct().sorted()
-                .map(t -> Pair.of(left.contains(t) ? t : null, right.contains(t) ? t : null)).toList();
-    }
-
-    public static String checkStatus(String game1) {
-        CompareStatus status = (game1.contains("(Bad")) ? CompareStatus.ERROR : CompareStatus.EQUALS;
-            return status.getMarker() + game1;
+    public static Triple<Style, String, Object> checkStatus(String title) {
+        Style style = (title.contains("(Bad")) ? Style.RED : Style.DEFAULT;
+        return Triple.of(style, title, null);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
