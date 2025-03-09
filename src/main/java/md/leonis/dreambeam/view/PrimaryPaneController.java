@@ -112,9 +112,9 @@ public class PrimaryPaneController implements Closeable {
 
     private void readFiles() {
         new Thread(() -> {
-            MainStageController.calculateBaseHashes(true, true);
+            MainStageController.calculateBaseHashes(false, false);
             JavaFxUtils.log("#" + str("primary.log.base.files.loaded"));
-            MainStageController.calculateUserHashes(true, true);
+            MainStageController.calculateUserHashes(false, false);
             JavaFxUtils.log("#" + str("primary.log.user.files.loaded"));
         }).start();
     }

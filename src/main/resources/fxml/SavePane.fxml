@@ -3,13 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.SavePaneController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="md.leonis.dreambeam.view.SavePaneController">
     <center>
         <BorderPane BorderPane.alignment="CENTER">
             <padding>
@@ -47,11 +48,21 @@
                         <padding>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                         </padding>
-                        <Label text="%save.unknown.image.label" />
-                        <Button fx:id="runWizardButton" mnemonicParsing="false" onAction="#runWizardButtonClick" text="%save.run.disk.name.wizard.button" />
-                        <Button disable="true" mnemonicParsing="false" text="%save.find.similar.images.button" />
+                  <HBox fx:id="nokHBox" alignment="CENTER">
+                     <children>
+                              <Label text="%save.unknown.image.label" />
+                              <Button fx:id="runWizardButton" mnemonicParsing="false" onAction="#runWizardButtonClick" text="%save.run.disk.name.wizard.button" />
+                     </children>
+                  </HBox>
+                        <Button fx:id="findSimilarButton" mnemonicParsing="false" onAction="#findSimilarButtonClick" text="%save.find.similar.images.button" />
                     </HBox>
-                    <ListView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+               <TableView fx:id="similarTableView">
+                 <columns>
+                   <TableColumn fx:id="titleTableColumn" editable="false" prefWidth="527.0" text="%save.title.table.column" />
+                   <TableColumn fx:id="diffTableColumn" editable="false" minWidth="0.0" prefWidth="131.0" style="-fx-alignment: CENTER;" text="%save.diff.table.column" />
+                     <TableColumn fx:id="sourceTableColumn" editable="false" prefWidth="120.0" sortable="false" style="-fx-alignment: CENTER;" text="%save.source.table.column" />
+                 </columns>
+               </TableView>
                 </VBox>
             </center>
         </BorderPane>

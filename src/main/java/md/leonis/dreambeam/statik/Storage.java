@@ -63,7 +63,7 @@ public class Storage {
         userFiles = new HashMap<>();
         userHashes = new HashMap<>();
         userDuplicates = new HashMap<>();
-        Utils.loadFiles(FileUtils.getBaseGamesDir(), userFiles, userHashes, userDuplicates);
+        Utils.loadFiles(FileUtils.getUserDir(), userFiles, userHashes, userDuplicates);
         userFilesLoaded = true;
     }
 

@@ -1,8 +1,13 @@
 package md.leonis.dreambeam.view;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import md.leonis.dreambeam.model.DiskImage;
 import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.FileUtils;
@@ -11,6 +16,10 @@ import md.leonis.dreambeam.utils.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static md.leonis.dreambeam.statik.Config.str;
 import static md.leonis.dreambeam.statik.Config.strError;
@@ -23,7 +32,12 @@ public class SavePaneController implements Closeable {
     public Button saveButton;
     public TextField titleTextField;
     public Button runWizardButton;
+    public Button findSimilarButton;
     public Label okLabel;
+    public TableView<Diff> similarTableView;
+    public TableColumn<Diff, String> titleTableColumn;
+    public TableColumn<Diff, String> diffTableColumn;
+    public TableColumn<Diff, Source> sourceTableColumn;
 
     private String name;
     private boolean recognized;
@@ -62,22 +76,16 @@ public class SavePaneController implements Closeable {
             saveButton.setDisable(StringUtils.isBlank(titleTextField.getText()));
         });
 
-        if (Storage.diskImage.isError()) {
-            //todo если были ошибки - получить размер файла и поискать похожие
-            // на самом деле, лучше дождаться сравнения по файликам.
-            //По размеру образ совпадает с:
-            //Dreamsoft (Rus) (RGR)
-            //В базе данных не удалось найти похожий образ диска
+        similarTableView.getSortOrder().add(diffTableColumn);
+        similarTableView.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldValue, newValue) -> titleTextField.setText(newValue.title));
 
-            //if getfilesize(Dir+SearchRec.name)=j then
-            //  begin
-            //   journal.memo2.SelAttributes.Color:= clgreen;journal.memo2.Lines.add('@По размеру образ совпадает с:');
-            //   journal.memo2.SelAttributes.Color:= clgreen;journal.memo2.Lines.add(@searchrec.name);memo1.perform(wm_vscroll, sb_linedown,0);flu:=true;
-            //  end;
-            // until FindNext(SearchRec)<>0;
-            // FindClose(SearchRec);
-            // if flu=false then journal.memo2.SelAttributes.Color:= clred;journal.memo2.Lines.add('!В базе данных не удалось найти похожий образ диска');memo1.perform(wm_vscroll, sb_linedown,0);
-            //e
+        titleTableColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().title()));
+        diffTableColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(String.format("%.2f%%", cellData.getValue().diff())));
+        sourceTableColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().source()));
+
+        if (Storage.diskImage.isError()) {
+            findSimilarButtonClick();
         }
     }
 
@@ -148,6 +156,25 @@ public class SavePaneController implements Closeable {
         thread.start();
     }
 
+    public void findSimilarButtonClick() {
+        List<Diff> diffList = calculateDiffPoints(Storage.baseFiles.values(), Storage.baseHashes, Source.BASE);
+        diffList.addAll(calculateDiffPoints(Storage.userFiles.values().stream().filter(f -> !Storage.baseHashes.containsKey(f.getCrc32())).toList(), Storage.userHashes, Source.USER));
+
+        SortedList<Diff> sortedData = new SortedList<>(FXCollections.observableList(diffList));
+        sortedData.comparatorProperty().bind(similarTableView.comparatorProperty());
+        similarTableView.setItems(sortedData);
+
+        if (diffList.isEmpty()) {
+            JavaFxUtils.showAlert("", "Something unique...", "", Alert.AlertType.INFORMATION);
+        }
+    }
+
+    public List<Diff> calculateDiffPoints(Collection<DiskImage> files, Map<String, String> hashes, Source source) {
+        return files.parallelStream().map(diskImage ->
+                new Diff(diskImage.getCrc32(), hashes.get(diskImage.getCrc32()), Storage.diskImage.calculateDiffPoints(diskImage), source))
+                .filter(r -> r.diff() > 0).sorted((d1, d2) -> Double.compare(d2.diff(), d1.diff())).collect(Collectors.toList());
+    }
+
     private void sleep() {
         try {
             Thread.sleep(50);
@@ -157,5 +184,12 @@ public class SavePaneController implements Closeable {
 
     @Override
     public void close() throws IOException {
+    }
+
+    public record Diff(String crc32, String title, double diff, Source source) {
+    }
+
+    public enum Source {
+        BASE, USER
     }
 }
