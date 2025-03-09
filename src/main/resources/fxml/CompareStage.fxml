@@ -19,8 +19,11 @@
             <HBox.margin>
                <Insets left="15.0" right="15.0" />
             </HBox.margin>
+            <HBox spacing="5.0">
             <Button fx:id="compareButton" mnemonicParsing="false" onAction="#compareButtonClick" prefWidth="80.0" text="%compare.compare.button" />
-            <Button fx:id="backButton" mnemonicParsing="false" disable="true" onAction="#backButtonClick" prefWidth="80.0" text="%compare.back.button" />
+               <Button fx:id="similarButton" mnemonicParsing="false" onAction="#similarButtonClick" prefWidth="80.0" text="%compare.similar.button" />
+            </HBox>
+            <Button fx:id="backButton" disable="true" mnemonicParsing="false" onAction="#backButtonClick" prefWidth="80.0" text="%compare.back.button" />
          </VBox>
          <TitledPane collapsible="false" text="%compare.left.side.titled.pane">
             <HBox spacing="5.0">
@@ -38,6 +41,9 @@
                   </padding>
                </RadioButton>
             </HBox>
+            <padding>
+               <Insets right="5.0" />
+            </padding>
          </TitledPane>
          <TitledPane collapsible="false" text="%compare.right.side.titled.pane">
             <HBox spacing="5.0">

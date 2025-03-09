@@ -73,15 +73,15 @@ public class DiskImage {
                 : file.subpath(0, file.getNameCount()).toString().toLowerCase();
     }
 
-    public double calculateDiffPoints(DiskImage diskImage) {
-        int count = Storage.diskImage.getRecords().size();
+    public double calculateDiffPoints(DiskImage newDiskImage, DiskImage diskImage) {
+        int count = newDiskImage.getRecords().size();
         int sum = 0;
 
-        for (FileRecord record : Storage.diskImage.getRecords()) {
+        for (FileRecord record : newDiskImage.getRecords()) {
             sum += diskImage.getDiffPoints(record);
         }
 
-        if (diskImage.getCalculatedSize() == Storage.diskImage.getCalculatedSize()) {
+        if (diskImage.getCalculatedSize() == newDiskImage.getCalculatedSize()) {
             sum += 10;
         }
 

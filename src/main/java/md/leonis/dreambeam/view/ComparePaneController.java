@@ -40,6 +40,7 @@ public class ComparePaneController implements Closeable {
 
     public ListView<Triple<Style, String, Object>> leftListView;
     public ListView<Triple<Style, String, Object>> rightListView;
+    public Button similarButton;
 
     private boolean leftUser = true;
     private boolean rightUser = false;
@@ -116,9 +117,44 @@ public class ComparePaneController implements Closeable {
         leftListView.setItems(FXCollections.observableList(baseGames));
     }
 
+    public void similarButtonClick() {
+        backButton.setDisable(false);
+        compareButton.setDisable(true);
+        similarButton.setDisable(true);
+
+        leftFile = leftListView.getSelectionModel().getSelectedItem();
+        rightFile = rightListView.getSelectionModel().getSelectedItem();
+
+        leftListView.scrollTo(0);
+        rightListView.scrollTo(0);
+
+        if (leftUser) {
+            findSimilar(Storage.userFiles, rightUser ? Storage.userFiles : Storage.baseFiles, Storage.userHashes, rightUser ? Storage.userHashes : Storage.baseHashes);
+        } else {
+            findSimilar(Storage.baseFiles, rightUser ? Storage.userFiles : Storage.baseFiles, Storage.userHashes, rightUser ? Storage.userHashes : Storage.baseHashes);
+        }
+    }
+
+    private void findSimilar(Map<String, DiskImage> sourceFiles, Map<String, DiskImage> destinationFiles,
+                             Map<String, String> sourceHashes, Map<String, String> destinationHashes) {
+        var selectedItem = leftListView.getSelectionModel().getSelectedItem();
+        String hash = sourceHashes.entrySet().stream()
+                .filter(e -> e.getValue().equals(selectedItem.getCenter())).map(Map.Entry::getKey).findFirst().orElse(null);
+        DiskImage diskImage = sourceFiles.get(hash);
+        var files = destinationFiles.values().parallelStream().map(di ->
+                        new SavePaneController.Diff(di.getCrc32(), destinationHashes.get(di.getCrc32()), diskImage.calculateDiffPoints(diskImage, di), SavePaneController.Source.BASE))
+                .filter(r -> r.diff() > 0).sorted((d1, d2) -> Double.compare(d2.diff(), d1.diff())).toList();
+
+        List<Triple<Style, String, Object>> rightLines = files.stream().map(f -> Triple.of(Style.DEFAULT, String.format("%s (%.2f%%)", f.title(), f.diff()), null)).toList();
+
+        leftListView.setItems(FXCollections.observableList(List.of(selectedItem)));
+        rightListView.setItems(FXCollections.observableList(rightLines));
+    }
+
     public void compareButtonClick() {
         backButton.setDisable(false);
         compareButton.setDisable(true);
+        similarButton.setDisable(true);
 
         leftFile = leftListView.getSelectionModel().getSelectedItem();
         rightFile = rightListView.getSelectionModel().getSelectedItem();
@@ -221,6 +257,7 @@ public class ComparePaneController implements Closeable {
         rightListView.scrollTo(0);
         backButton.setDisable(true);
         compareButton.setDisable(false);
+        similarButton.setDisable(false);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {

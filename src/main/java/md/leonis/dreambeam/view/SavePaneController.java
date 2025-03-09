@@ -1,6 +1,5 @@
 package md.leonis.dreambeam.view;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -37,7 +36,7 @@ public class SavePaneController implements Closeable {
     public TableView<Diff> similarTableView;
     public TableColumn<Diff, String> titleTableColumn;
     public TableColumn<Diff, String> diffTableColumn;
-    public TableColumn<Diff, Source> sourceTableColumn;
+    public TableColumn<Diff, String> sourceTableColumn;
 
     private String name;
     private boolean recognized;
@@ -82,7 +81,8 @@ public class SavePaneController implements Closeable {
 
         titleTableColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().title()));
         diffTableColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(String.format("%.2f%%", cellData.getValue().diff())));
-        sourceTableColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().source()));
+        sourceTableColumn.setCellValueFactory(cellData ->
+                new ReadOnlyStringWrapper(cellData.getValue().source().equals(Source.BASE) ? str("save.source.base") : str("save.source.user")));
 
         if (Storage.diskImage.isError()) {
             findSimilarButtonClick();
@@ -171,7 +171,7 @@ public class SavePaneController implements Closeable {
 
     public List<Diff> calculateDiffPoints(Collection<DiskImage> files, Map<String, String> hashes, Source source) {
         return files.parallelStream().map(diskImage ->
-                new Diff(diskImage.getCrc32(), hashes.get(diskImage.getCrc32()), Storage.diskImage.calculateDiffPoints(diskImage), source))
+                new Diff(diskImage.getCrc32(), hashes.get(diskImage.getCrc32()), Storage.diskImage.calculateDiffPoints(Storage.diskImage, diskImage), source))
                 .filter(r -> r.diff() > 0).sorted((d1, d2) -> Double.compare(d2.diff(), d1.diff())).collect(Collectors.toList());
     }
 
@@ -187,6 +187,13 @@ public class SavePaneController implements Closeable {
     }
 
     public record Diff(String crc32, String title, double diff, Source source) {
+
+        public Diff(String crc32, String title, double diff, Source source) {
+            this.crc32 = crc32;
+            this.title = title;
+            this.diff = Math.min(diff, 100.0);
+            this.source = source;
+        }
     }
 
     public enum Source {
