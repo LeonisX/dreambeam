@@ -31,8 +31,6 @@ public class Storage {
 
     public static Map<String, String> textMap;
 
-    public static long userFilesCount; //todo may be not need in future
-
     public static void readGamesDat(Path path) throws Exception {
         baseHashes = new HashMap<>();
         var pair = Utils.loadShortListHashes(path);
@@ -40,17 +38,20 @@ public class Storage {
         baseDuplicates = pair.getRight();
     }
 
-    public static void calculateBaseHashesAndSave() throws Exception { //todo rename
+    public static void calculateBaseHashesAndSave() throws Exception {
         loadBaseFiles(true);
         FileUtils.writeToFile(FileUtils.getBaseGamesDatFile(), baseHashes.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(e -> e.getValue() + " - " + e.getKey()).toList());
     }
 
-    public static void loadBaseFiles(boolean force) throws Exception { //todo rename
+    public static void loadBaseFiles(boolean force) throws Exception {
         if (baseFilesLoaded && !force) {
             return;
         }
         baseFilesLoaded = false;
-        loadFiles(baseFiles, baseHashes, baseDuplicates);
+        baseFiles = new HashMap<>();
+        baseHashes = new HashMap<>();
+        baseDuplicates = new HashMap<>();
+        Utils.loadFiles(FileUtils.getBaseGamesDir(), baseFiles, baseHashes, baseDuplicates);
         baseFilesLoaded = true;
     }
 
@@ -59,22 +60,18 @@ public class Storage {
             return;
         }
         userFilesLoaded = false;
-        loadFiles(userFiles, userHashes, userDuplicates);
+        userFiles = new HashMap<>();
+        userHashes = new HashMap<>();
+        userDuplicates = new HashMap<>();
+        Utils.loadFiles(FileUtils.getBaseGamesDir(), userFiles, userHashes, userDuplicates);
         userFilesLoaded = true;
     }
 
-    public static void loadFiles(Map<String, DiskImage> images, Map<String, String> hashes, Map<String, String> duplicates) throws Exception {
-        images = new HashMap<>();
-        hashes = new HashMap<>(); //todo избавиться бы
-        duplicates = new HashMap<>();
-        Utils.loadFiles(FileUtils.getBaseGamesDir(), images, hashes, duplicates);
-    }
-
-    public static void readUserFilesCount() {
+    public static int readUserFilesCount() {
         try {
-            Storage.userFilesCount = FileUtils.getFilesCount(FileUtils.getUserDir());
+            return FileUtils.getFilesCount(FileUtils.getUserDir());
         } catch (IOException e) {
-            Storage.userFilesCount = 0;
+            return 0;
         }
     }
 
@@ -84,11 +81,13 @@ public class Storage {
 
     public static void saveUserFile(String name) throws Exception {
         FileUtils.writeToFile(FileUtils.getUserFile(name), Storage.diskImage.getSaveLines());
+        userFiles.put(diskImage.getCrc32(), diskImage);
         userHashes.put(diskImage.getCrc32(), name);
     }
 
     public static void saveUserFileToBase(String name) throws Exception {
         FileUtils.writeToFile(FileUtils.getBaseGamesFile(name), Storage.diskImage.getSaveLines());
+        baseFiles.put(diskImage.getCrc32(), diskImage);
         baseHashes.put(diskImage.getCrc32(), name);
     }
 }

@@ -112,18 +112,17 @@ public class PrimaryPaneController implements Closeable {
 
     private void readFiles() {
         new Thread(() -> {
-            MainStageController.calculateUserHashes(true, true);
-            JavaFxUtils.log("#" + str("primary.log.user.files.loaded"));
             MainStageController.calculateBaseHashes(true, true);
             JavaFxUtils.log("#" + str("primary.log.base.files.loaded"));
+            MainStageController.calculateUserHashes(true, true);
+            JavaFxUtils.log("#" + str("primary.log.user.files.loaded"));
         }).start();
     }
 
     private void updateUserData() {
         renameButton.setVisible(!isUser());
         userLabel.setText(Config.user);
-        Storage.readUserFilesCount();
-        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Storage.userFilesCount));
+        userFilesLabel.setText(String.format(str("primary.user.disks.count"), Storage.readUserFilesCount()));
     }
 
     private void createBaseDir() {
