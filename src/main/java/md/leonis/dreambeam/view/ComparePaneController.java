@@ -74,13 +74,11 @@ public class ComparePaneController implements Closeable {
         rightListView.setCellFactory(Utils::colorLines2);
 
         var leftHandler = new ListViewHandler(leftListView, rightListView);
-        leftListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
-                -> leftHandler.sync(newValue));
+        //leftListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> leftHandler.sync(newValue));
         leftListView.setOnKeyPressed(leftHandler::handle);
 
         var rightHandler = new ListViewHandler(rightListView, leftListView);
-        rightListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)
-                -> rightHandler.sync(newValue));
+        //rightListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> rightHandler.sync(newValue));
         rightListView.setOnKeyPressed(rightHandler::handle);
 
         differenceCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> reactOnCheckBoxes());

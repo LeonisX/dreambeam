@@ -43,7 +43,7 @@ public record FileRecord(String title, long size, String hash, boolean isError) 
             int size = Integer.parseInt(fullTitle.substring(index1 + 1, index2 - 1));
             String hash = fullTitle.substring(index3 + 2);
             boolean isError = hash.contains("!!!");
-            hash = isError ? "" : hash;
+            //hash = isError ? "" : hash;
 
             return new FileRecord(title, size, hash, isError);
         } catch (Exception e) {
