@@ -19,14 +19,20 @@ import md.leonis.dreambeam.model.FileRecord;
 import md.leonis.dreambeam.statik.Storage;
 import md.leonis.dreambeam.utils.BinaryUtils;
 import md.leonis.dreambeam.utils.JavaFxUtils;
+import md.leonis.dreambeam.utils.StringUtils;
 import md.leonis.dreambeam.utils.Utils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.zip.CRC32;
 
 import static md.leonis.dreambeam.statik.Config.str;
 
@@ -92,28 +98,37 @@ public class ViewPaneController implements Closeable {
                 }
 
                 Path file = Storage.diskImage.getFiles().get(i);
-                long size;
+                long size = 0;
                 try {
                     size = Files.size(file);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    JavaFxUtils.log(String.format("!%s: %s: %s", file, e.getClass().getSimpleName(), e.getMessage()));
                 }
                 totalSize += size;
 
                 String currentFile = Storage.diskImage.getViewFileName(file);
 
-                Platform.runLater(() -> fileProgressLabel.setText(currentFile));
+                Platform.runLater(() -> {
+                    fileProgressBar.setProgress(0);
+                    fileProgressLabel.setText(currentFile);
+                });
 
                 try {
-                    //todo читать блоками а не целиком
-                    byte[] bytes = Files.readAllBytes(file);
+                    byte[] bytes = Files.readAllBytes(file); //todo удалить если всё совпадает с новым методом
 
                     //сравнивать на всякий случай с size
                     if (bytes.length != size) {
                         throw new RuntimeException(String.format("%s: %s: %s != %s !", file, str("view.size.is.different.error"), bytes.length, size));
                     }
 
-                    Storage.diskImage.getRecords().set(i, new FileRecord(currentFile, bytes.length, BinaryUtils.crc32String(bytes), false));
+                    String newSrc32 = StringUtils.formatHex(readAndCalculateCrc32(file, size));
+                    String oldCrc32 = BinaryUtils.crc32String(bytes);
+
+                    if (!newSrc32.equals(oldCrc32)) {
+                        System.out.println("!!! " + newSrc32 + " != " + oldCrc32);
+                    }
+
+                    Storage.diskImage.getRecords().set(i, new FileRecord(currentFile, bytes.length, newSrc32, false));
 
                     double percents = i * 1.0 / Storage.diskImage.getFiles().size();
                     Platform.runLater(() -> {
@@ -124,9 +139,9 @@ public class ViewPaneController implements Closeable {
 
                 } catch (Exception e) {
                     error = true;
-                    Storage.diskImage.getRecords().set(i, new FileRecord(currentFile, size, "", true));
+                    Storage.diskImage.getRecords().set(i, new FileRecord(currentFile, size, FileRecord.ERROR, true));
                     refreshControls(i);
-                    JavaFxUtils.log(String.format("%s: %s", file, str("view.read.error")));
+                    JavaFxUtils.log(String.format("!%s: %s", file, str("view.read.error")));
                 }
             }
 
@@ -143,6 +158,25 @@ public class ViewPaneController implements Closeable {
                 JavaFxUtils.showSavePanel();
             }
         }).start();
+    }
+
+    public int readAndCalculateCrc32(Path path, long size) throws IOException {
+        CRC32 crc = new CRC32();
+        try (SeekableByteChannel ch = Files.newByteChannel(path, StandardOpenOption.READ)) {
+            ByteBuffer bf = ByteBuffer.allocate(1024 * 128);
+            int completed = 0;
+            while (ch.read(bf) > 0) {
+                bf.flip();
+                var array = Arrays.copyOf(bf.array(), bf.remaining());
+                completed += array.length;
+                double percents = completed * 1.0 / size;
+                Platform.runLater(() -> fileProgressBar.setProgress(percents));
+                crc.update(array);
+                bf.clear();
+            }
+        }
+
+        return (int) crc.getValue();
     }
 
     private void refreshControls(int i) {

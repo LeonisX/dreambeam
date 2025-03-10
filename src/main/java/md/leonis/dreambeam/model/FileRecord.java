@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 public record FileRecord(String title, long size, String hash, boolean isError) {
 
-    private static final String ERROR = "Error!!!";
+    public static final String ERROR = "Error!!!";
 
     public FileRecord(Path file) {
         this(file.toString(), 0, null, false);

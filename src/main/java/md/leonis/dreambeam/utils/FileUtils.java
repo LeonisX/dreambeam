@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileUtils {
@@ -19,6 +21,7 @@ public class FileUtils {
     public static Path getUserLogFile() {
         return getRootDir().resolve(Config.user + ".log");
     }
+
     public static Path getUserFile(String fileName) {
         return getUserDir().resolve(fileName);
     }
@@ -59,25 +62,21 @@ public class FileUtils {
         return Paths.get(".");
     }
 
-    public static List<Path> listFiles(File folder) {
-        return listFiles(folder, new ArrayList<>());
+    public static List<Path> listFiles(File folder) throws IOException {
+        return listFiles(folder.toPath(), new ArrayList<>());
     }
 
-    public static List<Path> listFiles(File folder, List<Path> paths) {
-        File[] files = folder.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    listFiles(file, paths);
-                }
+    public static List<Path> listFiles(Path folder, List<Path> paths) throws IOException {
+        try (Stream<Path> stream = Files.list(folder)) {
+            Map<Boolean, List<Path>> files = stream.collect(Collectors.partitioningBy(Files::isDirectory));
+            for (Path file : files.get(true)) {
+                listFiles(file, paths);
             }
-            for (File file : files) {  // костыль конечно, но так считал код на Delphi :(
-                if (file.isFile()) {
-                    paths.add(file.toPath());
-                }
-            }
+            // костыль конечно, но так считал код на Delphi :(
+            paths.addAll(files.get(false));
+
+            return paths;
         }
-        return paths;
     }
 
     public static boolean exists(Path path) {

@@ -129,7 +129,7 @@ public class ComparePaneController implements Closeable {
         if (leftUser) {
             findSimilar(Storage.userFiles, rightUser ? Storage.userFiles : Storage.baseFiles, Storage.userHashes, rightUser ? Storage.userHashes : Storage.baseHashes);
         } else {
-            findSimilar(Storage.baseFiles, rightUser ? Storage.userFiles : Storage.baseFiles, Storage.userHashes, rightUser ? Storage.userHashes : Storage.baseHashes);
+            findSimilar(Storage.baseFiles, rightUser ? Storage.userFiles : Storage.baseFiles, Storage.baseHashes, rightUser ? Storage.userHashes : Storage.baseHashes);
         }
     }
 

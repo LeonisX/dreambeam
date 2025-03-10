@@ -173,7 +173,7 @@ public class PrimaryPaneController implements Closeable {
         JavaFxUtils.showAlert(strError(), String.format(str("primary.disk.read.error"), file.toString()), e.getClass().getSimpleName() + ": " + e.getMessage(), Alert.AlertType.ERROR);
     }
 
-    private void scanDriveAndOpenViewPane(File driveRoot, boolean isDirectory) {
+    private void scanDriveAndOpenViewPane(File driveRoot, boolean isDirectory) throws IOException {
         scanDrive(driveRoot);
 
         JavaFxUtils.log(Storage.HR);
