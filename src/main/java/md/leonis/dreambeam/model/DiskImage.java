@@ -75,7 +75,7 @@ public class DiskImage {
 
     public double calculateDiffPoints(DiskImage newDiskImage, DiskImage diskImage) {
         int count = newDiskImage.getRecords().size();
-        int sum = 0;
+        int sum = -10;
 
         for (FileRecord record : newDiskImage.getRecords()) {
             sum += diskImage.getDiffPoints(record);
@@ -88,7 +88,7 @@ public class DiskImage {
         return sum * 100.0 / (count * 4.0);
     }
 
-    public int getDiffPoints(FileRecord newRecord) {
+    private int getDiffPoints(FileRecord newRecord) {
         FileRecord record = searchMap.get(newRecord.title());
         if (record == null) {
             return -1;

@@ -187,13 +187,6 @@ public class SavePaneController implements Closeable {
     }
 
     public record Diff(String crc32, String title, double diff, Source source) {
-
-        public Diff(String crc32, String title, double diff, Source source) {
-            this.crc32 = crc32;
-            this.title = title;
-            this.diff = Math.min(diff, 100.0);
-            this.source = source;
-        }
     }
 
     public enum Source {
