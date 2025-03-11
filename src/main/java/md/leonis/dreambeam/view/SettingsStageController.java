@@ -2,10 +2,7 @@ package md.leonis.dreambeam.view;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import md.leonis.dreambeam.statik.Config;
 import md.leonis.dreambeam.utils.JavaFxUtils;
 
@@ -20,6 +17,8 @@ import static md.leonis.dreambeam.statik.Config.strError;
 public class SettingsStageController implements Closeable {
     public ComboBox<String> languageComboBox;
     public CheckBox updateNotificationCheckBox;
+    public TextField alcoholPathTextField;
+    public TextField alcoholDriveLetterTextField;
     public Button okButton;
 
     private final List<Locale> locales = List.of(Locale.of("en", "US"), Locale.of("ru", "RU"));
@@ -33,6 +32,8 @@ public class SettingsStageController implements Closeable {
         languageComboBox.getSelectionModel().select(Math.max(0, locales.indexOf(Config.locale)));
 
         updateNotificationCheckBox.setSelected(Config.updateNotification);
+        alcoholPathTextField.setText(Config.alcoholPath);
+        alcoholDriveLetterTextField.setText(Config.alcoholDriveLetter);
     }
 
     public void closeButtonClick(ActionEvent actionEvent) {
@@ -42,6 +43,8 @@ public class SettingsStageController implements Closeable {
     public void okButtonClick(ActionEvent actionEvent) {
         Config.locale = locales.get(languageComboBox.getSelectionModel().getSelectedIndex());
         Config.updateNotification = updateNotificationCheckBox.isSelected();
+        Config.alcoholPath = alcoholPathTextField.getText();
+        Config.alcoholDriveLetter = alcoholDriveLetterTextField.getText().toUpperCase();
         try {
             Config.saveProperties();
             //FileUtils.createDirectories(Config.getUserDir());

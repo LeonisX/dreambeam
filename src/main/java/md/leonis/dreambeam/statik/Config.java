@@ -18,8 +18,12 @@ public class Config {
     private static final String LOCALE = "Locale";
     private static final String UPDATE_NOTIFICATION = "UpdateNotification";
     private static final String NOTIFIED_VERSION = "NotifiedVersion";
+    private static final String ALCOHOL_PATH="AlcoholPath";
+    private static final String ALCOHOL_LETTER="AlcoholLetter";
 
     public static final String DEFAULT_USER = "Unnamed";
+    private static final String ALCOHOL_DEFAULT_PATH="C:\\Program Files (x86)\\Alcohol Soft\\Alcohol 52\\AxCmd.exe";
+    private static final String ALCOHOL_DEFAULT_LETTER="E";
 
     public static Properties properties = new Properties();
     public static Properties languages = new Properties();
@@ -29,8 +33,13 @@ public class Config {
     public static String user = DEFAULT_USER;
     public static boolean admin;
 
+    public static String alcoholPath;
+    public static String alcoholDriveLetter;
+
+
     // UI settings
     public static File lastDirectory; // Last directory for DirectoryChooser. //todo save to file
+    public static File batchDirectory;
 
     public static void loadProperties() {
         try (InputStream inputStream = new FileInputStream(FileUtils.getConfigFile().toFile())) {
@@ -43,6 +52,9 @@ public class Config {
             notifiedVersion = properties.getProperty(NOTIFIED_VERSION, VersionConfig.getVersion());
             admin = "true".equals(properties.getProperty(ADMIN));
             locale = Locale.of(properties.getProperty(LOCALE).substring(0, 2), properties.getProperty(LOCALE).substring(3).toUpperCase());
+
+            alcoholPath = properties.getProperty(ALCOHOL_PATH, ALCOHOL_DEFAULT_PATH);
+            alcoholDriveLetter = properties.getProperty(ALCOHOL_LETTER, ALCOHOL_DEFAULT_LETTER).toUpperCase();
         } catch (Exception ignored) {
         }
     }
@@ -94,5 +106,8 @@ public class Config {
         if (admin) {
             properties.put(ADMIN, admin);
         }
+
+        properties.put(ALCOHOL_PATH, alcoholPath);
+        properties.put(ALCOHOL_LETTER, alcoholDriveLetter);
     }
 }

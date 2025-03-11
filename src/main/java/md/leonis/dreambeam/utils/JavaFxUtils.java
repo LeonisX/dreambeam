@@ -138,6 +138,10 @@ public class JavaFxUtils {
         showWindow("SettingsStage.fxml", str("settings.title"), 320, 280);
     }
 
+    public static void showBatchWindow() {
+        showWindow("BatchStage.fxml", str("batch.title"), 900, 600);
+    }
+
     @SuppressWarnings("all")
     public static void showWindow(String resource, String title, int width, int height) {
         Platform.runLater(() -> {

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -31,6 +32,24 @@
                    <Label text="%settings.update.notification" />
                </HBox>
                <CheckBox fx:id="updateNotificationCheckBox" prefWidth="150.0" />
+           </HBox>
+           <HBox spacing="5.0">
+               <padding>
+                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <HBox alignment="CENTER_RIGHT" prefWidth="160.0">
+                   <Label text="Alcohol 52/120% path" />
+               </HBox>
+            <TextField fx:id="alcoholPathTextField" prefWidth="150.0" />
+           </HBox>
+           <HBox spacing="5.0">
+               <padding>
+                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <HBox alignment="CENTER_RIGHT" prefWidth="160.0">
+                   <Label text="Alcohol virtual drive letter" />
+               </HBox>
+            <TextField fx:id="alcoholDriveLetterTextField" prefWidth="150.0" />
            </HBox>
          <padding>
             <Insets top="20.0" />

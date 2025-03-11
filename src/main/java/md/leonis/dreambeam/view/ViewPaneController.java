@@ -114,6 +114,8 @@ public class ViewPaneController implements Closeable {
                 });
 
                 try {
+                    String newSrc32 = StringUtils.formatHex(readAndCalculateCrc32(file, size));
+
                     byte[] bytes = Files.readAllBytes(file); //todo удалить если всё совпадает с новым методом
 
                     //сравнивать на всякий случай с size
@@ -121,7 +123,6 @@ public class ViewPaneController implements Closeable {
                         throw new RuntimeException(String.format("%s: %s: %s != %s !", file, str("view.size.is.different.error"), bytes.length, size));
                     }
 
-                    String newSrc32 = StringUtils.formatHex(readAndCalculateCrc32(file, size));
                     String oldCrc32 = BinaryUtils.crc32String(bytes);
 
                     if (!newSrc32.equals(oldCrc32)) {

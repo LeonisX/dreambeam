@@ -23,19 +23,17 @@
                                 <padding>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
-                        <HBox alignment="CENTER_LEFT" spacing="7.0">
-                           <children>
-                                      <Label fx:id="userLabel">
-                                          <font>
-                                              <Font name="System Bold" size="12.0" />
-                                          </font>
-                                          <padding>
-                                              <Insets bottom="5.0" />
-                                          </padding>
-                                      </Label>
-                              <Button fx:id="renameButton" focusTraversable="false" mnemonicParsing="false" onAction="#renameButtonClick" text="%primary.rename.me.button" textFill="RED" />
-                           </children>
-                        </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="7.0">
+                                    <Label fx:id="userLabel">
+                                        <font>
+                                            <Font name="System Bold" size="12.0" />
+                                        </font>
+                                        <padding>
+                                            <Insets bottom="5.0" />
+                                        </padding>
+                                    </Label>
+                                    <Button fx:id="renameButton" focusTraversable="false" mnemonicParsing="false" onAction="#renameButtonClick" text="%primary.rename.me.button" textFill="RED" />
+                                </HBox>
                                 <Label fx:id="userFilesLabel" />
                                 <Label fx:id="baseFilesCountLabel">
                                     <padding>
@@ -65,6 +63,10 @@
                                     </padding>
                                     <Button fx:id="readFsButton" mnemonicParsing="false" onAction="#readFsButtonClick" text="%primary.read.directory.button" />
                                     <Button fx:id="readGdiButton" disable="true" mnemonicParsing="false" onAction="#readGdiButtonClick" text="%primary.read.gdi.button" />
+                                    <Button fx:id="batchScanButton" mnemonicParsing="false" onAction="#batchScanButtonClick" text="%primary.batch.scan.button">
+                              <VBox.margin>
+                                 <Insets top="7.0" />
+                              </VBox.margin></Button>
                                 </VBox>
                                 <VBox spacing="5.0">
                                     <padding>

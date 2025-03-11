@@ -47,6 +47,7 @@ public class PrimaryPaneController implements Closeable {
     public VBox cdVBox;
     public Button viewBaseButton;
     public TextArea dragTextArea;
+    public Button batchScanButton;
 
     private Map<String, Path> drives;
     private String volumeLabel;
@@ -462,5 +463,20 @@ public class PrimaryPaneController implements Closeable {
 
     @Override
     public void close() throws IOException {
+    }
+
+    public void batchScanButtonClick() {
+        try {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("TODO");
+            if (Config.batchDirectory != null) {
+                directoryChooser.setInitialDirectory(Config.batchDirectory);
+            }
+            batchDirectory = directoryChooser.showDialog(readFsButton.getScene().getWindow());
+
+            JavaFxUtils.showBatchWindow();
+        } catch (Exception e) {
+            showReadDiskAlert(Config.lastDirectory, e);
+        }
     }
 }
